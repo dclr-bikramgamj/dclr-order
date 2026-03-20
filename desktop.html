@@ -1,1 +1,2378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DCLR — Mutation Appeal System · Desktop</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════════════════
+   DCLR DESKTOP — Luxury Government Legal Workstation
+   Navy sidebar · Warm off-white canvas · Gold accents
+═══════════════════════════════════════════════════════ */
+:root {
+  --bg:        #F8F7F4;
+  --bg2:       #EFEDE8;
+  --card:      #FFFFFF;
+  --sidebar:   #0F1F3D;
+  --sidebar2:  #0C1A32;
+  --sidebar3:  #162646;
+  --gold:      #B8860B;
+  --gold2:     #C99A1A;
+  --gold3:     #D4A820;
+  --gold-dim:  rgba(184,134,11,.10);
+  --gold-glow: rgba(184,134,11,.25);
+  --gold-grad: linear-gradient(135deg,#B8860B 0%,#8B6508 100%);
+  --gold-grad-h: linear-gradient(135deg,#C99A1A 0%,#B8860B 100%);
+  --text:      #1A1A2A;
+  --text2:     #374151;
+  --text3:     #6B7280;
+  --text4:     #9CA3AF;
+  --border:    #E5E7EB;
+  --border2:   #D1D5DB;
+  --sh-card:   0 2px 8px rgba(0,0,0,.07);
+  --sh-md:     0 4px 16px rgba(0,0,0,.10);
+  --sh-lg:     0 8px 32px rgba(0,0,0,.12);
+  --green:     #16A34A; --green-bg: #F0FDF4; --green-br: rgba(22,163,74,.2);
+  --red:       #DC2626; --red-bg:   #FEF2F2; --red-br:   rgba(220,38,38,.2);
+  --amber:     #D97706; --amber-bg: #FFFBEB; --amber-br: rgba(217,119,6,.2);
+  --blue:      #1D4ED8; --blue-bg:  #EFF6FF; --blue-br:  rgba(29,78,216,.18);
+  --serif:  'Playfair Display', Georgia, serif;
+  --sans:   'Inter', system-ui, -apple-system, sans-serif;
+  --hindi:  'Noto Sans Devanagari', 'Inter', sans-serif;
+  --mangal: 'Mangal', 'Noto Sans Devanagari', sans-serif;
+  --t:      250ms cubic-bezier(.4,0,.2,1);
+  --spring: 360ms cubic-bezier(.34,1.56,.64,1);
+  --sidebar-w: 240px;
+  --topbar-h:  56px;
+}
 
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+html,body { height:100%; overflow:hidden }
+body {
+  font-family: var(--sans); background:var(--bg); color:var(--text);
+  -webkit-font-smoothing:antialiased; font-size:14px; display:flex;
+}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar {
+  width: var(--sidebar-w); height: 100vh; flex-shrink:0;
+  background: var(--sidebar);
+  display: flex; flex-direction: column;
+  position: relative; z-index:50;
+  box-shadow: 2px 0 20px rgba(0,0,0,.2);
+}
+
+.sb-logo {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  display: flex; align-items: center; gap: 11px;
+}
+.sb-seal {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--gold-dim); border: 1.5px solid rgba(184,134,11,.35);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+  box-shadow: 0 0 16px rgba(184,134,11,.2);
+}
+.sb-brand { flex:1 }
+.sb-brand-name { font-family:var(--serif); font-size:15px; font-weight:600; color:#fff; letter-spacing:.3px }
+.sb-brand-sub  { font-size:9.5px; color:rgba(255,255,255,.38); margin-top:2px; letter-spacing:.4px }
+
+/* Nav sections */
+.sb-section { padding: 18px 12px 6px }
+.sb-section-lbl { font-size:9px; font-weight:700; letter-spacing:1.8px; text-transform:uppercase; color:rgba(255,255,255,.28); padding:0 8px; margin-bottom:4px }
+
+.sb-item {
+  display: flex; align-items: center; gap:10px;
+  padding: 9px 10px; border-radius:9px;
+  cursor: pointer; margin-bottom:2px;
+  color: rgba(255,255,255,.55); font-size:13.5px; font-weight:500;
+  transition: all var(--t); position: relative;
+  border: 1px solid transparent;
+  user-select: none;
+}
+.sb-item:hover { background:rgba(255,255,255,.06); color:rgba(255,255,255,.85) }
+.sb-item.active {
+  background: rgba(184,134,11,.12);
+  color: var(--gold3);
+  border-color: rgba(184,134,11,.2);
+}
+.sb-item.active::before {
+  content:''; position:absolute; left:-12px; top:50%; transform:translateY(-50%);
+  width:3px; height:20px; border-radius:0 3px 3px 0;
+  background: var(--gold-grad);
+}
+.sb-ico { width:18px; text-align:center; font-size:16px; flex-shrink:0 }
+.sb-label { flex:1 }
+.sb-badge {
+  font-size:10px; font-weight:700; background:rgba(184,134,11,.2);
+  color:var(--gold3); padding:1px 7px; border-radius:10px;
+  border: 1px solid rgba(184,134,11,.25);
+}
+
+.sb-footer {
+  margin-top:auto; padding:16px 12px;
+  border-top: 1px solid rgba(255,255,255,.07);
+}
+.sb-user {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 10px; border-radius:9px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+}
+.sb-avatar {
+  width:32px; height:32px; border-radius:50%;
+  background:rgba(184,134,11,.2); border:1.5px solid rgba(184,134,11,.35);
+  display:flex; align-items:center; justify-content:center; font-size:15px;
+}
+.sb-uname { font-size:12.5px; font-weight:600; color:#fff; line-height:1.2 }
+.sb-urole { font-size:10px; color:rgba(255,255,255,.38) }
+.sb-version { font-size:9px; color:rgba(255,255,255,.2); text-align:center; margin-top:10px; letter-spacing:.5px }
+
+/* ═══ MAIN AREA ═══ */
+.main {
+  flex:1; display:flex; flex-direction:column;
+  overflow:hidden; min-width:0;
+}
+
+/* Top bar */
+.topbar {
+  height: var(--topbar-h); flex-shrink:0;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 0 var(--border), 0 2px 6px rgba(0,0,0,.04);
+  display: flex; align-items: center; padding:0 28px; gap:16px;
+}
+.tb-breadcrumb { display:flex; align-items:center; gap:7px; flex:1 }
+.tb-bc-root { font-size:12px; color:var(--text3) }
+.tb-bc-sep  { color:var(--border2); font-size:14px }
+.tb-bc-cur  { font-family:var(--serif); font-size:14.5px; font-weight:600; color:var(--text) }
+.tb-right   { display:flex; align-items:center; gap:10px }
+.tb-btn {
+  display:flex; align-items:center; gap:6px;
+  padding:7px 14px; border-radius:8px; border:none;
+  font-family:var(--sans); font-size:12.5px; font-weight:600;
+  cursor:pointer; transition:all var(--t);
+}
+.tb-btn-outline { background:transparent; color:var(--text3); border:1.5px solid var(--border) }
+.tb-btn-outline:hover { border-color:var(--border2); color:var(--text) }
+.tb-btn-gold {
+  background:var(--gold-grad); color:#fff;
+  box-shadow:0 2px 8px var(--gold-glow);
+}
+.tb-btn-gold:hover {
+  background:var(--gold-grad-h);
+  box-shadow:0 4px 12px var(--gold-glow);
+  transform:translateY(-1px);
+}
+.tb-kbd {
+  font-size:10px; background:var(--bg2); border:1px solid var(--border);
+  border-bottom:2px solid var(--border2); border-radius:4px;
+  padding:1px 5px; color:var(--text3); font-family:monospace;
+}
+.tb-divider { width:1px; height:22px; background:var(--border) }
+.tb-status-dot { width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 6px rgba(22,163,74,.4) }
+.tb-status-txt { font-size:11.5px; color:var(--text3) }
+
+/* ═══ CONTENT AREA ═══ */
+.content {
+  flex:1; overflow:hidden; display:flex;
+}
+
+/* ═══ SCREENS ═══ */
+.screen { display:none; width:100%; height:100%; overflow:hidden }
+.screen.active { display:flex }
+
+/* ═══ DASHBOARD ═══ */
+#screen-dashboard {
+  flex-direction:column; overflow-y:auto;
+  padding: 28px 32px 32px;
+  gap: 24px;
+}
+
+.dash-greeting {
+  display:flex; align-items:flex-end; justify-content:space-between;
+}
+.dash-greeting h1 {
+  font-family:var(--serif); font-size:26px; font-weight:600; color:var(--text);
+}
+.dash-greeting p { font-size:13.5px; color:var(--text3); margin-top:4px }
+.dash-date { font-size:12px; color:var(--text3); text-align:right }
+.dash-date strong { display:block; font-size:14px; color:var(--text2); font-weight:600 }
+
+/* KPI cards */
+.kpi-row { display:grid; grid-template-columns:repeat(5,1fr); gap:14px }
+.kpi {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:14px; padding:18px 20px;
+  box-shadow:var(--sh-card); position:relative; overflow:hidden;
+  transition:all var(--t);
+}
+.kpi:hover { box-shadow:var(--sh-md); transform:translateY(-2px) }
+.kpi::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  border-radius:14px 14px 0 0;
+}
+.kpi.total::before  { background:linear-gradient(90deg,var(--gold),var(--gold3)) }
+.kpi.accepted::before { background:var(--green) }
+.kpi.rejected::before { background:var(--red) }
+.kpi.remanded::before { background:var(--amber) }
+.kpi.closed::before   { background:var(--text3) }
+.kpi-label { font-size:10.5px; font-weight:600; letter-spacing:.8px; text-transform:uppercase; color:var(--text3); margin-bottom:10px }
+.kpi-num { font-family:var(--serif); font-size:32px; font-weight:700; color:var(--text); line-height:1 }
+.kpi.total .kpi-num  { color:var(--gold) }
+.kpi.accepted .kpi-num { color:var(--green) }
+.kpi.rejected .kpi-num  { color:var(--red) }
+.kpi.remanded .kpi-num { color:var(--amber) }
+.kpi-sub { font-size:11px; color:var(--text4); margin-top:6px }
+.kpi-ico { position:absolute; right:16px; top:50%; transform:translateY(-50%); font-size:28px; opacity:.12 }
+
+/* Analytics row */
+.analytics-row { display:grid; grid-template-columns:2fr 1fr; gap:14px }
+
+.chart-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:14px; padding:22px 24px;
+  box-shadow:var(--sh-card);
+}
+.chart-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px }
+.chart-title { font-family:var(--serif); font-size:15.5px; font-weight:600; color:var(--text) }
+.chart-sub   { font-size:11.5px; color:var(--text3); margin-top:2px }
+.chart-legend { display:flex; gap:14px }
+.cl-item { display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--text3) }
+.cl-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0 }
+
+/* Bar chart */
+.bar-chart { display:flex; align-items:flex-end; gap:6px; height:140px; padding-bottom:24px; position:relative }
+.bar-chart::after {
+  content:''; position:absolute; bottom:24px; left:0; right:0; height:1px;
+  background:var(--border); pointer-events:none;
+}
+.bar-group { display:flex; flex-direction:column; align-items:center; gap:3px; flex:1 }
+.bar-bars { display:flex; gap:3px; align-items:flex-end; height:100%; width:100% }
+.bar {
+  flex:1; border-radius:4px 4px 0 0;
+  transition:all var(--t); cursor:pointer; min-height:3px;
+  position:relative;
+}
+.bar:hover { opacity:.8; filter:brightness(1.1) }
+.bar-tooltip {
+  position:absolute; bottom:100%; left:50%; transform:translateX(-50%);
+  background:var(--text); color:#fff; padding:4px 8px; border-radius:6px;
+  font-size:11px; white-space:nowrap; margin-bottom:4px;
+  opacity:0; pointer-events:none; transition:opacity .15s;
+}
+.bar:hover .bar-tooltip { opacity:1 }
+.bar-lbl { font-size:9px; color:var(--text4); margin-top:4px }
+
+/* Donut chart */
+.donut-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:14px; padding:22px 24px;
+  box-shadow:var(--sh-card);
+  display:flex; flex-direction:column;
+}
+.donut-wrap { display:flex; align-items:center; justify-content:center; gap:20px; flex:1; margin-top:16px }
+.donut-svg { flex-shrink:0 }
+.donut-legend { display:flex; flex-direction:column; gap:9px }
+.dl-item { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text2) }
+.dl-swatch { width:10px; height:10px; border-radius:3px; flex-shrink:0 }
+.dl-val { font-weight:700; margin-left:auto; color:var(--text); padding-left:16px }
+
+/* Recent activity */
+.activity-row { display:grid; grid-template-columns:1fr 1fr; gap:14px }
+
+.recent-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:14px; box-shadow:var(--sh-card); overflow:hidden;
+}
+.rc-hdr {
+  padding:16px 20px 14px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.rc-title { font-family:var(--serif); font-size:14.5px; font-weight:600; color:var(--text) }
+.rc-link { font-size:12px; color:var(--gold); font-weight:600; cursor:pointer; transition:color var(--t) }
+.rc-link:hover { color:var(--gold2) }
+.rc-row {
+  display:flex; align-items:center; gap:12px;
+  padding:11px 20px; border-bottom:1px solid var(--border);
+  transition:background var(--t); cursor:pointer;
+}
+.rc-row:last-child { border-bottom:none }
+.rc-row:nth-child(even) { background:var(--bg) }
+.rc-row:hover { background:var(--gold-dim) }
+.rc-orb { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0 }
+.rc-info { flex:1; min-width:0 }
+.rc-num  { font-size:12.5px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.rc-pty  { font-size:11px; color:var(--text3); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.rc-date { font-size:10.5px; color:var(--text4); flex-shrink:0 }
+.badge   { font-size:10px; font-weight:600; padding:2px 8px; border-radius:20px; flex-shrink:0; white-space:nowrap }
+.bg-green{ background:var(--green-bg); color:var(--green); border:1px solid var(--green-br) }
+.bg-red  { background:var(--red-bg);   color:var(--red);   border:1px solid var(--red-br) }
+.bg-amber{ background:var(--amber-bg); color:var(--amber); border:1px solid var(--amber-br) }
+.bg-blue { background:var(--blue-bg);  color:var(--blue);  border:1px solid var(--blue-br) }
+.bg-gray { background:var(--bg2);      color:var(--text3); border:1px solid var(--border) }
+
+/* Quick stats panel */
+.quick-stats {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:14px; padding:22px 24px;
+  box-shadow:var(--sh-card);
+}
+.qs-title { font-family:var(--serif); font-size:14.5px; font-weight:600; color:var(--text); margin-bottom:16px }
+.qs-row { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border) }
+.qs-row:nth-child(even) { background:transparent }
+.qs-row:last-child { border-bottom:none }
+.qs-lbl { font-size:12px; color:var(--text3) }
+.qs-val { font-size:13px; font-weight:700; color:var(--text) }
+.qs-bar-wrap { width:100px; height:5px; background:var(--border); border-radius:5px; overflow:hidden }
+.qs-bar { height:100%; border-radius:5px; background:var(--gold-grad) }
+
+/* ═══ NEW ORDER — SPLIT SCREEN ═══ */
+#screen-new-order {
+  flex-direction:row;
+}
+
+/* Left panel: form */
+.form-panel {
+  width: 520px; flex-shrink:0;
+  display: flex; flex-direction: column;
+  border-right: 1px solid var(--border);
+  background: var(--bg);
+  overflow: hidden;
+}
+.fp-header {
+  padding: 16px 24px; background:var(--card);
+  border-bottom: 1px solid var(--border);
+  display:flex; align-items:center; gap:12px; flex-shrink:0;
+}
+.fp-title { font-family:var(--serif); font-size:16px; font-weight:600; color:var(--text) }
+.fp-sub   { font-size:11.5px; color:var(--text3); margin-top:2px }
+.step-pills { display:flex; gap:5px; overflow-x:auto; padding:0; margin-left:auto }
+.sp {
+  padding:5px 12px; border-radius:20px; font-size:11px; font-weight:500;
+  cursor:pointer; white-space:nowrap; transition:all var(--t);
+  background:var(--bg2); color:var(--text3); border:1px solid var(--border);
+}
+.sp.cur  { background:var(--gold-grad); color:#fff; border-color:var(--gold); box-shadow:0 2px 6px var(--gold-glow) }
+.sp.done { background:var(--green-bg); color:var(--green); border-color:var(--green-br) }
+
+.fp-body { flex:1; overflow-y:auto; padding:20px 24px }
+.fp-footer {
+  padding:14px 24px; background:var(--card);
+  border-top:1px solid var(--border);
+  display:flex; gap:10px; flex-shrink:0;
+}
+
+/* Right panel: preview */
+.preview-panel {
+  flex:1; display:flex; flex-direction:column;
+  background:var(--bg); overflow:hidden;
+}
+.pp-header {
+  padding:16px 24px; background:var(--card);
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:12px; flex-shrink:0;
+}
+.pp-title { font-family:var(--serif); font-size:16px; font-weight:600; color:var(--text) }
+.pp-sub   { font-size:11.5px; color:var(--text3); margin-top:2px }
+.pp-actions { display:flex; gap:8px; margin-left:auto }
+.pp-body { flex:1; overflow-y:auto; padding:20px 24px }
+
+/* Order preview shell */
+.order-shell {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:14px; overflow:hidden;
+  box-shadow:var(--sh-md);
+}
+.os-header {
+  background:linear-gradient(150deg,#0F1F3D 0%,#1E3060 100%);
+  padding:20px 24px;
+}
+.os-court  { font-size:13px; color:rgba(255,255,255,.78); font-family:var(--hindi); margin-bottom:10px }
+.os-tags   { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:12px }
+.os-ct     { font-size:10px; font-weight:600; padding:3px 10px; border-radius:20px; background:rgba(184,134,11,.2); color:var(--gold3); border:1px solid rgba(184,134,11,.3) }
+.os-tt     { font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px }
+.os-tt.allowed  { background:rgba(22,163,74,.15);  color:#4ADE80; border:1px solid rgba(22,163,74,.3) }
+.os-tt.rejected { background:rgba(220,38,38,.15);  color:#FCA5A5; border:1px solid rgba(220,38,38,.3) }
+.os-tt.remanded { background:rgba(217,119,6,.15);  color:#FCD34D; border:1px solid rgba(217,119,6,.3) }
+.os-tt.closed   { background:rgba(255,255,255,.1); color:rgba(255,255,255,.55); border:1px solid rgba(255,255,255,.15) }
+.os-parties {
+  display:flex; align-items:center; gap:10px;
+  background:rgba(255,255,255,.07); border-radius:8px; padding:10px 14px;
+}
+.osp-col { flex:1 }
+.osp-lbl { font-size:8.5px; color:rgba(255,255,255,.35); letter-spacing:.8px; text-transform:uppercase }
+.osp-name{ font-size:13px; font-weight:600; color:#fff; margin-top:2px; font-family:var(--hindi) }
+.osp-vs  { font-size:10px; font-weight:700; color:var(--gold3); padding:3px 8px; border-radius:6px; background:rgba(184,134,11,.15) }
+.os-meta {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  border-bottom:1px solid var(--border);
+}
+.omc { padding:10px 14px; border-right:1px solid var(--border) }
+.omc:nth-child(even) { background:var(--bg) }
+.omc:last-child { border-right:none }
+.oml { font-size:8.5px; color:var(--text3); letter-spacing:.5px; text-transform:uppercase }
+.omv { font-size:12.5px; font-weight:600; color:var(--text); margin-top:2px }
+.os-body { padding:18px 22px }
+.os-body-hdr {
+  display:flex; align-items:center; gap:8px; margin-bottom:14px;
+  padding-bottom:10px; border-bottom:1px solid var(--border);
+}
+.os-body-t { font-size:11.5px; font-weight:600; color:var(--text3) }
+.mangal-chip {
+  font-size:9px; font-weight:700; padding:2px 8px; border-radius:10px;
+  background:var(--gold-dim); color:var(--gold); border:1px solid rgba(184,134,11,.2);
+  margin-left:auto;
+}
+
+.o-loading { display:none; flex-direction:column; align-items:center; padding:48px; gap:14px }
+.o-loading.show { display:flex }
+.spinner { width:38px; height:38px; border-radius:50%; border:2px solid var(--border); border-top-color:var(--gold); animation:spin .7s linear infinite }
+@keyframes spin { to{transform:rotate(360deg)} }
+.loading-t { font-size:14px; color:var(--text3) }
+.loading-s { font-size:12px; color:var(--text4) }
+
+.o-section { padding:10px 0; border-bottom:1px solid var(--border) }
+.o-section:last-child { border-bottom:none; padding-bottom:0 }
+.o-section:nth-child(even) { background:var(--bg); margin:0 -22px; padding:10px 22px }
+.o-section.fin-sec {
+  background:var(--green-bg); border:1px solid var(--green-br);
+  border-radius:10px; padding:12px; margin-top:8px;
+}
+.sec-hdr { display:flex; align-items:flex-start; gap:9px; margin-bottom:6px }
+.sec-num { width:20px; height:20px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:9.5px; font-weight:700; color:#fff; flex-shrink:0 }
+.sec-hi  { font-size:12.5px; font-weight:600; color:var(--text) }
+.sec-en  { font-size:9.5px; color:var(--text3); margin-top:1px }
+.sec-ta  {
+  width:100%; font-family:var(--mangal); font-size:13.5px;
+  line-height:1.85; color:var(--text); background:var(--bg2);
+  border:1.5px solid var(--border); border-radius:8px; padding:9px 12px;
+  outline:none; resize:none; min-height:72px; transition:all var(--t);
+}
+.sec-ta:focus { border-color:var(--gold); box-shadow:0 0 0 3px var(--gold-dim); background:var(--card) }
+.sec-ta.filled { border-color:var(--green-br); background:var(--green-bg) }
+.fin-sec .sec-ta { background:rgba(22,163,74,.04); border-color:var(--green-br); min-height:92px }
+.rcms-bar {
+  background:var(--green-bg); border-top:1px solid var(--green-br);
+  padding:10px 16px; font-size:12px; font-weight:600;
+  color:var(--green); display:flex; align-items:center; gap:7px;
+  font-family:var(--hindi);
+}
+
+/* Empty state in preview */
+.preview-empty {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  height:100%; text-align:center; color:var(--text3); padding:48px;
+}
+.pe-icon { font-size:48px; opacity:.15; margin-bottom:16px }
+.pe-title { font-family:var(--serif); font-size:18px; font-weight:500; color:var(--text2); margin-bottom:8px }
+.pe-sub   { font-size:13px; line-height:1.7 }
+
+/* Section number colors */
+.sc1{background:#16A34A} .sc2{background:#0EA5E9} .sc3{background:#DC2626}
+.sc4{background:#D97706} .sc5{background:#0891B2} .sc6{background:#15803D}
+.sc7{background:#B91C1C} .sc8{background:#6D28D9} .sc9{background:#92400E}
+.sc10{background:#1D4ED8} .sc11{background:#065F46}
+
+/* ═══ FORM ELEMENTS ═══ */
+.fg  { margin-bottom:14px }
+.fg:last-child { margin-bottom:0 }
+.flbl { font-size:10.5px; font-weight:600; letter-spacing:.9px; text-transform:uppercase; color:var(--text3); display:block; margin-bottom:5px }
+.req  { color:var(--gold) }
+.fi   {
+  width:100%; background:var(--card); border:1.5px solid var(--border);
+  border-radius:8px; padding:9px 13px; font-family:var(--hindi); font-size:13.5px;
+  color:var(--text); outline:none; transition:border-color var(--t),box-shadow var(--t);
+  -webkit-appearance:none;
+}
+.fi::placeholder { color:var(--text4) }
+.fi:focus { border-color:var(--gold); box-shadow:0 0 0 3px var(--gold-dim) }
+textarea.fi { resize:vertical; min-height:80px; line-height:1.7 }
+select.fi {
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236B7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 11px center;
+  padding-right:32px; cursor:pointer;
+}
+.fg2 { display:grid; grid-template-columns:1fr 1fr; gap:12px }
+.fg3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px }
+.fwrap { position:relative }
+.fwrap .fi { padding-right:40px }
+
+/* Buttons */
+.btn {
+  padding:9px 18px; border:none; border-radius:8px;
+  font-family:var(--sans); font-size:13px; font-weight:600;
+  cursor:pointer; display:inline-flex; align-items:center;
+  justify-content:center; gap:7px; transition:all var(--t);
+}
+.btn:active { transform:scale(.97) }
+.btn:disabled { opacity:.42; cursor:not-allowed }
+.btn-gold {
+  background:var(--gold-grad); color:#fff;
+  box-shadow:0 2px 8px var(--gold-glow);
+}
+.btn-gold:hover:not(:disabled) { background:var(--gold-grad-h); box-shadow:0 4px 14px var(--gold-glow); transform:translateY(-1px) }
+.btn-ghost { background:transparent; color:var(--text3); border:1.5px solid var(--border) }
+.btn-ghost:hover:not(:disabled) { border-color:var(--border2); color:var(--text) }
+.btn-full { width:100% }
+.brow { display:flex; gap:10px }
+.brow .btn { flex:1 }
+
+/* Section divider */
+.form-section { margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--border) }
+.form-section:last-child { margin-bottom:0; padding-bottom:0; border-bottom:none }
+.fs-title { font-family:var(--serif); font-size:14.5px; font-weight:600; color:var(--navy); margin-bottom:14px; display:flex; align-items:center; gap:8px }
+.fs-title::before { content:''; width:3px; height:18px; border-radius:2px; background:var(--gold-grad) }
+
+/* Order type tiles */
+.ot-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:4px }
+.ot-tile {
+  background:var(--bg2); border:1.5px solid var(--border);
+  border-radius:10px; padding:12px 8px; text-align:center;
+  cursor:pointer; transition:all var(--t); position:relative; overflow:hidden;
+}
+.ot-tile::before { content:''; position:absolute; top:0; left:0; right:0; height:2.5px }
+.ot-tile.allowed::before  { background:var(--green) }
+.ot-tile.rejected::before { background:var(--red) }
+.ot-tile.remanded::before { background:var(--amber) }
+.ot-tile.closed::before   { background:var(--text3) }
+.ot-tile:hover { transform:translateY(-2px); box-shadow:var(--sh-md) }
+.ot-tile.sel { transform:translateY(-2px); box-shadow:var(--sh-md) }
+.ot-tile.allowed.sel  { background:var(--green-bg); border-color:var(--green-br) }
+.ot-tile.rejected.sel { background:var(--red-bg);   border-color:var(--red-br) }
+.ot-tile.remanded.sel { background:var(--amber-bg); border-color:var(--amber-br) }
+.ot-tile.closed.sel   { background:var(--bg2);      border-color:var(--border2) }
+.ot-tile.sel::after { content:'✓'; position:absolute; top:5px; right:7px; font-size:9px; font-weight:900; opacity:.7 }
+.ot-tile.allowed.sel::after  { color:var(--green) }
+.ot-tile.rejected.sel::after { color:var(--red) }
+.ot-tile.remanded.sel::after { color:var(--amber) }
+.ot-ico  { font-size:20px; display:block; margin-bottom:5px }
+.ot-n    { font-size:11px; font-weight:600; color:var(--text); display:block; line-height:1.3 }
+.ot-n.sel { }
+.ot-tile.allowed.sel  .ot-n { color:var(--green) }
+.ot-tile.rejected.sel .ot-n { color:var(--red) }
+.ot-tile.remanded.sel .ot-n { color:var(--amber) }
+.ot-s    { font-size:9px; color:var(--text3); display:block; margin-top:2px }
+
+/* Party blocks */
+.pblock {
+  background:var(--card); border:1px solid var(--border);
+  border-left:3px solid transparent; border-radius:10px; padding:14px;
+  margin-bottom:9px; position:relative;
+}
+.pblock.app-t  { border-left-color:var(--green) }
+.pblock.resp-t { border-left-color:var(--red) }
+.pblock.int-t  { border-left-color:var(--blue) }
+.plotblock { background:var(--card); border:1px solid var(--border); border-left:3px solid var(--gold); border-radius:10px; padding:14px; margin-bottom:9px; position:relative }
+.bk-hdr { display:flex; align-items:center; gap:8px; margin-bottom:11px }
+.bk-badge { width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:9.5px; font-weight:700; flex-shrink:0 }
+.bb-g{background:var(--green);color:#fff} .bb-r{background:var(--red);color:#fff} .bb-b{background:var(--blue);color:#fff} .bb-o{background:var(--gold);color:#fff}
+.bk-lbl { font-size:11.5px; font-weight:500; color:var(--text3) }
+.bk-rm { position:absolute; top:9px; right:9px; width:22px; height:22px; border-radius:50%; background:var(--red-bg); border:1px solid var(--red-br); color:var(--red); font-size:13px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all var(--t) }
+.bk-rm:hover { background:var(--red); color:#fff }
+.add-btn { width:100%; padding:10px; border:1.5px dashed rgba(107,114,128,.25); border-radius:9px; background:transparent; font-family:var(--sans); font-size:12px; color:var(--text3); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; transition:all var(--t) }
+.add-btn:hover { border-color:var(--gold); color:var(--gold); background:var(--gold-dim) }
+
+/* Paksh toggle */
+.ptoggle { display:flex; gap:3px; background:var(--bg2); border-radius:8px; padding:3px; margin-bottom:10px; border:1px solid var(--border) }
+.ptbtn { flex:1; padding:6px 10px; border-radius:6px; border:none; font-family:var(--sans); font-size:11.5px; font-weight:500; cursor:pointer; background:transparent; color:var(--text3); transition:all var(--t) }
+.ptbtn.on { background:var(--card); color:var(--gold); box-shadow:0 1px 3px rgba(0,0,0,.06); border:1px solid rgba(184,134,11,.2) }
+
+/* Analysis subs */
+.asub { border:1px solid var(--border); border-radius:10px; padding:14px; margin-bottom:11px; border-left:3px solid transparent }
+.asub:last-child { margin-bottom:0 }
+.asub.dec { background:var(--amber-bg); border-left-color:var(--amber) }
+.asub.dft { background:var(--blue-bg);  border-left-color:var(--blue) }
+.asub.anl { background:var(--green-bg); border-left-color:var(--green) }
+.as-lbl { font-size:10px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; margin-bottom:10px; display:flex; align-items:center; gap:6px }
+.asub.dec .as-lbl { color:#92400E }
+.asub.dft .as-lbl { color:#1E40AF }
+.asub.anl .as-lbl { color:#14532D }
+
+/* Scan zone */
+.scan-zone { border:1.5px dashed var(--border2); border-radius:9px; padding:16px; text-align:center; background:var(--bg2); cursor:pointer; position:relative; transition:all var(--t) }
+.scan-zone input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100% }
+.scan-zone:hover { border-color:var(--gold); background:var(--gold-dim) }
+.sz-ico { font-size:22px; opacity:.4; display:block; margin-bottom:6px }
+.sz-t   { font-size:12.5px; font-weight:500; color:var(--text2) }
+.sz-s   { font-size:10.5px; color:var(--text3); margin-top:2px }
+.ext-btn { width:100%; padding:9px; margin-top:8px; background:var(--gold-dim); border:1px solid rgba(184,134,11,.2); border-radius:7px; font-family:var(--sans); font-size:12px; font-weight:600; color:var(--gold); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all var(--t) }
+.ext-btn:disabled { opacity:.4; cursor:not-allowed }
+.ext-btn:hover:not(:disabled) { background:rgba(184,134,11,.15) }
+.scan-list { margin-top:8px; display:flex; flex-direction:column; gap:4px }
+.si { display:flex; align-items:center; gap:7px; background:var(--card); border:1px solid var(--border); border-radius:7px; padding:6px 10px }
+.si img { width:24px; height:24px; object-fit:cover; border-radius:4px }
+.si-n { flex:1; font-size:11px; color:var(--text3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.si-x { background:none; border:none; color:var(--text4); cursor:pointer; font-size:13px }
+.doc-zone { background:var(--bg2); border:1px dashed var(--border2); border-radius:9px; padding:10px; margin-top:9px }
+.dz-lbl { font-size:9.5px; font-weight:600; text-transform:uppercase; letter-spacing:.7px; color:var(--text3); margin-bottom:7px }
+.dz-row { display:flex; gap:5px; flex-wrap:wrap }
+.dzbtn { display:flex; align-items:center; gap:4px; padding:5px 10px; border-radius:7px; border:1px solid var(--border); background:var(--card); cursor:pointer; font-family:var(--sans); font-size:11.5px; color:var(--text3); transition:all var(--t) }
+.dzbtn input[type=file] { display:none }
+.dzbtn:hover { border-color:var(--gold); color:var(--gold); background:var(--gold-dim) }
+.doc-list { margin-top:6px; display:flex; flex-direction:column; gap:4px }
+.di { display:flex; align-items:center; gap:6px; background:var(--card); border:1px solid var(--border); border-radius:6px; padding:5px 8px }
+.di img { width:22px; height:22px; object-fit:cover; border-radius:3px }
+.di-n { flex:1; font-size:11px; color:var(--text3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:200px }
+.di-x { background:none; border:none; color:var(--text4); cursor:pointer; font-size:12px }
+
+/* AI box */
+.ai-box { background:linear-gradient(135deg,rgba(184,134,11,.05),rgba(184,134,11,.02)); border:1px solid rgba(184,134,11,.18); border-radius:10px; padding:14px; margin-bottom:14px }
+.ai-lbl { font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); display:flex; align-items:center; gap:6px; margin-bottom:9px }
+.ai-lbl::before { content:'◆'; font-size:6px }
+
+/* Decision bar */
+.dec-bar { background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; box-shadow:var(--sh-card); margin-top:12px }
+.db-hdr  { background:linear-gradient(150deg,#0F1F3D,#1E3060); padding:14px 16px }
+.db-hdr h3 { font-family:var(--serif); font-size:14.5px; font-weight:600; color:#fff }
+.db-hdr p  { font-size:11px; color:rgba(255,255,255,.45); margin-top:2px }
+.db-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; padding:12px }
+.dbtn { display:flex; flex-direction:column; align-items:center; gap:4px; padding:12px 8px; border-radius:9px; border:1.5px solid var(--border); background:var(--bg2); cursor:pointer; transition:all var(--t) }
+.dbtn:hover { transform:translateY(-1px); box-shadow:var(--sh-md) }
+.db-ico { font-size:22px }
+.db-l { font-size:11px; font-weight:700; color:var(--text) }
+.db-s { font-size:9px; color:var(--text3); text-align:center }
+.dbtn.acc.ch { background:var(--green-bg); border-color:var(--green-br) }
+.dbtn.rej.ch { background:var(--red-bg);   border-color:var(--red-br) }
+.dbtn.rem.ch { background:var(--amber-bg); border-color:var(--amber-br) }
+.dbtn.cls.ch { background:var(--bg2);      border-color:var(--border2) }
+.dbtn.acc.ch .db-l { color:var(--green) }
+.dbtn.rej.ch .db-l { color:var(--red) }
+.dbtn.rem.ch .db-l { color:var(--amber) }
+.db-stamp { display:none; margin:0 12px 12px; background:var(--green-bg); border:1px solid var(--green-br); border-radius:8px; padding:9px 12px; font-size:12.5px; font-weight:700; color:var(--green); align-items:center; gap:7px; font-family:var(--hindi) }
+.db-stamp.show { display:flex; animation:scIn .3s var(--t) }
+.db-legal { padding:0 12px 12px }
+.db-legbox { background:var(--bg); border:1px solid var(--border); border-radius:9px; padding:11px; display:none }
+.db-legbox.show { display:block }
+.db-legtitle { font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--text3); margin-bottom:7px }
+.db-legpt { display:flex; gap:7px; margin-bottom:5px; font-size:11.5px; color:var(--text2); line-height:1.5 }
+
+/* ═══ HISTORY TABLE ═══ */
+#screen-history {
+  flex-direction:column; overflow:hidden;
+}
+.hist-panel { display:flex; flex-direction:column; flex:1; overflow:hidden; padding:24px 32px; gap:16px }
+.hist-toolbar { display:flex; align-items:center; gap:12px; flex-shrink:0 }
+.hist-search {
+  flex:1; max-width:360px; position:relative;
+}
+.hist-search input {
+  width:100%; padding:9px 14px 9px 38px;
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:9px; font-family:var(--sans); font-size:13px;
+  color:var(--text); outline:none; transition:all var(--t);
+  box-shadow:var(--sh-card);
+}
+.hist-search input:focus { border-color:var(--gold); box-shadow:0 0 0 3px var(--gold-dim) }
+.hist-search::before { content:'🔍'; position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:13px; pointer-events:none }
+.filter-btns { display:flex; gap:6px }
+.fb { padding:7px 14px; border-radius:20px; font-size:12px; font-weight:500; cursor:pointer; background:var(--card); color:var(--text3); border:1px solid var(--border); transition:all var(--t); font-family:var(--sans) }
+.fb:hover { border-color:var(--border2); color:var(--text) }
+.fb.on { background:var(--gold-grad); color:#fff; border-color:var(--gold); box-shadow:0 2px 6px var(--gold-glow) }
+.hist-sort { display:flex; gap:7px; margin-left:auto }
+.sort-btn { padding:7px 12px; border-radius:8px; font-size:12px; font-weight:500; cursor:pointer; background:var(--card); color:var(--text3); border:1px solid var(--border); transition:all var(--t); display:flex; align-items:center; gap:5px }
+.sort-btn:hover { color:var(--text); border-color:var(--border2) }
+.sort-btn.asc::after  { content:' ↑' }
+.sort-btn.desc::after { content:' ↓' }
+
+/* Table */
+.table-wrap { flex:1; overflow-y:auto; background:var(--card); border-radius:14px; border:1px solid var(--border); box-shadow:var(--sh-card) }
+table { width:100%; border-collapse:collapse }
+thead { position:sticky; top:0; z-index:5 }
+thead tr { background:var(--bg); border-bottom:2px solid var(--border) }
+th {
+  padding:11px 16px; text-align:left; font-size:10.5px; font-weight:700;
+  letter-spacing:.8px; text-transform:uppercase; color:var(--text3);
+  cursor:pointer; user-select:none; transition:color var(--t); white-space:nowrap;
+}
+th:hover { color:var(--gold) }
+th.sorted { color:var(--gold) }
+tbody tr {
+  border-bottom:1px solid var(--border); transition:background var(--t); cursor:pointer;
+}
+tbody tr:nth-child(even) { background:var(--bg) }
+tbody tr:nth-child(odd)  { background:var(--card) }
+tbody tr:hover { background:rgba(184,134,11,.05) }
+tbody tr:last-child { border-bottom:none }
+td { padding:12px 16px; font-size:13px; color:var(--text); vertical-align:middle }
+.td-case { font-weight:600 }
+.td-name { color:var(--text2) }
+.td-date { color:var(--text3); font-size:12px; white-space:nowrap }
+.td-mouza { color:var(--text3); font-size:12px }
+.td-actions { display:flex; gap:6px; justify-content:flex-end }
+.ta-btn { padding:4px 10px; border-radius:6px; border:none; font-size:11px; font-weight:600; cursor:pointer; font-family:var(--sans); transition:all var(--t) }
+.ta-btn:active { transform:scale(.93) }
+.ta-c { background:var(--blue-bg); color:var(--blue); border:1px solid var(--blue-br) }
+.ta-d { background:var(--red-bg);  color:var(--red);  border:1px solid var(--red-br) }
+.table-empty { text-align:center; padding:64px; color:var(--text4); font-size:13px }
+.table-footer { padding:10px 16px; border-top:1px solid var(--border); background:var(--bg); display:flex; align-items:center; gap:10px; font-size:12px; color:var(--text3); border-radius:0 0 14px 14px; flex-shrink:0 }
+
+/* ═══ SETTINGS SCREEN ═══ */
+#screen-settings {
+  flex-direction: column; overflow-y: auto; padding:28px 32px;
+}
+.settings-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:20px }
+.set-card { background:var(--card); border:1px solid var(--border); border-radius:14px; overflow:hidden; box-shadow:var(--sh-card) }
+.sc-hdr { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px }
+.sc-ico { width:32px; height:32px; border-radius:8px; background:var(--gold-dim); border:1px solid rgba(184,134,11,.18); display:flex; align-items:center; justify-content:center; font-size:15px }
+.sc-title { font-family:var(--serif); font-size:14px; font-weight:600; color:var(--navy) }
+.sc-body { padding:16px 20px }
+.irow { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--border) }
+.irow:nth-child(even) { background:transparent }
+.irow:last-child { border-bottom:none }
+.ir-l { font-size:12px; color:var(--text3); flex:1 }
+.ir-v { font-size:13px; font-weight:600; color:var(--text); text-align:right }
+.tsw { position:relative; width:42px; height:23px; flex-shrink:0 }
+.tsw input { opacity:0; width:0; height:0 }
+.tsl { position:absolute; cursor:pointer; inset:0; background:var(--border2); border-radius:23px; transition:var(--t) }
+.tsl::before { content:''; position:absolute; height:17px; width:17px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:var(--t); box-shadow:0 1px 3px rgba(0,0,0,.2) }
+.tsw input:checked + .tsl { background:var(--gold) }
+.tsw input:checked + .tsl::before { transform:translateX(19px) }
+
+/* ═══ CAMERA MODAL — GLASSMORPHISM ═══ */
+.cam-modal {
+  display:none; position:fixed; inset:0; z-index:9998;
+  background:rgba(15,31,61,.5); align-items:center; justify-content:center;
+  backdrop-filter:blur(20px) saturate(180%);
+}
+.cam-modal.open { display:flex }
+.cam-sheet {
+  background:rgba(255,255,255,.92); backdrop-filter:blur(28px) saturate(200%);
+  border:1px solid rgba(255,255,255,.65); border-radius:18px;
+  padding:24px; width:480px;
+  display:flex; flex-direction:column; gap:12px;
+  box-shadow:0 20px 60px rgba(0,0,0,.2);
+}
+.cam-title { font-family:var(--serif); font-size:16px; font-weight:600; color:var(--navy); text-align:center }
+video { width:100%; border-radius:10px; background:#000; max-height:280px }
+
+/* ═══ TOAST ═══ */
+.toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(70px);
+  background:rgba(15,31,61,.95); border:1px solid rgba(255,255,255,.08);
+  color:#fff; padding:11px 20px; border-radius:24px;
+  font-size:13px; font-weight:500; box-shadow:0 8px 28px rgba(0,0,0,.25);
+  opacity:0; transition:all .26s; z-index:9997;
+  display:flex; align-items:center; gap:8px; white-space:nowrap;
+  backdrop-filter:blur(10px);
+}
+.toast.show { transform:translateX(-50%) translateY(0); opacity:1 }
+
+/* ═══ KEYBOARD SHORTCUT BADGE ═══ */
+.kbd { font-size:10px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:4px; padding:1px 5px; font-family:monospace; color:rgba(255,255,255,.45) }
+
+/* Voice mic */
+.vmic { position:absolute; right:9px; top:8px; width:26px; height:26px; border-radius:50%; background:var(--gold-dim); border:1px solid rgba(184,134,11,.2); display:flex; align-items:center; justify-content:center; font-size:12px; cursor:pointer; transition:all var(--t); z-index:2 }
+.vmic.rec { background:var(--red); border-color:var(--red); animation:vPulse 1s ease infinite }
+@keyframes vPulse { 0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.4)} 50%{box-shadow:0 0 0 6px rgba(220,38,38,0)} }
+
+/* Animations */
+@keyframes scIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideRight { from{opacity:0;transform:translateX(-16px)} to{opacity:1;transform:translateX(0)} }
+
+.screen.active > * { animation:scIn .22s var(--t) }
+
+/* Scrollbar */
+::-webkit-scrollbar { width:5px; height:5px }
+::-webkit-scrollbar-track { background:transparent }
+::-webkit-scrollbar-thumb { background:var(--border2); border-radius:5px }
+::-webkit-scrollbar-thumb:hover { background:var(--border) }
+
+/* Plot badge */
+.plot-badge { font-size:9px; font-weight:700; background:var(--gold); color:#fff; padding:2px 7px; border-radius:8px; margin-left:8px }
+
+/* Responsive warning for small screens */
+@media (max-width: 900px) {
+  .desktop-warn { display:flex !important }
+}
+.desktop-warn {
+  display:none; position:fixed; inset:0; z-index:99999;
+  background:var(--navy); flex-direction:column;
+  align-items:center; justify-content:center;
+  text-align:center; padding:32px; gap:16px;
+}
+.desktop-warn h2 { font-family:var(--serif); font-size:24px; color:#fff }
+.desktop-warn p  { font-size:14px; color:rgba(255,255,255,.5); max-width:320px; line-height:1.7 }
+.desktop-warn a  { color:var(--gold3); text-decoration:underline; font-size:13px }
+
+.mt10{margin-top:10px} .mb12{margin-bottom:12px}
+</style>
+</head>
+<body>
+
+<!-- Small screen warning -->
+<div class="desktop-warn">
+  <div style="font-size:40px">🖥️</div>
+  <h2>Desktop Required</h2>
+  <p>This is the desktop version of DCLR Order System. Please use a screen wider than 900px, or open the mobile version.</p>
+  <a href="https://dclr-bikramgamj.github.io/dclr-order/">Open Mobile Version →</a>
+</div>
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-seal">⚖️</div>
+    <div class="sb-brand">
+      <div class="sb-brand-name">DCLR System</div>
+      <div class="sb-brand-sub">Bikramganj · Rohtas</div>
+    </div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-lbl">Main</div>
+    <div class="sb-item active" id="sb-dashboard" onclick="goScreen('dashboard')">
+      <span class="sb-ico">📊</span><span class="sb-label">Dashboard</span>
+    </div>
+    <div class="sb-item" id="sb-new-order" onclick="goScreen('new-order')">
+      <span class="sb-ico">✍️</span><span class="sb-label">New Order</span>
+      <span class="kbd">G</span>
+    </div>
+    <div class="sb-item" id="sb-history" onclick="goScreen('history')">
+      <span class="sb-ico">📁</span><span class="sb-label">Case History</span>
+      <span class="sb-badge" id="sbBadge">0</span>
+    </div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-lbl">System</div>
+    <div class="sb-item" id="sb-settings" onclick="goScreen('settings')">
+      <span class="sb-ico">⚙️</span><span class="sb-label">Settings</span>
+    </div>
+    <div class="sb-item" id="sb-mobile" onclick="window.open('https://dclr-bikramgamj.github.io/dclr-order/','_blank')">
+      <span class="sb-ico">📱</span><span class="sb-label">Mobile Version</span>
+    </div>
+  </div>
+
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">👨‍⚖️</div>
+      <div>
+        <div class="sb-uname" id="sbUserName">DCLR</div>
+        <div class="sb-urole" id="sbUserRole">Deputy Collector, Bikramganj</div>
+      </div>
+    </div>
+    <div class="sb-version">v14 Desktop · Bihar Land Mutation Act 2011</div>
+  </div>
+</aside>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<div class="main">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="tb-breadcrumb">
+      <span class="tb-bc-root">DCLR</span>
+      <span class="tb-bc-sep">›</span>
+      <span class="tb-bc-cur" id="tbCur">Dashboard</span>
+    </div>
+    <div class="tb-right">
+      <div class="tb-status-dot"></div>
+      <span class="tb-status-txt">Bihar Mutation Act 2011</span>
+      <div class="tb-divider"></div>
+      <button class="tb-btn tb-btn-outline" onclick="goScreen('history')">📁 Case History</button>
+      <button class="tb-btn tb-btn-gold" onclick="goScreen('new-order')">
+        ✍️ New Order
+        <span class="tb-kbd">G</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <div class="screen active" id="screen-dashboard">
+
+      <div class="dash-greeting">
+        <div>
+          <h1>Good morning ⚖️</h1>
+          <p>Bihar Land Mutation Act 2011 — DCLR Court, Bikramganj</p>
+        </div>
+        <div class="dash-date">
+          <strong id="dashDate">—</strong>
+          <span>Bikramganj, Rohtas, Bihar</span>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="kpi-row">
+        <div class="kpi total">
+          <div class="kpi-label">Total Orders</div>
+          <div class="kpi-num" id="kpi-total">0</div>
+          <div class="kpi-sub">All disposed cases</div>
+          <div class="kpi-ico">📋</div>
+        </div>
+        <div class="kpi accepted">
+          <div class="kpi-label">Appeal Accepted</div>
+          <div class="kpi-num" id="kpi-accepted">0</div>
+          <div class="kpi-sub">Mutation directed</div>
+          <div class="kpi-ico">✅</div>
+        </div>
+        <div class="kpi rejected">
+          <div class="kpi-label">Appeal Rejected</div>
+          <div class="kpi-num" id="kpi-rejected">0</div>
+          <div class="kpi-sub">Dismissed</div>
+          <div class="kpi-ico">❌</div>
+        </div>
+        <div class="kpi remanded">
+          <div class="kpi-label">Remanded Back</div>
+          <div class="kpi-num" id="kpi-remanded">0</div>
+          <div class="kpi-sub">To CO for reconsideration</div>
+          <div class="kpi-ico">🔁</div>
+        </div>
+        <div class="kpi closed">
+          <div class="kpi-label">Temp. Closed</div>
+          <div class="kpi-num" id="kpi-closed">0</div>
+          <div class="kpi-sub">Non-prosecution</div>
+          <div class="kpi-ico">🔒</div>
+        </div>
+      </div>
+
+      <!-- Analytics Row -->
+      <div class="analytics-row">
+        <div class="chart-card">
+          <div class="chart-hdr">
+            <div>
+              <div class="chart-title">Orders by Outcome</div>
+              <div class="chart-sub">Last 12 months (simulated for demo)</div>
+            </div>
+            <div class="chart-legend">
+              <div class="cl-item"><div class="cl-dot" style="background:var(--green)"></div>Accepted</div>
+              <div class="cl-item"><div class="cl-dot" style="background:var(--red)"></div>Rejected</div>
+              <div class="cl-item"><div class="cl-dot" style="background:var(--amber)"></div>Remanded</div>
+            </div>
+          </div>
+          <div class="bar-chart" id="barChart"></div>
+        </div>
+
+        <div class="donut-card">
+          <div class="chart-hdr">
+            <div>
+              <div class="chart-title">Outcome Mix</div>
+              <div class="chart-sub">Distribution of orders</div>
+            </div>
+          </div>
+          <div class="donut-wrap">
+            <svg class="donut-svg" width="120" height="120" viewBox="0 0 120 120" id="donutSvg">
+              <circle cx="60" cy="60" r="45" fill="none" stroke="#E5E7EB" stroke-width="18"/>
+              <text x="60" y="64" text-anchor="middle" font-size="18" font-weight="700" fill="#1A1A2A" font-family="Playfair Display">0</text>
+              <text x="60" y="76" text-anchor="middle" font-size="9" fill="#6B7280" font-family="Inter">Total</text>
+            </svg>
+            <div class="donut-legend" id="donutLegend">
+              <div class="dl-item"><div class="dl-swatch" style="background:var(--green)"></div>Accepted<span class="dl-val" id="dl-a">0</span></div>
+              <div class="dl-item"><div class="dl-swatch" style="background:var(--red)"></div>Rejected<span class="dl-val" id="dl-r">0</span></div>
+              <div class="dl-item"><div class="dl-swatch" style="background:var(--amber)"></div>Remanded<span class="dl-val" id="dl-m">0</span></div>
+              <div class="dl-item"><div class="dl-swatch" style="background:var(--text3)"></div>Closed<span class="dl-val" id="dl-c">0</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity Row -->
+      <div class="activity-row">
+        <div class="recent-card">
+          <div class="rc-hdr">
+            <span class="rc-title">Recent Orders</span>
+            <span class="rc-link" onclick="goScreen('history')">View all →</span>
+          </div>
+          <div id="recentOrders">
+            <div class="table-empty" style="padding:32px">No orders yet. Create your first order.</div>
+          </div>
+        </div>
+
+        <div class="quick-stats">
+          <div class="qs-title">Disposal Rate</div>
+          <div class="qs-row">
+            <span class="qs-lbl">Acceptance Rate</span>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="qs-bar-wrap"><div class="qs-bar" id="qb-accepted" style="width:0%"></div></div>
+              <span class="qs-val" id="qv-accepted">0%</span>
+            </div>
+          </div>
+          <div class="qs-row">
+            <span class="qs-lbl">Rejection Rate</span>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="qs-bar-wrap"><div class="qs-bar" id="qb-rejected" style="width:0%;background:linear-gradient(135deg,var(--red),#B91C1C)"></div></div>
+              <span class="qs-val" id="qv-rejected">0%</span>
+            </div>
+          </div>
+          <div class="qs-row">
+            <span class="qs-lbl">Remand Rate</span>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="qs-bar-wrap"><div class="qs-bar" id="qb-remanded" style="width:0%;background:linear-gradient(135deg,var(--amber),#B45309)"></div></div>
+              <span class="qs-val" id="qv-remanded">0%</span>
+            </div>
+          </div>
+          <div class="qs-row">
+            <span class="qs-lbl">Closure Rate</span>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="qs-bar-wrap"><div class="qs-bar" id="qb-closed" style="width:0%;background:linear-gradient(135deg,#6B7280,#374151)"></div></div>
+              <span class="qs-val" id="qv-closed">0%</span>
+            </div>
+          </div>
+          <div style="margin-top:16px;padding:13px;background:var(--gold-dim);border:1px solid rgba(184,134,11,.2);border-radius:10px">
+            <div style="font-size:10.5px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Act Reference</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.7">Section 7 — Appeal before DCLR<br>Section 8 — Revision before Addl. Collector (30 days)<br>Rule 11 — Procedure; Section 16 — Civil Court powers</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══ NEW ORDER — SPLIT SCREEN ═══ -->
+    <div class="screen" id="screen-new-order">
+
+      <!-- LEFT: Form -->
+      <div class="form-panel">
+        <div class="fp-header">
+          <div>
+            <div class="fp-title">New Mutation Appeal Order</div>
+            <div class="fp-sub">Bihar Land Mutation Act 2011, Section 7</div>
+          </div>
+          <div class="step-pills" id="stepPills">
+            <div class="sp cur" id="sp-0" onclick="goStep(0)">1. Case</div>
+            <div class="sp"     id="sp-1" onclick="goStep(1)">2. Appellant</div>
+            <div class="sp"     id="sp-2" onclick="goStep(2)">3. Respondent</div>
+            <div class="sp"     id="sp-3" onclick="goStep(3)">4. Intervenor</div>
+            <div class="sp"     id="sp-4" onclick="goStep(4)">5. Grounds</div>
+            <div class="sp"     id="sp-5" onclick="goStep(5)">6. Generate</div>
+          </div>
+        </div>
+
+        <div class="fp-body">
+
+          <!-- Step 0: Case -->
+          <div id="step-0">
+            <div class="form-section">
+              <div class="fs-title">Case Details</div>
+              <div class="fg">
+                <label class="flbl">Case Number <span class="req">✦</span></label>
+                <input class="fi" id="caseNo" placeholder="e.g. 45/2024-25" style="max-width:260px">
+              </div>
+            </div>
+            <div class="form-section">
+              <div class="fs-title">Land Details <span class="plot-badge" id="plotBadge">1 Plot</span></div>
+              <div style="background:var(--gold-dim);border:1px solid rgba(184,134,11,.18);border-radius:10px;padding:14px;margin-bottom:14px">
+                <div style="font-size:9.5px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:11px">Common Details</div>
+                <div class="fg2">
+                  <div class="fg"><label class="flbl">Circle (Anchal)</label><input class="fi" id="anchal" value="Bikramganj"></div>
+                  <div class="fg"><label class="flbl">Thana No.</label><input class="fi" id="thana" placeholder="e.g. 256"></div>
+                </div>
+                <div class="fg2">
+                  <div class="fg"><label class="flbl">CO Order Date</label><input class="fi" type="date" id="coOrderDate"></div>
+                  <div class="fg"><label class="flbl">Deed / Document</label><input class="fi" lang="hi" id="deedNo" placeholder="Sale Deed No."></div>
+                </div>
+              </div>
+              <div id="plotList"></div>
+              <button class="add-btn" onclick="addPlot()">＋  Add Another Plot / Khesra</button>
+            </div>
+          </div>
+
+          <!-- Step 1: Appellant -->
+          <div id="step-1" style="display:none">
+            <div class="form-section">
+              <div class="fs-title" style="color:var(--green)">Appellant / Vaadi</div>
+              <div id="appellantList"></div>
+              <button class="add-btn" onclick="addParty('appellant')">＋  Add Another Appellant</button>
+              <div style="margin-top:13px;padding-top:13px;border-top:1px solid var(--border)">
+                <div class="fg"><label class="flbl">Appellant's Advocate</label><input class="fi" id="appAdvName" placeholder="Advocate name" style="max-width:300px"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Respondent -->
+          <div id="step-2" style="display:none">
+            <div class="form-section">
+              <div class="fs-title" style="color:var(--red)">Respondent</div>
+              <div id="respondentList"></div>
+              <button class="add-btn" onclick="addParty('respondent')">＋  Add Another Respondent</button>
+              <div style="margin-top:13px;padding-top:13px;border-top:1px solid var(--border)">
+                <div class="fg"><label class="flbl">Respondent's Advocate</label><input class="fi" id="respAdvName" placeholder="Advocate name" style="max-width:300px"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Intervenor -->
+          <div id="step-3" style="display:none">
+            <div class="form-section">
+              <div class="fs-title" style="color:var(--blue)">Intervenor (Optional)</div>
+              <p style="font-size:12.5px;color:var(--text3);margin-bottom:13px;line-height:1.6">Fill only if an intervention petition has been filed in this case.</p>
+              <div id="intervenorList"></div>
+              <button class="add-btn" onclick="addParty('intervenor')">＋  Add Intervenor</button>
+            </div>
+          </div>
+
+          <!-- Step 4: Grounds -->
+          <div id="step-4" style="display:none">
+
+            <div class="form-section">
+              <div class="fs-title">Notice Details — Section 4</div>
+              <div class="fg"><label class="flbl">Notice Service Details</label>
+              <div class="fwrap"><textarea class="fi" lang="hi" id="notice_detail" style="min-height:60px" placeholder="Notice issued on... served on... parties present / absent..."></textarea></div></div>
+            </div>
+
+            <div class="form-section">
+              <div class="fs-title" style="color:var(--blue)">Appellant's Argument — Section 5</div>
+              <div class="ptoggle">
+                <button class="ptbtn on" onclick="tglPaksh('vaadi','type',this)">✏️ Type Input</button>
+                <button class="ptbtn"    onclick="tglPaksh('vaadi','scan',this)">📷 From Scan</button>
+              </div>
+              <div id="vaadi-text">
+                <div class="fg"><label class="flbl">Main Argument <span class="req">✦</span></label>
+                <div class="fwrap"><textarea class="fi" lang="hi" id="vaadi_paksh" placeholder="What argument did the appellant give?"></textarea></div></div>
+              </div>
+              <div id="vaadi-scan" style="display:none">
+                <div class="scan-zone"><input type="file" accept="image/*,.pdf" multiple onchange="hScan(event,'vaadi')"><span class="sz-ico">📄</span><div class="sz-t">Tap to upload petition</div><div class="sz-s">JPG · PNG · PDF</div></div>
+                <div class="scan-list" id="vaadi-scan-list"></div>
+                <button class="ext-btn" id="vaadi-ext-btn" onclick="extractPaksh('vaadi')" disabled>✨ Extract with AI</button>
+                <div class="fg mt10"><label class="flbl">Extracted Text</label><textarea class="fi" lang="hi" id="vaadi_paksh_scan" placeholder="Text appears here..."></textarea></div>
+              </div>
+              <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+                <div class="fg"><label class="flbl">Evidence — Section 6</label>
+                <div class="fwrap"><textarea class="fi" lang="hi" id="vaadi_sakshya" style="min-height:60px" placeholder="Registered sale deed, genealogy, Khatiyan copy, Naksha..."></textarea></div></div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="fs-title" style="color:var(--red)">Respondent's Argument — Section 7</div>
+              <div class="ptoggle">
+                <button class="ptbtn on" onclick="tglPaksh('prativaadi','type',this)">✏️ Type Input</button>
+                <button class="ptbtn"    onclick="tglPaksh('prativaadi','scan',this)">📷 From Scan</button>
+              </div>
+              <div id="prativaadi-text">
+                <div class="fg"><label class="flbl">Respondent's Reply / CO's Ground</label>
+                <div class="fwrap"><textarea class="fi" lang="hi" id="prativaadi_paksh" placeholder="Respondent / CO's argument..."></textarea></div></div>
+              </div>
+              <div id="prativaadi-scan" style="display:none">
+                <div class="scan-zone"><input type="file" accept="image/*,.pdf" multiple onchange="hScan(event,'prativaadi')"><span class="sz-ico">📄</span><div class="sz-t">Upload reply</div><div class="sz-s">JPG · PNG · PDF</div></div>
+                <div class="scan-list" id="prativaadi-scan-list"></div>
+                <button class="ext-btn" id="prativaadi-ext-btn" onclick="extractPaksh('prativaadi')" disabled>✨ Extract with AI</button>
+                <div class="fg mt10"><label class="flbl">Extracted Text</label><textarea class="fi" lang="hi" id="prativaadi_paksh_scan" placeholder="Text appears here..."></textarea></div>
+              </div>
+              <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+                <div class="fg"><label class="flbl">Evidence — Section 8</label>
+                <div class="fwrap"><textarea class="fi" lang="hi" id="prativaadi_sakshya" style="min-height:60px" placeholder="Documents submitted by respondent..."></textarea></div></div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="fs-title" style="color:var(--amber)">Intervenor's Argument — Section 9</div>
+              <div class="ptoggle">
+                <button class="ptbtn on" onclick="tglPaksh('hastkshepak','type',this)">✏️ Type Input</button>
+                <button class="ptbtn"    onclick="tglPaksh('hastkshepak','scan',this)">📷 From Scan</button>
+              </div>
+              <div id="hastkshepak-text">
+                <div class="fg"><label class="flbl">Intervenor's Argument (Optional)</label>
+                <div class="fwrap"><textarea class="fi" lang="hi" id="hastkshepak_paksh" placeholder="हस्तक्षेपकर्ता का तर्क..."></textarea></div></div>
+              </div>
+              <div id="hastkshepak-scan" style="display:none">
+                <div class="scan-zone"><input type="file" accept="image/*,.pdf" multiple onchange="hScan(event,'hastkshepak')"><span class="sz-ico">📄</span><div class="sz-t">Upload petition</div><div class="sz-s">JPG · PNG · PDF</div></div>
+                <div class="scan-list" id="hastkshepak-scan-list"></div>
+                <button class="ext-btn" id="hastkshepak-ext-btn" onclick="extractPaksh('hastkshepak')" disabled>✨ Extract with AI</button>
+                <div class="fg mt10"><label class="flbl">Extracted Text</label><textarea class="fi" lang="hi" id="hastkshepak_paksh_scan" placeholder="Text appears here..."></textarea></div>
+              </div>
+            </div>
+
+            <!-- Section 10 Analysis -->
+            <div class="form-section">
+              <div class="fs-title" style="color:var(--blue)">Analysis — Section 10</div>
+
+              <div class="asub dec" id="deciderSub">
+                <div class="as-lbl">🔍 A. Deciders — AI Analysis &amp; Decision</div>
+
+                <!-- AI Analyse Button -->
+                <button class="btn-analyse" id="analyseBtn" onclick="analyseWithAI()">
+                  <span id="analyseBtnIco">🤖</span>
+                  <span id="analyseBtnTxt">Analyse Case with AI</span>
+                </button>
+                <div style="font-size:11px;color:var(--text3);margin-bottom:11px;line-height:1.6">
+                  AI reads all arguments, evidence &amp; uploaded documents → generates structured findings.
+                </div>
+
+                <!-- Loading state -->
+                <div id="deciderLoading" style="display:none;align-items:center;gap:12px;padding:16px;background:var(--bg2);border-radius:9px;margin-bottom:10px;">
+                  <div class="spinner" style="width:26px;height:26px;border-width:2px"></div>
+                  <div style="font-size:12.5px;color:var(--text3)" id="deciderLoadingTxt">Reading all arguments and documents...</div>
+                </div>
+
+                <!-- Findings Output — 3-column grid on desktop -->
+                <div id="deciderOutput" style="display:none;margin-bottom:13px">
+                  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
+
+                    <div style="background:var(--green-bg);border:1px solid var(--green-br);border-radius:10px;padding:13px">
+                      <div style="font-size:9px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">✅ Positive Findings</div>
+                      <div id="posFindings" style="font-size:12px;color:var(--text2);line-height:1.75;font-family:var(--hindi)"></div>
+                    </div>
+
+                    <div style="background:var(--red-bg);border:1px solid var(--red-br);border-radius:10px;padding:13px">
+                      <div style="font-size:9px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">❌ Negative / Objections</div>
+                      <div id="negFindings" style="font-size:12px;color:var(--text2);line-height:1.75;font-family:var(--hindi)"></div>
+                    </div>
+
+                    <div style="background:var(--blue-bg);border:1px solid var(--blue-br);border-radius:10px;padding:13px">
+                      <div style="font-size:9px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">⚖️ Legal Points</div>
+                      <div id="legalFindings" style="font-size:12px;color:var(--text2);line-height:1.75;font-family:var(--hindi)"></div>
+                    </div>
+                  </div>
+
+                  <!-- AI Recommendation -->
+                  <div id="aiRecoBox" style="display:none;background:var(--amber-bg);border:1px solid var(--amber-br);border-radius:9px;padding:12px;margin-bottom:10px">
+                    <div style="font-size:9px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">🧠 AI Recommendation</div>
+                    <div id="aiReco" style="font-size:13px;color:var(--text2);line-height:1.8;font-family:var(--hindi)"></div>
+                  </div>
+                </div>
+
+                <input type="hidden" id="key_facts">
+
+                <!-- Decision Tiles -->
+                <div style="background:rgba(255,255,255,.85);border-radius:9px;padding:11px;border:1px solid rgba(217,119,6,.15)">
+                  <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber);margin-bottom:9px">⚖️ DCLR Decision — Confirm After Reviewing Findings</div>
+                  <div class="ot-grid">
+                    <div class="ot-tile allowed sel" id="dt-allowed"  onclick="selDecider('allowed')"><span class="ot-ico">✅</span><span class="ot-n">Accepted</span><span class="ot-s">CO for Mutation</span></div>
+                    <div class="ot-tile rejected"    id="dt-rejected" onclick="selDecider('rejected')"><span class="ot-ico">❌</span><span class="ot-n">Rejected</span><span class="ot-s">Revision</span></div>
+                    <div class="ot-tile remanded"    id="dt-remanded" onclick="selDecider('remanded')"><span class="ot-ico">🔁</span><span class="ot-n">Remanded</span><span class="ot-s">Fresh reconsider</span></div>
+                    <div class="ot-tile closed"      id="dt-closed"   onclick="selDecider('closed')"><span class="ot-ico">🔒</span><span class="ot-n">Temp. Closed</span><span class="ot-s">Non-prosecution</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="asub dft" id="draftOrderSub">
+                <div class="as-lbl">📋 B. Draft Order — Auto-generated</div>
+                <div id="draftEmpty" style="font-size:12px;color:var(--text3);padding:6px 0;line-height:1.7">
+                  👆 Select a decision above — AI will auto-generate the draft direction here.
+                </div>
+                <div id="draftDisplay" style="display:none">
+                  <div style="background:rgba(29,78,216,.05);border:1px solid rgba(29,78,216,.2);border-radius:9px;padding:13px;margin-bottom:10px">
+                    <div style="font-size:9px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px">🤖 AI Generated Draft Direction to CO</div>
+                    <div id="draftText" style="font-size:13.5px;color:var(--text);line-height:1.9;font-family:var(--hindi);white-space:pre-wrap"></div>
+                  </div>
+                  <div style="font-size:11px;color:var(--text3);margin-bottom:7px">✏️ Edit if needed:</div>
+                </div>
+                <div class="fwrap">
+                  <textarea class="fi" lang="hi" id="aadesh_saar" style="min-height:65px;background:rgba(29,78,216,.03);border-color:rgba(29,78,216,.18)" placeholder="Draft direction will appear above. Edit here or add details..."></textarea>
+                </div>
+              </div>
+
+              <div class="asub anl">
+                <div class="as-lbl">⚖️ C. DCLR's Analysis</div>
+                <div class="fg">
+                  <label class="flbl">Legal Analysis &amp; Findings <span class="req">✦</span></label>
+                  <div class="fwrap"><textarea class="fi" lang="hi" id="vishleshan" style="background:rgba(22,163,74,.03);border-color:rgba(22,163,74,.2)" placeholder="Your legal findings... AI will elaborate..."></textarea></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Step 5: Generate -->
+          <div id="step-5" style="display:none">
+            <div class="ai-box">
+              <div class="ai-lbl">Additional Instructions to AI</div>
+              <textarea class="fi" lang="hi" id="additionalInst" style="background:rgba(184,134,11,.03)" placeholder="Any special point... Section 4(h) / specific timeline..."></textarea>
+            </div>
+
+            <!-- Decision bar -->
+            <div class="dec-bar">
+              <div class="db-hdr"><h3>⚖️ Final Decision</h3><p>Review the draft on the right, then confirm</p></div>
+              <div class="db-grid">
+                <button class="dbtn acc" id="db-allowed"  onclick="finalDec('allowed',this)"><span class="db-ico">✅</span><span class="db-l">Accepted</span><span class="db-s">CO for Mutation</span></button>
+                <button class="dbtn rej" id="db-rejected" onclick="finalDec('rejected',this)"><span class="db-ico">❌</span><span class="db-l">Rejected</span><span class="db-s">Revision</span></button>
+                <button class="dbtn rem" id="db-remanded" onclick="finalDec('remanded',this)"><span class="db-ico">🔁</span><span class="db-l">Remanded</span><span class="db-s">Fresh consideration</span></button>
+                <button class="dbtn cls" id="db-closed"   onclick="finalDec('closed',this)"><span class="db-ico">🔒</span><span class="db-l">Closed</span><span class="db-s">Non-prosecution</span></button>
+              </div>
+              <div class="db-legal"><div class="db-legbox" id="dbLegBox"></div></div>
+              <div class="db-stamp" id="dbStamp"><span>🔏</span><span id="dbStampTxt">Decision recorded</span></div>
+            </div>
+          </div>
+
+        </div><!-- fp-body -->
+
+        <div class="fp-footer">
+          <button class="btn btn-ghost" id="backBtn" onclick="prevStep()" style="display:none">← Back</button>
+          <button class="btn btn-ghost" onclick="resetForm()">🔄 Reset</button>
+          <button class="btn btn-gold" id="nextBtn" onclick="nextStep()" style="flex:1">Next →</button>
+        </div>
+      </div>
+
+      <!-- RIGHT: Preview -->
+      <div class="preview-panel">
+        <div class="pp-header">
+          <div>
+            <div class="pp-title">Order Preview</div>
+            <div class="pp-sub">Live preview — updates as you type</div>
+          </div>
+          <div class="pp-actions">
+            <button class="btn btn-ghost" id="wordBtn" onclick="dlWord()" disabled style="padding:7px 13px;font-size:12px">⬇️ Word</button>
+            <button class="btn btn-ghost" id="pdfBtn"  onclick="dlPDF()"  disabled style="padding:7px 13px;font-size:12px">🖨️ PDF</button>
+            <button class="btn btn-ghost" id="copyBtn" onclick="qCopy()"  disabled style="padding:7px 13px;font-size:12px">📋 Copy</button>
+            <button class="btn btn-gold"  id="genBtn"  onclick="generateOrder()" style="padding:7px 14px;font-size:12px">✨ Generate</button>
+          </div>
+        </div>
+
+        <div class="pp-body">
+          <!-- Empty state (before generation) -->
+          <div class="preview-empty" id="previewEmpty">
+            <div class="pe-icon">⚖️</div>
+            <div class="pe-title">Order Preview</div>
+            <div class="pe-sub">Fill the form on the left and click <strong>✨ Generate</strong> to create your order. The complete 11-section order will appear here in real time.</div>
+          </div>
+
+          <!-- Order shell (after generation) -->
+          <div id="previewOuter" style="display:none">
+            <div class="order-shell">
+              <div class="os-header">
+                <div class="os-court">उप समाहर्ता सह भूमि सुधार पदाधिकारी न्यायालय, बिक्रमगंज, जिला — रोहतास (बिहार)</div>
+                <div class="os-tags">
+                  <span class="os-ct" id="prev-case">वाद सं. ___</span>
+                  <span class="os-tt allowed" id="prev-type">Appeal Accepted</span>
+                </div>
+                <div class="os-parties">
+                  <div class="osp-col"><div class="osp-lbl">Appellant</div><div class="osp-name" id="prev-app">—</div></div>
+                  <div class="osp-vs">बनाम</div>
+                  <div class="osp-col" style="text-align:right"><div class="osp-lbl">Respondent</div><div class="osp-name" id="prev-resp">—</div></div>
+                </div>
+              </div>
+              <div class="os-meta">
+                <div class="omc"><div class="oml">Case No.</div><div class="omv" id="prev-caseno">—</div></div>
+                <div class="omc"><div class="oml">Order Date</div><div class="omv" id="prev-order">—</div></div>
+                <div class="omc"><div class="oml">Appellant Adv.</div><div class="omv" id="prev-appAdv">—</div></div>
+                <div class="omc"><div class="oml">Respondent Adv.</div><div class="omv" id="prev-respAdv">—</div></div>
+              </div>
+              <div class="os-body">
+                <div class="os-body-hdr">
+                  <span class="os-body-t">Order Draft — 11 Sections</span>
+                  <span class="mangal-chip">✦ Mangal Font — RCMS Ready</span>
+                </div>
+                <div class="o-loading" id="orderLoading">
+                  <div class="spinner"></div>
+                  <div class="loading-t">AI is generating the order...</div>
+                  <div class="loading-s">Analysing case · Drafting 11 sections</div>
+                </div>
+                <div id="orderSections"></div>
+              </div>
+              <div class="rcms-bar">✅ इस आदेश की प्रति RCMS पोर्टल पर अपलोड की जाए।</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══ HISTORY ═══ -->
+    <div class="screen" id="screen-history">
+      <div class="hist-panel">
+        <div class="hist-toolbar">
+          <div class="hist-search">
+            <input id="histSearch" placeholder="Search by case no., party name, mouza..." oninput="filterHist(this.value)">
+          </div>
+          <div class="filter-btns">
+            <button class="fb on" onclick="filterType('all',this)">All</button>
+            <button class="fb" onclick="filterType('allowed',this)">✅ Accepted</button>
+            <button class="fb" onclick="filterType('rejected',this)">❌ Rejected</button>
+            <button class="fb" onclick="filterType('remanded',this)">🔁 Remanded</button>
+            <button class="fb" onclick="filterType('closed',this)">🔒 Closed</button>
+          </div>
+          <div class="hist-sort">
+            <button class="sort-btn" onclick="sortBy('orderDate')">📅 Date</button>
+            <button class="sort-btn" onclick="sortBy('caseNo')">🔢 Case No.</button>
+            <button class="sort-btn" onclick="exportCases()">📤 Export JSON</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th onclick="sortBy('caseNo')">Case Number</th>
+                <th onclick="sortBy('appellant')">Appellant</th>
+                <th onclick="sortBy('respondent')">Respondent</th>
+                <th onclick="sortBy('mouza')">Mouza</th>
+                <th onclick="sortBy('orderType')">Decision</th>
+                <th onclick="sortBy('orderDate')">Order Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="histTable">
+              <tr><td colspan="7" class="table-empty">No cases saved yet. Create your first order.</td></tr>
+            </tbody>
+          </table>
+          <div class="table-footer" id="tableFooter">
+            <span id="tableCount">0 cases</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SETTINGS ═══ -->
+    <div class="screen" id="screen-settings">
+      <div style="max-width:900px;width:100%">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div>
+            <h2 style="font-family:var(--serif);font-size:22px;font-weight:600;color:var(--text)">Settings</h2>
+            <p style="font-size:13px;color:var(--text3);margin-top:4px">Configure API key, court details, and preferences</p>
+          </div>
+        </div>
+        <div class="settings-grid">
+
+          <!-- API Key -->
+          <div class="set-card">
+            <div class="sc-hdr"><div class="sc-ico">🔑</div><div class="sc-title">Anthropic API Key</div></div>
+            <div class="sc-body">
+              <p style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.7">Your API key is stored only on this device. Never shared or sent anywhere else.</p>
+              <div class="fg mb12">
+                <label class="flbl">API Key</label>
+                <div class="fwrap"><input class="fi" id="apiKeyInput" type="password" placeholder="sk-ant-..." oninput="saveApiKey(this.value)"><button class="vmic" onclick="tglKey()" id="keyEye" style="background:var(--bg2);border-color:var(--border)">👁️</button></div>
+              </div>
+              <div id="apiKeyStatus" style="font-size:11px;color:var(--text3);margin-bottom:10px"></div>
+              <button class="btn btn-gold btn-full" onclick="testApiKey()">🔌  Test Connection</button>
+            </div>
+          </div>
+
+          <!-- Court Details -->
+          <div class="set-card">
+            <div class="sc-hdr"><div class="sc-ico">🏛️</div><div class="sc-title">Court Details</div></div>
+            <div class="sc-body">
+              <div class="fg mb12"><label class="flbl">DCLR Name</label><input class="fi" id="dclrName" placeholder="Sri / Smt. ..." oninput="saveCS('dclrName',this.value)"></div>
+              <div class="fg mb12"><label class="flbl">Court Location</label><input class="fi" id="courtLocation" value="Bikramganj, Rohtas (Bihar)" oninput="saveCS('courtLocation',this.value)"></div>
+              <div class="fg"><label class="flbl">District</label><input class="fi" id="courtDistrict" value="Rohtas" oninput="saveCS('courtDistrict',this.value)"></div>
+            </div>
+          </div>
+
+          <!-- Voice -->
+          <div class="set-card">
+            <div class="sc-hdr"><div class="sc-ico">🎙️</div><div class="sc-title">Voice Input</div></div>
+            <div class="sc-body">
+              <div class="irow"><span class="ir-l">Voice Input (Hindi)</span><label class="tsw"><input type="checkbox" id="voiceEnabled" onchange="saveVoice(this.checked)" checked><span class="tsl"></span></label></div>
+              <div class="irow"><span class="ir-l">Voice Language</span><select onchange="saveLang(this.value)" id="voiceLang" class="fi" style="width:auto;padding:6px 28px 6px 10px;font-size:12.5px"><option value="hi-IN">Hindi (हिंदी)</option><option value="en-IN">English (India)</option></select></div>
+              <div class="irow"><span class="ir-l">Order Text Size</span><select onchange="saveFZ(this.value)" id="fontSizeSelect" class="fi" style="width:auto;padding:6px 28px 6px 10px;font-size:12.5px"><option value="13">Small</option><option value="14" selected>Medium</option><option value="15">Large</option></select></div>
+            </div>
+          </div>
+
+          <!-- Keyboard Shortcuts -->
+          <div class="set-card">
+            <div class="sc-hdr"><div class="sc-ico">⌨️</div><div class="sc-title">Keyboard Shortcuts</div></div>
+            <div class="sc-body">
+              <div class="irow"><span class="ir-l">New Order</span><span class="ir-v"><kbd style="background:var(--bg2);border:1px solid var(--border);border-bottom:2px solid var(--border2);border-radius:4px;padding:2px 7px;font-size:11px;font-family:monospace">G</kbd></span></div>
+              <div class="irow"><span class="ir-l">Dashboard</span><span class="ir-v"><kbd style="background:var(--bg2);border:1px solid var(--border);border-bottom:2px solid var(--border2);border-radius:4px;padding:2px 7px;font-size:11px;font-family:monospace">1</kbd></span></div>
+              <div class="irow"><span class="ir-l">History</span><span class="ir-v"><kbd style="background:var(--bg2);border:1px solid var(--border);border-bottom:2px solid var(--border2);border-radius:4px;padding:2px 7px;font-size:11px;font-family:monospace">2</kbd></span></div>
+              <div class="irow"><span class="ir-l">Generate Order</span><span class="ir-v"><kbd style="background:var(--bg2);border:1px solid var(--border);border-bottom:2px solid var(--border2);border-radius:4px;padding:2px 7px;font-size:11px;font-family:monospace">Ctrl + Enter</kbd></span></div>
+              <div class="irow"><span class="ir-l">Next Step</span><span class="ir-v"><kbd style="background:var(--bg2);border:1px solid var(--border);border-bottom:2px solid var(--border2);border-radius:4px;padding:2px 7px;font-size:11px;font-family:monospace">→</kbd></span></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Data Management -->
+        <div class="set-card" style="margin-top:18px">
+          <div class="sc-hdr"><div class="sc-ico">💾</div><div class="sc-title">Data Management</div></div>
+          <div class="sc-body" style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-ghost" onclick="exportCases()" style="flex:1">📤 Export Case History (JSON)</button>
+            <button class="btn btn-ghost" onclick="clearAll()" style="flex:1;color:var(--red);border-color:var(--red-br)">🗑️ Clear All Data</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- content -->
+</div><!-- main -->
+
+<!-- Camera Modal -->
+<div class="cam-modal" id="camModal">
+  <div class="cam-sheet">
+    <div class="cam-title">📷 Scan Document</div>
+    <video id="camVideo" autoplay playsinline></video>
+    <canvas id="camCanvas" style="display:none"></canvas>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-gold btn-full" onclick="capturePhoto()">📸 Capture</button>
+      <button class="btn btn-ghost" onclick="closeCamera()">✕ Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><span id="tIco">✅</span><span id="tMsg"></span></div>
+
+<script>
+'use strict';
+// ═══════════════════════════════════════════════════════════
+// DCLR DESKTOP v1 — Full Workstation
+// Bihar Land Mutation Act 2011 | Rules 2012
+// ═══════════════════════════════════════════════════════════
+
+// ── STATE ──
+let OT = 'allowed';
+let step = 0;
+let sortCol = 'orderDate', sortDir = 'desc';
+let camStream = null, camTarget = null;
+const parties  = { appellant:[], respondent:[], intervenor:[] };
+const pScans   = { vaadi:[], prativaadi:[], hastkshepak:[] };
+const cases    = [];
+const history  = [];
+const plots    = [];
+let filteredHist = [];
+
+// ── MAPS ──
+const TLBL = { allowed:'अपील स्वीकृत', rejected:'अपील अस्वीकृत', remanded:'Remanded Back', closed:'अपील अस्थायी बंद' };
+const TBADGE = { allowed:'bg-green', rejected:'bg-red', remanded:'bg-amber', closed:'bg-amber' };
+const TORB = { allowed:'var(--green-bg)', rejected:'var(--red-bg)', remanded:'var(--amber-bg)', closed:'var(--bg2)' };
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+const LDESC = {
+  allowed:  {c:'var(--green)', pts:['Previous CO mutation order is set aside','CO directed to mutate in favour of Appellant (Rule 9 & 10)']},
+  rejected: {c:'var(--red)',   pts:["Appellant's petition rejected — CO's order stands","Revision before Addl. Collector within 30 days (Section 8)"]},
+  remanded: {c:'var(--amber)', pts:['CO order set aside — fresh reconsideration','Rule 5(2) spot verification + new evidence required']},
+  closed:   {c:'var(--text3)', pts:['Closed due to non-prosecution','Can be reopened via Prayer/Application']}
+};
+
+const SECS = [
+  {n:1,hi:'वादी का नाम एवं विवरण',    en:'Applicant Name & Details',            c:'sc1'},
+  {n:2,hi:'वाद का संक्षेप',            en:'Brief of Case',                       c:'sc2'},
+  {n:3,hi:'भूमि विवरण',               en:'Land Details',                        c:'sc3'},
+  {n:4,hi:'सूचना विवरण',              en:'Notice Detail',                       c:'sc4'},
+  {n:5,hi:'वादी का पक्ष',             en:'Vaadi ka Paksh',                      c:'sc5'},
+  {n:6,hi:'वादी के साक्ष्य',          en:'Vaadi ke Sakshya',                    c:'sc6'},
+  {n:7,hi:'प्रतिवादी का पक्ष',        en:'Prativaadi ka Paksh',                 c:'sc7'},
+  {n:8,hi:'प्रतिवादी के साक्ष्य',     en:'Prativaadi ke Sakshya',               c:'sc8'},
+  {n:9,hi:'हस्तक्षेपकर्ता का पक्ष',   en:'Hastkshepak (if any)',                c:'sc9',opt:true},
+  {n:10,hi:'विश्लेषण',                  en:'Deciders · Order Summary · Analysis', c:'sc10'},
+  {n:11,hi:'आदेश',                      en:'Final Order',                         c:'sc11',fin:true}
+];
+
+const LAW = `BIHAR LAND MUTATION ACT 2011 & RULES 2012:
+SEC 7: Appeal before DCLR within 30 days. DCLR hears parties, examines evidence, passes REASONED order.
+RULE 11: Memorandum + e-Receipt. DCLR calls case record, issues notice, passes reasoned order.
+SEC 8/RULE 12: Revision before Additional Collector within 30 days of DCLR order.
+SEC 16: DCLR has powers of Civil Court.
+RULE 5(2): Spot verification — physical possession critical.
+RULE 9: Correction Slip. RULE 10: Khatian/Register alteration.
+AMENDMENT RULES 2020: CO disposal — 35 days (no objection) / 75 days (with objection).`;
+
+// ── INIT ──
+window.onload = () => {
+  loadApiKey(); loadCS(); loadHistory();
+  addParty('appellant'); addParty('respondent');
+  buildSecs(); addPlot(); selDecider('allowed'); initVoice();
+  setDashDate(); buildBarChart();
+  // Keyboard shortcuts
+  document.addEventListener('keydown', handleKeys);
+};
+
+function handleKeys(e) {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'g' || e.key === 'G') { goScreen('new-order'); e.preventDefault(); }
+  if (e.key === '1') goScreen('dashboard');
+  if (e.key === '2') goScreen('history');
+  if (e.ctrlKey && e.key === 'Enter') { generateOrder(); e.preventDefault(); }
+}
+
+// ── HELPERS ──
+const g  = id => (document.getElementById(id)?.value || '').trim();
+const td = () => { const d=new Date(); return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`; };
+const ti = () => new Date().toISOString().split('T')[0];
+const fd = d => { if(!d) return '—'; const dt=new Date(d); return `${String(dt.getDate()).padStart(2,'0')}.${String(dt.getMonth()+1).padStart(2,'0')}.${dt.getFullYear()}`; };
+
+function toast(msg, ico='✅') {
+  document.getElementById('tMsg').textContent = msg;
+  document.getElementById('tIco').textContent = ico;
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  clearTimeout(t._to);
+  t._to = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function setDashDate() {
+  const el = document.getElementById('dashDate');
+  if (el) { const d=new Date(); el.textContent=`${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`; }
+}
+
+// ── NAVIGATION ──
+function goScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(s => s.classList.remove('active'));
+  const sc = document.getElementById('screen-'+name);
+  const sb = document.getElementById('sb-'+name);
+  if (sc) sc.classList.add('active');
+  if (sb) sb.classList.add('active');
+  const breadcrumbs = {
+    'dashboard':'Dashboard','new-order':'New Mutation Appeal',
+    'history':'Case History','settings':'Settings'
+  };
+  const el = document.getElementById('tbCur');
+  if (el && breadcrumbs[name]) el.textContent = breadcrumbs[name];
+  if (name === 'history') { filteredHist = [...history]; renderTable(filteredHist); }
+  if (name === 'dashboard') { updateDashboard(); buildBarChart(); }
+}
+
+function goStep(n) {
+  for (let i = 0; i < 6; i++) {
+    const e = document.getElementById('step-'+i);
+    if (e) e.style.display = i === n ? 'block' : 'none';
+    const p = document.getElementById('sp-'+i);
+    if (p) { p.classList.remove('cur','done'); if(i<n)p.classList.add('done'); else if(i===n)p.classList.add('cur'); }
+  }
+  step = n;
+  document.getElementById('backBtn').style.display = n > 0 ? 'flex' : 'none';
+  const nb = document.getElementById('nextBtn');
+  if (n === 5) { nb.textContent = '✨ Generate Order'; nb.onclick = generateOrder; }
+  else { nb.textContent = 'Next →'; nb.onclick = nextStep; }
+}
+function nextStep() { if (step < 5) goStep(step + 1); }
+function prevStep() { if (step > 0) goStep(step - 1); }
+
+function resetForm() {
+  if (!confirm('Reset all form data? This cannot be undone.')) return;
+  parties.appellant=[]; parties.respondent=[]; parties.intervenor=[];
+  pScans.vaadi=[]; pScans.prativaadi=[]; pScans.hastkshepak=[];
+  plots.length = 0;
+  document.getElementById('plotList').innerHTML = '';
+  document.getElementById('appellantList').innerHTML = '';
+  document.getElementById('respondentList').innerHTML = '';
+  document.getElementById('intervenorList').innerHTML = '';
+  ['caseNo','thana','coOrderDate','deedNo','appAdvName','respAdvName','notice_detail','vaadi_paksh','vaadi_sakshya','prativaadi_paksh','prativaadi_sakshya','hastkshepak_paksh','key_facts','aadesh_saar','vishleshan','additionalInst'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  addParty('appellant'); addParty('respondent');
+  addPlot(); goStep(0);
+  document.getElementById('previewOuter').style.display = 'none';
+  document.getElementById('previewEmpty').style.display = 'flex';
+  ['wordBtn','pdfBtn','copyBtn'].forEach(id=>document.getElementById(id).disabled=true);
+  toast('Form reset.', '🔄');
+}
+
+// ── PLOTS ──
+function addPlot() {
+  const idx = plots.length; plots.push({});
+  const d = document.createElement('div'); d.className = 'plotblock'; d.id = 'plot-'+idx;
+  d.innerHTML = `<div class="bk-hdr"><span class="bk-badge bb-o">${idx+1}</span><span class="bk-lbl">Plot / Khesra ${idx+1}</span>${idx>0?`<button class="bk-rm" onclick="rmPlot(${idx})">×</button>`:''}</div>
+  <div class="fg2"><div class="fg"><label class="flbl">Mouza <span class="req">✦</span></label><input class="fi" lang="hi" id="pm-${idx}" placeholder="Mouza name"></div>
+  <div class="fg"><label class="flbl">Khata No. <span class="req">✦</span></label><input class="fi" id="pk-${idx}" placeholder="e.g. 125"></div></div>
+  <div class="fg2"><div class="fg"><label class="flbl">Khesra No. <span class="req">✦</span></label><input class="fi" id="pkh-${idx}" placeholder="e.g. 456"></div>
+  <div class="fg"><label class="flbl">Area (Rakba)</label><input class="fi" id="pa-${idx}" placeholder="e.g. 0.25 acre"></div></div>`;
+  document.getElementById('plotList').appendChild(d);
+  updPB();
+}
+function rmPlot(i){ document.getElementById('plot-'+i)?.remove(); plots[i]=null; updPB(); toast('Plot removed.','🗑️'); }
+function updPB(){ const a=plots.filter((p,i)=>p!==null&&document.getElementById('plot-'+i)).length; const b=document.getElementById('plotBadge'); if(b) b.textContent=a+' Plot'+(a>1?'s':''); }
+function colPlots(){
+  const l=[];
+  plots.forEach((p,i)=>{ if(!p||!document.getElementById('plot-'+i)) return; const m=g('pm-'+i),k=g('pk-'+i),kh=g('pkh-'+i),a=g('pa-'+i); if(!m&&!k&&!kh) return; l.push(`  Plot ${i+1}: मौजा-${m||'—'}, खाता-${k||'—'}, खेसरा-${kh||'—'}, रकबा-${a||'अभिलेखानुसार'}`); });
+  return l.join('\n');
+}
+function fPlot(f){ for(let i=0;i<plots.length;i++){ if(plots[i]&&document.getElementById('plot-'+i)){const v=g('p'+f[0]+'-'+i);if(v)return v;} } return ''; }
+
+// ── PARTIES ──
+function addParty(type) {
+  const idx=parties[type].length; parties[type].push({});
+  const bc=type==='appellant'?'app-t':type==='respondent'?'resp-t':'int-t';
+  const bb=type==='appellant'?'bb-g':type==='respondent'?'bb-r':'bb-b';
+  const lb=type==='appellant'?'Appellant':type==='respondent'?'Respondent':'Intervenor';
+  const d=document.createElement('div'); d.className='pblock '+bc; d.id='pb-'+type+'-'+idx;
+  d.innerHTML=`<div class="bk-hdr"><span class="bk-badge ${bb}">${idx+1}</span><span class="bk-lbl">${lb} ${idx+1}</span>${idx>0?`<button class="bk-rm" onclick="rmParty('${type}',${idx})">×</button>`:''}</div>
+  <div class="fg2" style="margin-bottom:8px"><div class="fg"><label class="flbl">Full Name <span class="req">✦</span></label><input class="fi" lang="hi" id="${type}-n-${idx}" placeholder="Full name"></div>
+  <div class="fg"><label class="flbl">Father / Husband</label><input class="fi" lang="hi" id="${type}-f-${idx}" placeholder="Father's name"></div></div>
+  <div class="fg2" style="margin-bottom:8px"><div class="fg"><label class="flbl">Village / Address</label><input class="fi" lang="hi" id="${type}-v-${idx}" placeholder="Village, Police Station"></div>
+  <div class="fg"><label class="flbl">Presence</label><select class="fi" id="${type}-p-${idx}"><option value="present">Present</option><option value="exparte">Absent (Ex-parte)</option><option value="adv">Through Advocate</option></select></div></div>
+  <div class="doc-zone"><div class="dz-lbl">📎 Documents</div><div class="dz-row"><label class="dzbtn">📄 PDF<input type="file" accept=".pdf,.doc" multiple onchange="addDoc(event,'${type}',${idx})"></label><label class="dzbtn">🖼️ Image<input type="file" accept="image/*" multiple onchange="addDoc(event,'${type}',${idx})"></label><button class="dzbtn" type="button" onclick="openCam('${type}',${idx})">📷 Camera</button></div><div class="doc-list" id="dl-${type}-${idx}"></div></div>`;
+  document.getElementById(type+'List').appendChild(d);
+}
+function rmParty(t,i){ document.getElementById('pb-'+t+'-'+i)?.remove(); parties[t][i]=null; toast('Removed.','🗑️'); }
+function addDoc(e,t,i){ Array.from(e.target.files).forEach(f=>aDoc(t,i,f)); e.target.value=''; }
+function aDoc(t,i,file){
+  const list=document.getElementById('dl-'+t+'-'+i); if(!list) return;
+  const k=`${t}-${i}-${Date.now()}`; const isI=file.type.startsWith('image/');
+  const d=document.createElement('div'); d.className='di'; d.id='di-'+k;
+  if(isI){const r=new FileReader();r.onload=ev=>{d.innerHTML=`<img src="${ev.target.result}"><span class="di-n">${file.name}</span><button class="di-x" onclick="document.getElementById('di-${k}').remove()">✕</button>`;};r.readAsDataURL(file);}
+  else{d.innerHTML=`<span style="font-size:14px">📄</span><span class="di-n">${file.name}</span><button class="di-x" onclick="document.getElementById('di-${k}').remove()">✕</button>`;}
+  list.appendChild(d); toast(`'${file.name}' added.`,'📎');
+}
+function colParties(type){
+  return parties[type].map((p,i)=>{ if(!p) return null; const nm=g(`${type}-n-${i}`); if(!nm) return null; const f=g(`${type}-f-${i}`),v=g(`${type}-v-${i}`); const ps=document.getElementById(`${type}-p-${i}`)?.value; const pl=ps==='present'?'उपस्थित':ps==='exparte'?'अनुपस्थित':'अधिवक्ता द्वारा'; return `${i+1}. ${nm}${f?', पु./पत्नी '+f:''}${v?', ग्राम '+v:''} (${pl})`; }).filter(Boolean).join('\n');
+}
+function pNames(type){ return parties[type].map((p,i)=>p?g(`${type}-n-${i}`):'').filter(Boolean); }
+
+// ── PAKSH TOGGLE ──
+function tglPaksh(who,mode,btn){
+  const body=btn.closest('.form-section')||btn.parentElement.parentElement;
+  body.querySelectorAll('.ptbtn').forEach(b=>b.classList.remove('on')); btn.classList.add('on');
+  const te=document.getElementById(who+'-text'),se=document.getElementById(who+'-scan');
+  if(mode==='type'){if(te)te.style.display='block';if(se)se.style.display='none';}
+  else{if(te)te.style.display='none';if(se)se.style.display='block';}
+}
+
+// ── SCAN ──
+function hScan(e,who){ Array.from(e.target.files).forEach(f=>aScan(who,f)); e.target.value=''; }
+function aScan(who,file){
+  pScans[who].push(file);
+  const list=document.getElementById(who+'-scan-list'); if(!list) return;
+  const k=who+'-'+Date.now(); const isI=file.type.startsWith('image/');
+  const d=document.createElement('div'); d.className='si'; d.id='ss-'+k;
+  if(isI){const r=new FileReader();r.onload=ev=>{d.innerHTML=`<img src="${ev.target.result}"><span class="si-n">${file.name}</span><button class="si-x" onclick="document.getElementById('ss-${k}').remove()">✕</button>`;};r.readAsDataURL(file);}
+  else{d.innerHTML=`<span style="font-size:14px">📄</span><span class="si-n">${file.name}</span><button class="si-x" onclick="document.getElementById('ss-${k}').remove()">✕</button>`;}
+  list.appendChild(d);
+  document.getElementById(who+'-ext-btn').disabled=false;
+  toast('File added.','📎');
+}
+async function extractPaksh(who){
+  const files=pScans[who].filter(Boolean); if(!files.length){toast('Add a file first.','⚠️');return;}
+  const btn=document.getElementById(who+'-ext-btn'); btn.disabled=true; btn.textContent='⏳ Extracting...';
+  const wl=who==='vaadi'?'Appellant':who==='prativaadi'?'Respondent':'Intervenor';
+  const imgs=[];
+  for(const f of files.slice(0,3)){if(!f.type.startsWith('image/'))continue;const b=await new Promise(res=>{const r=new FileReader();r.onload=ev=>res(ev.target.result.split(',')[1]);r.readAsDataURL(f);});imgs.push({type:'image',source:{type:'base64',media_type:f.type,data:b}});}
+  if(!imgs.length){toast('AI extracts from JPG/PNG only.','⚠️');btn.disabled=false;btn.textContent='✨ Extract with AI';return;}
+  try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:[...imgs,{type:'text',text:`यह ${wl} की याचिका की image है। मुख्य तर्क हिंदी में 150-200 शब्दों में लिखें।`}]}]})});const d=await res.json();const ta=document.getElementById(who+'_paksh_scan');if(ta){ta.value=d.content?.[0]?.text||'';ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';}toast(`${wl}'s argument extracted!`,'✨');}
+  catch(err){toast('Error: '+err.message,'❌');}
+  finally{btn.disabled=false;btn.textContent='✨ Extract with AI';}
+}
+function getPaksh(who){const s=document.getElementById(who+'-scan');if(s&&s.style.display!=='none')return document.getElementById(who+'_paksh_scan')?.value?.trim()||'';return g(who==='vaadi'?'vaadi_paksh':who==='prativaadi'?'prativaadi_paksh':'hastkshepak_paksh');}
+
+// ── CAMERA ──
+function openCam(t,i){camTarget={t,i};document.getElementById('camModal').classList.add('open');navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}).then(s=>{camStream=s;document.getElementById('camVideo').srcObject=s;}).catch(()=>{toast('Camera not available.','❌');closeCamera();});}
+function closeCamera(){if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}document.getElementById('camModal').classList.remove('open');}
+function capturePhoto(){const v=document.getElementById('camVideo'),c=document.getElementById('camCanvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);c.toBlob(blob=>{const f=new File([blob],`cam-${Date.now()}.jpg`,{type:'image/jpeg'});if(camTarget)aDoc(camTarget.t,camTarget.i,f);closeCamera();},'image/jpeg',.92);}
+
+// ── DECIDER ──
+function selDecider(t){
+  OT=t;
+  ['allowed','rejected','remanded','closed'].forEach(k=>{document.getElementById('dt-'+k)?.classList.remove('sel');document.getElementById('db-'+k)?.classList.remove('ch');});
+  document.getElementById('dt-'+t)?.classList.add('sel');
+  const pt=document.getElementById('prev-type');
+  if(pt){pt.textContent=TLBL[t];pt.className='os-tt '+t;}
+  toast('Decision: '+TLBL[t],t==='allowed'?'✅':t==='rejected'?'❌':t==='remanded'?'🔁':'🔒');
+}
+
+// ── BUILD SECTIONS ──
+function buildSecs(){
+  const c=document.getElementById('orderSections'); if(!c) return;
+  c.innerHTML=SECS.map(s=>`
+    <div class="o-section${s.fin?' fin-sec':''}" id="osec-${s.n}">
+      <div class="sec-hdr"><div class="sec-num ${s.c}">${s.n}</div><div><div class="sec-hi">${s.hi}</div><div class="sec-en">${s.en}${s.opt?' — Optional':''}</div></div></div>
+      <textarea id="sectext-${s.n}" class="sec-ta" placeholder="${s.fin?'Final order...':'Section content...'}"></textarea>
+    </div>`).join('');
+}
+
+// ── PREVIEW HEADER ──
+function updPrev(){
+  const cn=document.getElementById('prev-caseno');if(cn)cn.textContent=g('caseNo')||'—';
+  document.getElementById('prev-case').textContent='वाद सं. '+(g('caseNo')||'___');
+  const pt=document.getElementById('prev-type');if(pt){pt.textContent=TLBL[OT];pt.className='os-tt '+OT;}
+  document.getElementById('prev-order').textContent=td();
+  document.getElementById('prev-appAdv').textContent=g('appAdvName')||'—';
+  document.getElementById('prev-respAdv').textContent=g('respAdvName')||'—';
+  document.getElementById('prev-app').textContent=pNames('appellant').join(', ')||'—';
+  document.getElementById('prev-resp').textContent=pNames('respondent').join(', ')||'—';
+}
+
+// ── GENERATE ──
+async function generateOrder(){
+  if(!g('caseNo')){toast('Case Number required.','⚠️');return;}
+  if(!g('vishleshan')){toast('DCLR Analysis required.','⚠️');return;}
+  const vp=plots.filter((p,i)=>p&&document.getElementById('plot-'+i)&&(g('pm-'+i)||g('pkh-'+i)));
+  if(!vp.length){toast('Fill at least one Plot.','⚠️');return;}
+  if(!parties.appellant.some((p,i)=>p&&g(`appellant-n-${i}`))){toast('Fill Appellant name.','⚠️');return;}
+  if(!parties.respondent.some((p,i)=>p&&g(`respondent-n-${i}`))){toast('Fill Respondent name.','⚠️');return;}
+  if(!getPaksh('vaadi')){toast("Fill Appellant's argument.",'⚠️');return;}
+  const hasI=parties.intervenor.some((p,i)=>p&&g(`intervenor-n-${i}`));
+  const instr={allowed:'अपील स्वीकृत — CO का पूर्व आदेश निरस्त; Rule 9 & 10 के अनुसार नामांतरण का निर्देश।',rejected:'अपील अस्वीकृत — CO का आदेश बरकरार; Section 8 के अनुसार Revision का सुझाव।',remanded:'Remanded Back — Rule 5(2) के अनुसार spot verification हेतु CO को वापस।',closed:'अपील अस्थायी बंद — Rule 11(4); भविष्य में Prayer से पुनः खोली जा सकती है।'}[OT];
+  updPrev();
+  document.getElementById('previewEmpty').style.display = 'none';
+  document.getElementById('previewOuter').style.display = 'block';
+  document.getElementById('orderLoading').classList.add('show');
+  document.getElementById('genBtn').textContent = '⏳ Generating...';
+  document.getElementById('genBtn').disabled = true;
+  ['wordBtn','pdfBtn','copyBtn'].forEach(id=>document.getElementById(id).disabled=true);
+  SECS.forEach(s=>{const e=document.getElementById('sectext-'+s.n);if(e){e.value='';e.className='sec-ta';}});
+  // Scroll preview into view
+  document.getElementById('previewOuter').scrollIntoView({behavior:'smooth',block:'start'});
+  const prompt=`आप DCLR (Land Reforms Deputy Collector), बिक्रमगंज, रोहतास, बिहार के आदेश प्रारूपकार हैं।
+${LAW}
+आदेश प्रकार: ${instr}
+न्यायालय: उप समाहर्ता सह भूमि सुधार पदाधिकारी न्यायालय, बिक्रमगंज, जिला — रोहतास (बिहार)
+वाद सं.: नामांतरण अपील वाद सं. ${g('caseNo')}; आदेश तिथि: ${td()}
+वादी: ${colParties('appellant')}; अधिवक्ता: ${g('appAdvName')||'स्वयं'}
+प्रतिवादी: ${colParties('respondent')}; अधिवक्ता: ${g('respAdvName')||'—'}
+${hasI?'हस्तक्षेपकर्ता: '+colParties('intervenor'):'हस्तक्षेपकर्ता: कोई नहीं'}
+भूमि: अंचल-${g('anchal')||'बिक्रमगंज'}, थाना-${g('thana')||'—'}, CO आदेश-${fd(g('coOrderDate'))}, दस्तावेज-${g('deedNo')||'अभिलेखानुसार'}
+${colPlots()}
+वादी पक्ष: ${getPaksh('vaadi')}; वादी साक्ष्य: ${g('vaadi_sakshya')||'अभिलेखानुसार'}
+प्रतिवादी पक्ष: ${getPaksh('prativaadi')||'जवाब नहीं।'}; प्रतिवादी साक्ष्य: ${g('prativaadi_sakshya')||'कोई नहीं'}
+हस्तक्षेपकर्ता: ${getPaksh('hastkshepak')||'कोई नहीं।'}
+सूचना: ${g('notice_detail')||''}; तथ्य: ${g('key_facts')||'AI to identify'}
+Draft Order: ${g('aadesh_saar')||''}; DCLR विश्लेषण: ${g('vishleshan')}; अतिरिक्त: ${g('additionalInst')||''}
+RULES: 1) Section 7 Bihar Mutation Act 2011. 2) Rule 11. 3) खंड 10: (A) निर्णायक तथ्य; (B) आदेश सारांश; (C) DCLR विश्लेषण. 4) खंड 11 अंत: "इस आदेश की प्रति RCMS पोर्टल पर अपलोड की जाए।" 5) हस्ताक्षर नहीं. 6) ONLY JSON: [{"num":1,"content":"..."},...,{"num":11,"content":"..."}]`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const txt=data.content?.[0]?.text||'';
+    const m=txt.match(/\[[\s\S]*\]/); if(!m) throw new Error('JSON not found');
+    JSON.parse(m[0]).forEach(sec=>{
+      const e=document.getElementById('sectext-'+sec.num);
+      if(e){e.value=sec.content;e.className='sec-ta filled';e.style.height='auto';e.style.height=e.scrollHeight+'px';}
+    });
+    ['wordBtn','pdfBtn','copyBtn'].forEach(id=>document.getElementById(id).disabled=false);
+    // Save
+    const cd={id:Date.now(),caseNo:g('caseNo'),appellant:pNames('appellant').join(', '),respondent:pNames('respondent').join(', '),mouza:fPlot('m'),orderType:OT,orderDate:ti(),orderText:buildTxt()};
+    history.unshift(cd); cases.unshift(cd);
+    filteredHist = [...history];
+    try{localStorage.setItem('dclr_cases',JSON.stringify(history.slice(0,200)));}catch(e){}
+    updateDashboard(); buildBarChart();
+    const sb=document.getElementById('sbBadge'); if(sb)sb.textContent=history.length;
+    toast('All 11 sections generated! ✨');
+    // Auto switch to step 5 for final decision
+    goStep(5);
+  }catch(err){toast('Error: '+err.message,'❌');}
+  finally{
+    document.getElementById('orderLoading').classList.remove('show');
+    document.getElementById('genBtn').textContent='✨ Generate';
+    document.getElementById('genBtn').disabled=false;
+  }
+}
+
+// ── ORDER TEXT ──
+function buildTxt(){
+  const l=[`उप समाहर्ता सह भूमि सुधार पदाधिकारी न्यायालय, बिक्रमगंज, जिला — रोहतास (बिहार)`,`नामांतरण अपील वाद सं. ${g('caseNo')} — ${TLBL[OT]}`,`आदेश तिथि: ${td()}`,`वादी अधिवक्ता: ${g('appAdvName')||'स्वयं'}  |  प्रतिवादी अधिवक्ता: ${g('respAdvName')||'—'}`,''];
+  SECS.forEach(s=>{const v=document.getElementById('sectext-'+s.n)?.value||'';if(v){l.push(`${s.n}. ${s.hi}`);l.push(v);l.push('');}});
+  l.push('इस आदेश की प्रति RCMS पोर्टल पर अपलोड की जाए।');
+  return l.join('\n');
+}
+
+// ── COPY / PDF / WORD ──
+async function qCopy(){
+  const btn=document.getElementById('copyBtn'); if(!btn||btn.disabled) return;
+  try{await navigator.clipboard.writeText(buildTxt()); toast('Order copied in Mangal font! Paste in RCMS.','📋');}
+  catch(e){toast('Copy failed: '+e.message,'❌');}
+}
+
+function shareWA(){
+  const msg=encodeURIComponent(`*DCLR Court, Bikramganj — Order Summary*\n\nCase No.: ${g('caseNo')||'—'}\nDecision: *${TLBL[OT]}*\nAppellant: ${pNames('appellant').join(', ')||'—'}\nRespondent: ${pNames('respondent').join(', ')||'—'}\nDate: ${td()}\n\n_Bihar Land Mutation Act 2011, Section 7_`);
+  window.open('https://wa.me/?text='+msg,'_blank');
+}
+
+function finalDec(decision,btn){
+  ['allowed','rejected','remanded','closed'].forEach(k=>document.getElementById('db-'+k)?.classList.remove('ch'));
+  btn.classList.add('ch'); OT=decision; selDecider(decision);
+  const msgs={allowed:'✅ Accepted — CO directed for mutation',rejected:'❌ Rejected — Revision before Addl. Collector',remanded:'🔁 Remanded — CO to reconsider with fresh evidence',closed:'🔒 Closed — Can be reopened via Prayer'};
+  document.getElementById('dbStampTxt').textContent=msgs[decision];
+  document.getElementById('dbStamp').classList.add('show');
+  const desc=LDESC[decision]; const lb=document.getElementById('dbLegBox');
+  if(lb&&desc){lb.innerHTML=`<div class="db-legtitle">Legal Effect</div>${desc.pts.map(p=>`<div class="db-legpt"><span style="color:${desc.c};flex-shrink:0">▸</span>${p}</div>`).join('')}`;lb.classList.add('show');}
+  document.getElementById('dbStamp').scrollIntoView({behavior:'smooth',block:'nearest'});
+  toast(msgs[decision],decision==='allowed'?'✅':decision==='rejected'?'❌':decision==='remanded'?'🔁':'🔒');
+}
+
+async function dlPDF(){
+  if(document.getElementById('pdfBtn').disabled){toast('Generate order first.','⚠️');return;}
+  try{
+    const{jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const mL=22,mR=20,mT=18,mB=20,pW=210,pH=297,cW=pW-mL-mR;let y=mT;
+    doc.setFont('helvetica');
+    const chk=h=>{if(y+h>pH-mB){doc.addPage();y=mT;}};
+    doc.setFillColor('#0F1F3D');doc.rect(0,0,pW,mT+26,'F');
+    doc.setFontSize(12.5);doc.setFont('helvetica','bold');doc.setTextColor('#B8860B');
+    doc.text('COURT OF THE DEPUTY COLLECTOR (LAND REFORMS)',pW/2,mT+7,{align:'center'});
+    doc.setFontSize(8.5);doc.setFont('helvetica','normal');doc.setTextColor('#FFFFFF');
+    doc.text('Bikramganj, District — Rohtas (Bihar)  |  Bihar Land Mutation Act 2011',pW/2,mT+13,{align:'center'});
+    doc.setDrawColor('#B8860B');doc.setLineWidth(.6);doc.line(mL,mT+17,pW-mR,mT+17);
+    y=mT+22;
+    doc.setTextColor('#1A1A2A');doc.setFontSize(11);doc.setFont('helvetica','bold');
+    doc.text(`Mutation Appeal Case No. ${g('caseNo')||'—'}  —  ${TLBL[OT]}`,pW/2,y,{align:'center'});
+    y+=5;doc.setFontSize(8.5);doc.setFont('helvetica','normal');doc.setTextColor('#6B7280');
+    doc.text(`Date of Order: ${td()}`,pW/2,y,{align:'center'});
+    y+=7;doc.setDrawColor('#E5E7EB');doc.setLineWidth(.3);doc.line(mL,y,pW-mR,y);y+=4;
+    doc.setFontSize(9);doc.setTextColor('#374151');
+    doc.text(`Appellant: ${pNames('appellant').join(', ')||'—'}`,mL,y);
+    doc.text(`Respondent: ${pNames('respondent').join(', ')||'—'}`,pW/2+2,y);
+    y+=5;doc.line(mL,y,pW-mR,y);y+=5;
+    SECS.forEach(sec=>{
+      const ct=document.getElementById('sectext-'+sec.n)?.value||'';if(!ct.trim())return;
+      chk(13);
+      doc.setFillColor('#1D4ED8');doc.circle(mL+3.5,y-1,3.5,'F');
+      doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor('#fff');
+      doc.text(String(sec.n),mL+3.5,y+.5,{align:'center'});
+      doc.setTextColor('#1A1A2A');doc.setFontSize(10);doc.setFont('helvetica','bold');
+      doc.text(sec.hi+' — '+sec.en,mL+10,y+.5);
+      y+=4.5;doc.setDrawColor('#E5E7EB');doc.setLineWidth(.2);doc.line(mL+10,y,pW-mR,y);y+=3;
+      doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor('#374151');
+      doc.splitTextToSize(ct,cW-4).forEach(line=>{chk(5);doc.text(line,mL+4,y);y+=4.8;});
+      y+=2;
+    });
+    chk(18);y+=4;doc.setDrawColor('#B8860B');doc.setLineWidth(.5);doc.line(mL,y,pW-mR,y);y+=5;
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor('#16A34A');
+    doc.text('✓ इस आदेश की प्रति RCMS पोर्टल पर अपलोड की जाए।',mL,y);
+    y+=8;doc.setDrawColor('#E5E7EB');doc.setLineWidth(.3);doc.line(pW-mR-48,y-1,pW-mR,y-1);
+    doc.setFontSize(8.5);doc.setFont('helvetica','normal');doc.setTextColor('#374151');
+    doc.text('Deputy Collector (Land Reforms)',pW-mR-48,y+4);doc.text('Bikramganj, Rohtas (Bihar)',pW-mR-48,y+9);
+    const tot=doc.getNumberOfPages();
+    for(let i=1;i<=tot;i++){doc.setPage(i);doc.setFontSize(7.5);doc.setTextColor('#9CA3AF');doc.text(`Page ${i} of ${tot}  |  Case No. ${g('caseNo')||'—'}  |  DCLR Court, Bikramganj`,pW/2,pH-8,{align:'center'});doc.setDrawColor('#E5E7EB');doc.setLineWidth(.2);doc.line(mL,pH-11,pW-mR,pH-11);}
+    doc.save(`MA_Case_${(g('caseNo')||'order').replace(/\//g,'-')}_${td().replace(/\./g,'')}.pdf`);
+    toast('PDF downloaded!','🖨️');
+  }catch(err){toast('PDF error: '+err.message,'❌');}
+}
+
+async function dlWord(){
+  if(document.getElementById('wordBtn').disabled){toast('Generate order first.','⚠️');return;}
+  const{Document,Packer,Paragraph,TextRun,AlignmentType,BorderStyle,UnderlineType}=docx;
+  const M='Mangal';const c=[];
+  const ct=(text,opts={})=>new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:opts.before||0,after:opts.after||100},border:opts.bb?{bottom:{style:BorderStyle.SINGLE,size:6,color:'000000',space:4}}:undefined,children:[new TextRun({text,bold:!!opts.bold,size:opts.size||24,font:M})]});
+  const lf=(text,opts={})=>new Paragraph({alignment:AlignmentType.LEFT,spacing:{before:opts.before||0,after:opts.after||100},indent:opts.indent?{firstLine:360}:undefined,children:[new TextRun({text,bold:!!opts.bold,size:opts.size||24,font:M,underline:opts.ul?{type:UnderlineType.SINGLE}:undefined})]});
+  c.push(ct('उप समाहर्ता सह भूमि सुधार पदाधिकारी न्यायालय',{bold:true,size:28,after:40}));
+  c.push(ct('बिक्रमगंज, जिला — रोहतास (बिहार)',{size:24,after:40}));
+  c.push(ct(`नामांतरण अपील वाद सं. ${g('caseNo')} — ${TLBL[OT]}`,{bold:true,size:26,after:40,bb:true}));
+  c.push(ct(`आदेश तिथि: ${td()}`,{size:22,after:200}));
+  SECS.forEach(s=>{const v=document.getElementById('sectext-'+s.n)?.value||'';if(!v)return;c.push(lf(`${s.n}. ${s.hi}`,{bold:true,size:26,before:200,after:80,ul:true}));v.split('\n').forEach(line=>{if(line.trim())c.push(lf(line,{indent:true,after:100}));else c.push(lf('',{after:60}));});});
+  c.push(lf('',{after:200}));c.push(ct('इस आदेश की प्रति RCMS पोर्टल पर अपलोड की जाए।',{bold:true,size:24,before:100}));
+  const doc=new Document({styles:{default:{document:{run:{font:M,size:24}}}},sections:[{properties:{page:{size:{width:11906,height:16838},margin:{top:1080,right:1080,bottom:1080,left:1440}}},children:c}]});
+  const buf=await Packer.toBuffer(doc);
+  const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`M.A. Case ${g('caseNo').replace(/\//g,'-')}.docx`;a.click();URL.revokeObjectURL(url);
+  toast('Word (Mangal) downloading!','📥');
+}
+
+// ── HISTORY & TABLE ──
+function loadHistory(){
+  try{const s=JSON.parse(localStorage.getItem('dclr_cases')||'[]');s.forEach(c=>{if(!history.find(x=>x.id===c.id))history.push(c);});}catch(e){}
+  filteredHist=[...history];
+  updateDashboard(); buildBarChart();
+  const sb=document.getElementById('sbBadge'); if(sb)sb.textContent=history.length;
+}
+
+function renderTable(rows){
+  const tbody=document.getElementById('histTable');
+  const fc=document.getElementById('tableCount');
+  if(fc) fc.textContent=rows.length+' case'+(rows.length!==1?'s':'');
+  if(!rows.length){tbody.innerHTML='<tr><td colspan="7" class="table-empty">No cases found.</td></tr>';return;}
+  tbody.innerHTML=rows.map(h=>`
+    <tr>
+      <td class="td-case">MA ${h.caseNo}</td>
+      <td class="td-name">${h.appellant||'—'}</td>
+      <td class="td-name">${h.respondent||'—'}</td>
+      <td class="td-mouza">${h.mouza||'—'}</td>
+      <td><span class="badge ${TBADGE[h.orderType]||'bg-gray'}">${TLBL[h.orderType]||'—'}</span></td>
+      <td class="td-date">${fd(h.orderDate)}</td>
+      <td><div class="td-actions">
+        <button class="ta-btn ta-c" onclick="cpCase(${h.id})">📋 Copy</button>
+        <button class="ta-btn ta-d" onclick="delCase(${h.id})">🗑️</button>
+      </div></td>
+    </tr>`).join('');
+}
+
+function sortBy(col){
+  if(sortCol===col) sortDir=sortDir==='asc'?'desc':'asc';
+  else{ sortCol=col; sortDir='asc'; }
+  filteredHist.sort((a,b)=>{
+    let av=a[col]||'', bv=b[col]||'';
+    if(sortDir==='desc'){ [av,bv]=[bv,av]; }
+    return av<bv?-1:av>bv?1:0;
+  });
+  renderTable(filteredHist);
+}
+
+function filterHist(q){
+  if(!q.trim()){filteredHist=[...history];renderTable(filteredHist);return;}
+  const d=q.toLowerCase();
+  filteredHist=history.filter(c=>(c.caseNo||'').toLowerCase().includes(d)||(c.appellant||'').toLowerCase().includes(d)||(c.respondent||'').toLowerCase().includes(d)||(c.mouza||'').toLowerCase().includes(d));
+  renderTable(filteredHist);
+}
+
+function filterType(t,btn){
+  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  filteredHist=t==='all'?[...history]:history.filter(c=>c.orderType===t);
+  renderTable(filteredHist);
+}
+
+function cpCase(id){const c=history.find(x=>x.id===id);if(!c||!c.orderText){toast('Order text not saved.','⚠️');return;}navigator.clipboard.writeText(c.orderText).then(()=>toast('Order copied!','📋'));}
+function delCase(id){if(!confirm('Delete this case?'))return;const i=history.findIndex(c=>c.id===id);if(i>-1){history.splice(i,1);filteredHist=filteredHist.filter(c=>c.id!==id);try{localStorage.setItem('dclr_cases',JSON.stringify(history));}catch(e){}renderTable(filteredHist);updateDashboard();buildBarChart();const sb=document.getElementById('sbBadge');if(sb)sb.textContent=history.length;toast('Case deleted.','🗑️');}}
+function exportCases(){if(!history.length){toast('No cases.','⚠️');return;}const b=new Blob([JSON.stringify(history,null,2)],{type:'application/json'});const url=URL.createObjectURL(b);const a=document.createElement('a');a.href=url;a.download='DCLR_Cases_'+td().replace(/\./g,'')+'.json';a.click();URL.revokeObjectURL(url);toast('Exported!','📤');}
+function clearAll(){if(!confirm('Delete ALL saved cases? Cannot be undone.'))return;history.length=0;cases.length=0;filteredHist=[];localStorage.removeItem('dclr_cases');renderTable([]);updateDashboard();buildBarChart();const sb=document.getElementById('sbBadge');if(sb)sb.textContent='0';toast('All data cleared.','🗑️');}
+
+// ── DASHBOARD ──
+function updateDashboard(){
+  const total=history.length;
+  const acc=history.filter(c=>c.orderType==='allowed').length;
+  const rej=history.filter(c=>c.orderType==='rejected').length;
+  const rem=history.filter(c=>c.orderType==='remanded').length;
+  const cls=history.filter(c=>c.orderType==='closed').length;
+  [['kpi-total',total],['kpi-accepted',acc],['kpi-rejected',rej],['kpi-remanded',rem],['kpi-closed',cls]].forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=v;});
+  // Mobile-compatible stats
+  [['stat-total',total],['stat-allowed',acc],['stat-dismissed',rej],['stat-remanded',rem],['stat-sthagit',cls]].forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=v;});
+  // Disposal rates
+  const rate=(n,d)=>d>0?Math.round(n/d*100):0;
+  [['accepted',acc,total],['rejected',rej,total],['remanded',rem,total],['closed',cls,total]].forEach(([k,n,d])=>{
+    const pct=rate(n,d);
+    const qb=document.getElementById('qb-'+k); if(qb)qb.style.width=pct+'%';
+    const qv=document.getElementById('qv-'+k); if(qv)qv.textContent=pct+'%';
+  });
+  // Donut legend
+  [['dl-a',acc],['dl-r',rej],['dl-m',rem],['dl-c',cls]].forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=v;});
+  // Update donut SVG
+  buildDonut(acc,rej,rem,cls,total);
+  // Recent orders in dashboard
+  buildRecentOrders();
+}
+
+function buildDonut(acc,rej,rem,cls,total){
+  const svg=document.getElementById('donutSvg'); if(!svg)return;
+  const R=45, CX=60, CY=60, stroke=18;
+  const data=[{v:acc,c:'#16A34A'},{v:rej,c:'#DC2626'},{v:rem,c:'#D97706'},{v:cls,c:'#9CA3AF'}];
+  const tot=total||1;
+  const circ=2*Math.PI*R;
+  let offset=0; let segments='';
+  data.forEach(({v,c})=>{
+    const frac=v/tot; const dash=frac*circ;
+    segments+=`<circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="${c}" stroke-width="${stroke}" stroke-dasharray="${dash} ${circ-dash}" stroke-dashoffset="${-offset}" transform="rotate(-90 ${CX} ${CY})"/>`;
+    offset+=dash;
+  });
+  svg.innerHTML=`<circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="#E5E7EB" stroke-width="${stroke}"/>${segments}
+  <text x="${CX}" y="${CY+4}" text-anchor="middle" font-size="18" font-weight="700" fill="#1A1A2A" font-family="Playfair Display">${total}</text>
+  <text x="${CX}" y="${CY+16}" text-anchor="middle" font-size="9" fill="#6B7280" font-family="Inter">Total</text>`;
+}
+
+function buildRecentOrders(){
+  const c=document.getElementById('recentOrders'); if(!c) return;
+  if(!history.length){c.innerHTML='<div style="padding:24px;text-align:center;color:var(--text4);font-size:12.5px">No orders yet.</div>';return;}
+  c.innerHTML=history.slice(0,6).map((h,i)=>`
+    <div class="rc-row">
+      <div class="rc-orb" style="background:${TORB[h.orderType]||'var(--bg2)'}">${h.orderType==='allowed'?'✅':h.orderType==='rejected'?'❌':h.orderType==='remanded'?'🔁':'🔒'}</div>
+      <div class="rc-info">
+        <div class="rc-num">Case No. ${h.caseNo}</div>
+        <div class="rc-pty">${h.appellant||'—'} vs ${h.respondent||'—'}</div>
+      </div>
+      <span class="rc-date">${fd(h.orderDate)}</span>
+      <span class="badge ${TBADGE[h.orderType]||'bg-gray'}">${TLBL[h.orderType]||'—'}</span>
+    </div>`).join('');
+}
+
+function buildBarChart(){
+  const el=document.getElementById('barChart'); if(!el) return;
+  // Group by month
+  const monthData={};
+  const now=new Date();
+  for(let i=5;i>=0;i--){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    monthData[k]={allowed:0,rejected:0,remanded:0,label:MONTHS[d.getMonth()]};
+  }
+  history.forEach(c=>{
+    if(!c.orderDate) return;
+    const k=c.orderDate.substring(0,7);
+    if(monthData[k]) monthData[k][c.orderType]=(monthData[k][c.orderType]||0)+1;
+  });
+  const months=Object.values(monthData);
+  const maxVal=Math.max(1,...months.map(m=>m.allowed+m.rejected+m.remanded));
+  const H=116; // chart height
+  el.innerHTML=months.map(m=>{
+    const ah=Math.round(m.allowed/maxVal*H);
+    const rh=Math.round(m.rejected/maxVal*H);
+    const mh=Math.round(m.remanded/maxVal*H);
+    return `<div class="bar-group">
+      <div class="bar-bars">
+        <div class="bar" style="height:${ah}px;background:var(--green);border-radius:4px 4px 0 0"><div class="bar-tooltip">${m.allowed} Accepted</div></div>
+        <div class="bar" style="height:${rh}px;background:var(--red);border-radius:4px 4px 0 0"><div class="bar-tooltip">${m.rejected} Rejected</div></div>
+        <div class="bar" style="height:${mh}px;background:var(--amber);border-radius:4px 4px 0 0"><div class="bar-tooltip">${m.remanded} Remanded</div></div>
+      </div>
+      <div class="bar-lbl">${m.label}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── API KEY ──
+function saveApiKey(v){if(v.startsWith('sk-ant-')||v===''){localStorage.setItem('dclr_ak',v);const s=document.getElementById('apiKeyStatus');if(s)s.textContent=v?'✅ Key saved to device':'';}};
+function loadApiKey(){const k=localStorage.getItem('dclr_ak')||'';const i=document.getElementById('apiKeyInput');if(i&&k)i.value=k;const s=document.getElementById('apiKeyStatus');if(s&&k)s.textContent='✅ API Key loaded from device';}
+function tglKey(){const i=document.getElementById('apiKeyInput');const e=document.getElementById('keyEye');if(!i)return;i.type=i.type==='password'?'text':'password';if(e)e.textContent=i.type==='password'?'👁️':'🙈';}
+async function testApiKey(){const k=localStorage.getItem('dclr_ak')||'';if(!k){toast('Enter API key first.','⚠️');return;}toast('Testing connection...','🔌');try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:10,messages:[{role:'user',content:'Hi'}]})});const d=await r.json();if(d.content)toast('✅ API Key is working!','🟢');else toast('❌ '+(d.error?.message||'Invalid key'),'🔴');}catch(e){toast('Error: '+e.message,'❌');}}
+
+// ── COURT SETTINGS ──
+function saveCS(k,v){localStorage.setItem('dclr_'+k,v);}
+function loadCS(){
+  ['dclrName','courtLocation','courtDistrict'].forEach(k=>{const v=localStorage.getItem('dclr_'+k);const e=document.getElementById(k);if(e&&v)e.value=v;});
+  const n=localStorage.getItem('dclr_dclrName');
+  if(n){const e=document.getElementById('sbUserName');if(e)e.textContent=n;}
+  const l=localStorage.getItem('dclr_courtLocation');
+  if(l){const e=document.getElementById('sbUserRole');if(e)e.textContent='DCLR, '+l;}
+  const vl=document.getElementById('voiceLang');const s=localStorage.getItem('dclr_vl');if(vl&&s)vl.value=s;
+  const fs=document.getElementById('fontSizeSelect');const sf=localStorage.getItem('dclr_fs');if(fs&&sf){fs.value=sf;applyFS(sf);}
+}
+function saveFZ(v){localStorage.setItem('dclr_fs',v);applyFS(v);}
+function applyFS(v){document.querySelectorAll('.sec-ta').forEach(e=>e.style.fontSize=v+'px');}
+function saveVoice(c){localStorage.setItem('dclr_vc',c?'1':'0');toast(c?'🎙️ Voice enabled':'Voice disabled');}
+function saveLang(v){localStorage.setItem('dclr_vl',v);}
+
+// ── VOICE ──
+let vRec=null,avf=null;
+function initVoice(){
+  if(!('webkitSpeechRecognition'in window)&&!('SpeechRecognition'in window))return;
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  vRec=new SR();vRec.continuous=true;vRec.interimResults=true;
+  vRec.lang=localStorage.getItem('dclr_vl')||'hi-IN';
+  vRec.onresult=e=>{if(!avf)return;let f='';for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)f+=e.results[i][0].transcript;}const el=document.getElementById(avf);if(el&&f){el.value+=(el.value?' ':'')+f;el.style.height='auto';el.style.height=el.scrollHeight+'px';}};
+  vRec.onerror=()=>stopV();vRec.onend=()=>stopV();
+  ['vaadi_paksh','prativaadi_paksh','hastkshepak_paksh','vishleshan','aadesh_saar','key_facts','notice_detail'].forEach(id=>addMic(id));
+}
+function addMic(fid){
+  if(localStorage.getItem('dclr_vc')==='0')return;
+  const el=document.getElementById(fid);if(!el||el.dataset.mic)return;
+  el.dataset.mic='1';el.style.paddingRight='42px';
+  const w=el.parentElement;if(w)w.style.position='relative';
+  const b=document.createElement('button');b.type='button';b.className='vmic';b.id='vm-'+fid;b.innerHTML='🎙️';b.title='Voice Input (Hindi)';b.style.top='8px';
+  b.onclick=()=>togV(fid);if(w)w.appendChild(b);
+}
+function togV(fid){if(!vRec){toast('Voice not supported.','⚠️');return;}if(avf===fid){stopV();return;}if(avf)stopV();avf=fid;vRec.lang=localStorage.getItem('dclr_vl')||'hi-IN';vRec.start();const b=document.getElementById('vm-'+fid);if(b)b.classList.add('rec');toast('🎙️ Listening...','🎙️');}
+function stopV(){if(vRec&&avf){try{vRec.stop();}catch(e){}const b=document.getElementById('vm-'+avf);if(b)b.classList.remove('rec');}avf=null;}
+
+// ════════════════════════════════════════════════════════
+// AI CHAIN — Desktop v1
+// A: Analyse → B: Draft on Decision → C: Analysis → Final Order
+// ════════════════════════════════════════════════════════
+
+const LAW_FULL = `BIHAR LAND MUTATION ACT 2011 & RULES 2012:
+Section 7: Appeal before DCLR within 30 days of CO order. DCLR gives hearing, examines evidence, passes REASONED order.
+Section 8/Rule 12: Revision before Additional Collector within 30 days of DCLR order.
+Section 16: DCLR has powers of Civil Court — evidence, summons, oath, costs.
+Rule 5(2): Spot verification — physical possession is CRITICAL factor.
+Rule 9: CO issues Correction Slip. Rule 10: CO alters Khatian/Register.
+Rule 11: Appeal procedure — memorandum, notice, hearing.
+Amendment Rules 2020: CO disposal — 35 days (no objection) / 75 days (with objection).
+Key principles:
+- Registered sale deed = strong proof of title transfer
+- Physical possession + registered deed = strong case for mutation
+- Co-sharer objection requires civil court adjudication first
+- Limitation: appeal within 30 days of CO order
+- DCLR cannot decide title disputes — only mutation eligibility
+- Civil suit pending → mutation may be deferred`;
+
+async function collectAllImages() {
+  const imgs = [];
+  for (const who of ['vaadi','prativaadi','hastkshepak']) {
+    for (const file of (pScans[who] || []).filter(Boolean).slice(0,2)) {
+      if (!file.type.startsWith('image/')) continue;
+      try {
+        const b64 = await new Promise(res => {
+          const r = new FileReader();
+          r.onload = ev => res(ev.target.result.split(',')[1]);
+          r.readAsDataURL(file);
+        });
+        imgs.push({ type:'image', source:{ type:'base64', media_type:file.type, data:b64 } });
+      } catch(e) {}
+    }
+  }
+  return imgs;
+}
+
+async function analyseWithAI() {
+  const btn = document.getElementById('analyseBtn');
+  const loadEl = document.getElementById('deciderLoading');
+  const outEl = document.getElementById('deciderOutput');
+  const loadTxt = document.getElementById('deciderLoadingTxt');
+
+  const vaadiText = getPaksh('vaadi');
+  const pratiText = getPaksh('prativaadi');
+  const hastkText = getPaksh('hastkshepak');
+
+  if (!vaadiText && pScans.vaadi.filter(Boolean).length === 0) {
+    toast("Fill Appellant's argument or upload petition first.", '⚠️'); return;
+  }
+  if (!parties.appellant.some((p,i) => p && g(`appellant-n-${i}`))) {
+    toast('Fill Appellant name first.', '⚠️'); return;
+  }
+
+  btn.disabled = true;
+  btn.classList.add('analysing');
+  document.getElementById('analyseBtnIco').textContent = '⏳';
+  document.getElementById('analyseBtnTxt').textContent = 'AI is analysing...';
+  loadEl.style.display = 'flex';
+  outEl.style.display = 'none';
+
+  try {
+    loadTxt.textContent = 'Reading uploaded documents...';
+    const imgs = await collectAllImages();
+    const msgContent = [];
+
+    if (imgs.length > 0) {
+      loadTxt.textContent = `Analysing ${imgs.length} document(s) with AI vision...`;
+      imgs.forEach(img => msgContent.push({ type:'image', source:img.source }));
+    }
+
+    // Collect plot details
+    const plotDetails = plots.map((p,i) => {
+      if (!p || !document.getElementById('plot-'+i)) return null;
+      const m=g('pm-'+i), k=g('pk-'+i), kh=g('pkh-'+i), a=g('pa-'+i);
+      if (!m && !k && !kh) return null;
+      return `मौजा: ${m||'—'}, खाता: ${k||'—'}, खेसरा: ${kh||'—'}, रकबा: ${a||'—'}`;
+    }).filter(Boolean).join(' | ');
+
+    const caseSummary = `
+CASE: नामांतरण अपील वाद सं. ${g('caseNo') || '—'}
+COURT: DCLR Court, ${g('anchal') || 'Bikramganj'}, Rohtas, Bihar
+CO ORDER DATE: ${g('coOrderDate') || '—'} | DEED/DOC: ${g('deedNo') || '—'}
+LAND: ${plotDetails || 'See case record'}
+APPELLANT: ${colParties('appellant')}
+RESPONDENT: ${colParties('respondent')}
+${parties.intervenor.some((p,i)=>p&&g('intervenor-n-'+i)) ? 'INTERVENOR: '+colParties('intervenor') : ''}
+NOTICE: ${g('notice_detail') || 'Not specified'}
+KEY FACTS (DCLR noted): ${g('key_facts') || 'Not specified'}
+APPELLANT ARGUMENT: ${vaadiText || 'See uploaded document'}
+APPELLANT EVIDENCE: ${g('vaadi_sakshya') || 'Not specified'}
+RESPONDENT ARGUMENT: ${pratiText || 'Not filed'}
+RESPONDENT EVIDENCE: ${g('prativaadi_sakshya') || 'None'}
+INTERVENOR: ${hastkText || 'None'}
+
+${LAW_FULL}`.trim();
+
+    msgContent.push({
+      type: 'text',
+      text: `You are a legal expert assistant for a DCLR court in Bihar. Analyse this mutation appeal case and provide structured findings.
+
+${caseSummary}
+
+${imgs.length > 0 ? 'Also analyse the uploaded document images shown above for additional facts and arguments.' : ''}
+
+Respond ONLY in this exact JSON format (no other text, no markdown):
+{
+  "positive_findings": ["Finding 1 in Hindi/English", "Finding 2", "Finding 3"],
+  "negative_findings": ["Objection 1", "Objection 2"],
+  "legal_points": ["Legal point referencing specific section", "Legal point 2"],
+  "recommendation": "allowed OR rejected OR remanded OR closed",
+  "recommendation_reason": "Brief reason in Hindi",
+  "suggested_analysis": "3-4 sentences in Hindi for DCLR official legal analysis"
+}`
+    });
+
+    loadTxt.textContent = 'AI generating findings...';
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        messages: [{ role: 'user', content: msgContent }]
+      })
+    });
+    const data = await res.json();
+    const txt = data.content?.[0]?.text || '';
+    const match = txt.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error('Invalid response format');
+    const findings = JSON.parse(match[0]);
+
+    // Render Positive Findings
+    document.getElementById('posFindings').innerHTML =
+      (findings.positive_findings || []).map(f =>
+        `<div class="finding-item"><span class="finding-bullet" style="color:var(--green)">✅</span><span>${f}</span></div>`
+      ).join('') || '<div class="finding-item"><span>—</span><span>No strong positive findings</span></div>';
+
+    // Render Negative Findings
+    document.getElementById('negFindings').innerHTML =
+      (findings.negative_findings || []).map(f =>
+        `<div class="finding-item"><span class="finding-bullet" style="color:var(--red)">❌</span><span>${f}</span></div>`
+      ).join('') || '<div class="finding-item"><span>—</span><span>No major objections</span></div>';
+
+    // Render Legal Points
+    document.getElementById('legalFindings').innerHTML =
+      (findings.legal_points || []).map(f =>
+        `<div class="finding-item"><span class="finding-bullet" style="color:var(--blue)">⚖️</span><span>${f}</span></div>`
+      ).join('') || '<div class="finding-item"><span>—</span><span>Standard provisions apply</span></div>';
+
+    // AI Recommendation
+    if (findings.recommendation && findings.recommendation_reason) {
+      document.getElementById('aiReco').textContent =
+        `सुझाव: ${TLBL[findings.recommendation] || findings.recommendation} — ${findings.recommendation_reason}`;
+      document.getElementById('aiRecoBox').style.display = 'block';
+      selDecider(findings.recommendation);
+      await generateDraftOrder(findings.recommendation);
+    }
+
+    // AI Suggested Analysis for Section C
+    if (findings.suggested_analysis) {
+      document.getElementById('analysisSuggestionText').textContent = findings.suggested_analysis;
+      document.getElementById('analysisSuggestion').style.display = 'block';
+    }
+
+    window._aiFindings = findings;
+    outEl.style.display = 'block';
+    toast('AI analysis complete! Review findings and confirm decision.', '🤖');
+
+  } catch(err) {
+    toast('Analysis error: ' + err.message, '❌');
+    console.error(err);
+  } finally {
+    loadEl.style.display = 'none';
+    btn.disabled = false;
+    btn.classList.remove('analysing');
+    document.getElementById('analyseBtnIco').textContent = '🔄';
+    document.getElementById('analyseBtnTxt').textContent = 'Re-analyse with AI';
+  }
+}
+
+async function generateDraftOrder(decision) {
+  const draftDisplay = document.getElementById('draftDisplay');
+  const draftEmpty = document.getElementById('draftEmpty');
+  const draftTextEl = document.getElementById('draftText');
+  const aadeshSaar = document.getElementById('aadesh_saar');
+  if (!draftTextEl) return;
+
+  if (draftDisplay) draftDisplay.style.display = 'block';
+  if (draftEmpty) draftEmpty.style.display = 'none';
+  draftTextEl.textContent = '⏳ Generating draft...';
+
+  const anchal = g('anchal') || 'Bikramganj';
+  const appName = pNames('appellant').join(', ') || '—';
+
+  const drafts = {
+    allowed: `वादी (${appName}) की अपील स्वीकृत की जाती है। अंचल अधिकारी ${anchal} को निर्देश दिया जाता है कि Bihar Land Mutation Rules 2012 के Rule 9 के अनुसार Correction Slip जारी करें तथा Rule 10 के अनुसार खतियान/रजिस्टर में संशोधन कर ${appName} के नाम नामांतरण अंकित करें। CO का पूर्व आदेश निरस्त किया जाता है।`,
+    rejected: `वादी (${appName}) की अपील अस्वीकृत की जाती है। अंचल अधिकारी का आदेश बरकरार रखा जाता है। अपीलार्थी Bihar Land Mutation Act 2011 की धारा 8/Rule 12 के अंतर्गत अपर समाहर्ता न्यायालय में 30 दिन के भीतर पुनरीक्षण याचिका दायर कर सकते हैं।`,
+    remanded: `प्रकरण अंचल अधिकारी ${anchal} को पुनर्विचार हेतु वापस किया जाता है। CO को निर्देश है कि Rule 5(2) के अनुसार भौतिक कब्जे का पुनः सत्यापन करें तथा 75 कार्य दिवसों के भीतर नया आदेश पारित करें।`,
+    closed: `अपीलार्थी की अनुपस्थिति/non-prosecution के कारण यह अपील अस्थायी रूप से बंद की जाती है। Rule 11(4) के अनुसार अपीलार्थी पर्याप्त कारण दर्शाते हुए प्रार्थना पत्र देकर अपील पुनः खुलवा सकते हैं।`
+  };
+
+  const draft = drafts[decision] || '';
+  draftTextEl.textContent = draft;
+  if (aadeshSaar && !aadeshSaar.value.trim()) aadeshSaar.value = draft;
+}
+
+// Override selDecider to trigger draft generation
+const _origSelDecider = selDecider;
+selDecider = function(t) {
+  _origSelDecider(t);
+  const draftEmpty = document.getElementById('draftEmpty');
+  const draftDisplay = document.getElementById('draftDisplay');
+  if (draftEmpty) draftEmpty.style.display = 'none';
+  if (draftDisplay) draftDisplay.style.display = 'block';
+  generateDraftOrder(t);
+};
+
+function useAISuggestion() {
+  const txt = document.getElementById('analysisSuggestionText')?.textContent;
+  const el = document.getElementById('vishleshan');
+  if (txt && el) {
+    el.value = txt;
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+    el.focus();
+    toast('AI analysis added to Section C! Review and edit as needed.', '✅');
+    document.getElementById('analysisSubC')?.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+}
+
+// Override generateOrder to auto-fill if analysis empty
+const _origGenerateOrder = generateOrder;
+generateOrder = async function() {
+  const vishEl = document.getElementById('vishleshan');
+  const suggEl = document.getElementById('analysisSuggestionText');
+  if (vishEl && !vishEl.value.trim() && suggEl && suggEl.textContent.trim()) {
+    vishEl.value = suggEl.textContent.trim();
+    toast('Auto-filled DCLR Analysis from AI suggestion.', '💡');
+  }
+  const aEl = document.getElementById('aadesh_saar');
+  const draftEl = document.getElementById('draftText');
+  if (aEl && !aEl.value.trim() && draftEl && draftEl.textContent && !draftEl.textContent.includes('⏳')) {
+    aEl.value = draftEl.textContent.trim();
+  }
+  await _origGenerateOrder();
+};
+
+</script>
+</body>
+</html>
