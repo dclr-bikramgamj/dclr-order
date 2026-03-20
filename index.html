@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>DCLR — Mutation Appeal System</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+/* ══════════════════════════════════════════════════
+   DESIGN TOKENS — Luxury Government Banking Portal
+   Spec: warm off-white · white cards · navy · gold
+══════════════════════════════════════════════════ */
+:root {
+  /* Backgrounds */
+  --bg:        #F8F7F4;   /* warm off-white base */
+  --bg2:       #EFEDE8;   /* slightly deeper */
+  --card:      #FFFFFF;
+  --card2:     #FAFAF8;
+
+  /* Brand */
+  --navy:      #0F1F3D;
+  --navy2:     #162646;
+  --navy3:     #1E3060;
+
+  /* Gold — ONLY on buttons, active nav, highlights */
+  --gold:      #B8860B;
+  --gold2:     #C99A1A;
+  --gold3:     #D4A820;
+  --gold-dim:  rgba(184,134,11,.09);
+  --gold-glow: rgba(184,134,11,.22);
+  --gold-grad: linear-gradient(135deg, #B8860B 0%, #8B6508 100%);
+  --gold-grad-h: linear-gradient(135deg, #C99A1A 0%, #B8860B 100%);
+
+  /* Text */
+  --text:      #1A1A2A;   /* dark charcoal */
+  --text2:     #374151;
+  --text3:     #6B7280;   /* cool gray */
+  --text4:     #9CA3AF;
+
+  /* Borders */
+  --border:    #E5E7EB;
+  --border2:   #D1D5DB;
+
+  /* Shadows */
+  --sh-card:   0 2px 8px rgba(0,0,0,.08);
+  --sh-md:     0 4px 16px rgba(0,0,0,.10);
+  --sh-lg:     0 8px 32px rgba(0,0,0,.12);
+  --sh-sm:     0 1px 3px rgba(0,0,0,.06);
+
+  /* Status — exact spec */
+  --green:     #16A34A;
+  --green-bg:  #F0FDF4;
+  --green-br:  rgba(22,163,74,.2);
+  --red:       #DC2626;
+  --red-bg:    #FEF2F2;
+  --red-br:    rgba(220,38,38,.2);
+  --amber:     #D97706;
+  --amber-bg:  #FFFBEB;
+  --amber-br:  rgba(217,119,6,.2);
+  --blue:      #1D4ED8;
+  --blue-bg:   #EFF6FF;
+  --blue-br:   rgba(29,78,216,.18);
+
+  /* Type */
+  --serif:  'Playfair Display', Georgia, serif;
+  --sans:   'Inter', system-ui, -apple-system, sans-serif;
+  --hindi:  'Noto Sans Devanagari', 'Inter', sans-serif;
+  --mangal: 'Mangal', 'Noto Sans Devanagari', sans-serif;
+
+  /* Motion */
+  --t:      250ms cubic-bezier(.4,0,.2,1);
+  --spring: 360ms cubic-bezier(.34,1.56,.64,1);
+
+  /* Layout */
+  --hdr:    56px;
+  --nav:    62px;
+  --r:      10px;
+  --r2:     14px;
+  --r3:     20px;
+}
+
+/* ══════ RESET ══════ */
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent }
+html { scroll-behavior:smooth }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+  max-width: 480px;
+  margin: 0 auto;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ══════ SPLASH ══════ */
+#splash {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--navy);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.sp-ring {
+  width: 68px; height: 68px; border-radius: 50%;
+  border: 1.5px solid rgba(184,134,11,.5);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px; margin-bottom: 20px;
+  box-shadow: 0 0 28px rgba(184,134,11,.18);
+  animation: spIn .5s var(--spring);
+}
+@keyframes spIn { from{opacity:0;transform:scale(.5)} to{opacity:1;transform:scale(1)} }
+#splash h1 { font-family:var(--serif); font-size:25px; font-weight:600; color:#fff; animation:spUp .5s var(--t) .2s both }
+#splash p  { font-size:10.5px; color:rgba(255,255,255,.4); margin-top:6px; letter-spacing:2.2px; text-transform:uppercase; animation:spUp .5s var(--t) .35s both }
+.sp-divider { width:36px; height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent); margin:22px 0 18px; animation:spUp .4s var(--t) .5s both }
+.sp-dots { display:flex; gap:7px; animation:spUp .3s var(--t) .65s both }
+.sp-dots span { width:5px; height:5px; border-radius:50%; background:var(--gold); opacity:.25; animation:spPulse 1.3s ease infinite }
+.sp-dots span:nth-child(2){animation-delay:.22s}
+.sp-dots span:nth-child(3){animation-delay:.44s}
+@keyframes spUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+@keyframes spPulse { 0%,100%{opacity:.2;transform:scale(1)} 50%{opacity:.85;transform:scale(1.4)} }
+
+/* ══════ HEADER ══════ */
+.hdr {
+  position: fixed; top:0; left:50%; transform:translateX(-50%);
+  width:100%; max-width:480px; height:var(--hdr);
+  z-index: 100; display:flex; align-items:center; padding:0 16px; gap:10px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 0 var(--border), 0 2px 6px rgba(0,0,0,.04);
+}
+.hdr-seal {
+  width:30px; height:30px; border-radius:8px;
+  background:var(--gold-dim); border:1px solid rgba(184,134,11,.2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px; flex-shrink:0;
+}
+.hdr-info { flex:1; min-width:0 }
+.hdr-title { font-family:var(--serif); font-size:14px; font-weight:600; color:var(--navy); white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.hdr-sub   { font-size:10px; color:var(--text3); margin-top:1px; letter-spacing:.3px }
+.hdr-btn {
+  width:32px; height:32px; border-radius:8px; flex-shrink:0;
+  background:var(--bg2); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; cursor:pointer; color:var(--text3);
+  transition:all var(--t);
+}
+.hdr-btn:active { background:var(--gold-dim); border-color:rgba(184,134,11,.3); color:var(--gold) }
+.hdr-badge {
+  font-size:9px; font-weight:700; letter-spacing:.6px;
+  color:var(--gold); background:var(--gold-dim);
+  border:1px solid rgba(184,134,11,.22);
+  padding:2px 8px; border-radius:20px; flex-shrink:0;
+}
+
+/* ══════ BOTTOM NAV ══════ */
+.bnav {
+  position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+  width:100%; max-width:480px; height:var(--nav);
+  background:var(--card);
+  border-top:1px solid var(--border);
+  box-shadow:0 -1px 0 var(--border), 0 -2px 8px rgba(0,0,0,.04);
+  display:flex; align-items:center; padding:0 4px env(safe-area-inset-bottom); z-index:100;
+}
+.ni {
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:3px; padding:6px 3px; background:none; border:none;
+  cursor:pointer; font-family:var(--sans); font-size:9.5px; font-weight:500;
+  color:var(--text4); letter-spacing:.2px; transition:all var(--t);
+  border-radius:8px; position:relative;
+}
+.ni.on { color:var(--gold) }
+.ni-ico { font-size:20px; line-height:1; transition:all var(--t) }
+.ni.on .ni-ico { transform:translateY(-1px); filter:drop-shadow(0 0 5px var(--gold-glow)) }
+.ni.on::after {
+  content:''; position:absolute; bottom:3px; left:50%; transform:translateX(-50%);
+  width:18px; height:2.5px; border-radius:2px;
+  background:var(--gold-grad);
+  animation:niDot var(--spring);
+}
+@keyframes niDot { from{width:0;opacity:0} to{width:18px;opacity:1} }
+
+/* ══════ SCROLL / SCREENS ══════ */
+.scroll-area {
+  padding-top:calc(var(--hdr) + 16px);
+  padding-bottom:calc(var(--nav) + 20px);
+  min-height:100dvh;
+}
+.screen { display:none }
+.screen.on { display:block; animation:scIn .22s var(--t) }
+@keyframes scIn { from{opacity:0;transform:translateY(7px)} to{opacity:1;transform:translateY(0)} }
+
+/* ══════ TYPOGRAPHY ══════ */
+.sec-lbl {
+  font-size:10px; font-weight:600; letter-spacing:1.8px;
+  text-transform:uppercase; color:var(--gold);
+  margin:0 16px 10px; display:flex; align-items:center; gap:9px;
+}
+.sec-lbl::after { content:''; flex:1; height:1px; background:linear-gradient(to right,var(--border),transparent) }
+
+/* ══════ HOME HERO ══════ */
+.hero {
+  margin:0 16px 18px;
+  background:linear-gradient(150deg, var(--navy) 0%, var(--navy3) 100%);
+  border-radius:var(--r3); padding:22px 20px;
+  position:relative; overflow:hidden;
+}
+.hero::before {
+  content:'⚖'; position:absolute; right:18px; bottom:12px;
+  font-size:70px; opacity:.05; line-height:1;
+  user-select:none; pointer-events:none;
+}
+.hero::after {
+  content:''; position:absolute; top:-30px; right:-30px;
+  width:120px; height:120px; border-radius:50%;
+  background:radial-gradient(circle,rgba(184,134,11,.16) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-eye { font-size:10px; font-weight:600; letter-spacing:2.2px; text-transform:uppercase; color:var(--gold3); margin-bottom:7px }
+.hero-h   { font-family:var(--serif); font-size:21px; font-weight:600; color:#fff; line-height:1.3; margin-bottom:18px }
+.hero-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px }
+.hstat {
+  background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.10);
+  border-radius:10px; padding:11px 8px; text-align:center; transition:all var(--t);
+}
+.hstat.link { cursor:pointer }
+.hstat.link:active { background:rgba(255,255,255,.12) }
+.hstat-n { font-family:var(--serif); font-size:23px; font-weight:700; color:var(--gold3); display:block; line-height:1 }
+.hstat-l { font-size:9px; color:rgba(255,255,255,.45); margin-top:4px; display:block; letter-spacing:.5px; text-transform:uppercase }
+
+/* ══════ QUICK ACTIONS ══════ */
+.qgrid { display:grid; grid-template-columns:repeat(4,1fr); gap:9px; margin:0 16px 18px }
+.qbtn {
+  display:flex; flex-direction:column; align-items:center; gap:7px;
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--r); padding:13px 7px;
+  cursor:pointer; box-shadow:var(--sh-card);
+  transition:all var(--t); font-family:var(--sans);
+}
+.qbtn:hover { box-shadow:var(--sh-md); transform:translateY(-1px) }
+.qbtn:active { transform:scale(.96); background:var(--bg2) }
+.qico { width:40px; height:40px; border-radius:10px; background:var(--gold-dim); border:1px solid rgba(184,134,11,.18); display:flex; align-items:center; justify-content:center; font-size:18px; transition:all var(--t) }
+.qlbl { font-size:9.5px; color:var(--text3); font-weight:500; text-align:center }
+
+/* ══════ CASE CARDS (home) ══════ */
+.case-list { margin:0 16px; display:flex; flex-direction:column; gap:8px }
+.ccard {
+  background:var(--card); border:1px solid var(--border);
+  border-left:3px solid transparent;
+  border-radius:var(--r); padding:13px 14px;
+  display:flex; align-items:center; gap:12px;
+  cursor:pointer; transition:all var(--t); box-shadow:var(--sh-card);
+}
+.ccard:hover { box-shadow:var(--sh-md); transform:translateY(-1px); border-left-color:var(--gold) }
+.ccard:active { transform:scale(.99) }
+.corb { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0 }
+.cinfo { flex:1; min-width:0 }
+.cnum  { font-size:13px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.cpty  { font-size:11px; color:var(--text3); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+
+/* ══════ STATUS BADGES — exact spec ══════ */
+.badge { font-size:10px; font-weight:600; padding:3px 9px; border-radius:20px; flex-shrink:0; white-space:nowrap }
+.bg-green { background:var(--green-bg); color:var(--green); border:1px solid var(--green-br) }
+.bg-red   { background:var(--red-bg);   color:var(--red);   border:1px solid var(--red-br) }
+.bg-amber { background:var(--amber-bg); color:var(--amber); border:1px solid var(--amber-br) }
+.bg-blue  { background:var(--blue-bg);  color:var(--blue);  border:1px solid var(--blue-br) }
+.bg-gray  { background:var(--bg2);      color:var(--text3); border:1px solid var(--border) }
+
+/* ══════ STEP STRIP ══════ */
+.steps { display:flex; gap:6px; margin:0 16px 16px; overflow-x:auto; padding-bottom:2px }
+.step-chip {
+  flex-shrink:0; padding:6px 14px; border-radius:20px;
+  font-size:11.5px; font-weight:500; cursor:pointer;
+  background:var(--card); color:var(--text3);
+  border:1px solid var(--border); white-space:nowrap;
+  transition:all var(--t);
+}
+.step-chip.cur {
+  background:var(--gold-grad); color:#fff;
+  border-color:var(--gold);
+  box-shadow:0 2px 8px var(--gold-glow);
+}
+.step-chip.done { background:var(--green-bg); color:var(--green); border-color:var(--green-br) }
+
+/* ══════ LUX CARD ══════ */
+.lcard {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--r2); margin:0 16px 12px;
+  overflow:hidden; box-shadow:var(--sh-card);
+}
+/* Gold left-border on important status cards */
+.lcard.gold-l  { border-left:3px solid var(--gold) }
+.lcard.green-l { border-left:3px solid var(--green) }
+.lcard.red-l   { border-left:3px solid var(--red) }
+.lcard.amber-l { border-left:3px solid var(--amber) }
+
+.chdr {
+  padding:13px 16px 11px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:11px; background:var(--card);
+}
+.cico {
+  width:33px; height:33px; border-radius:8px;
+  background:var(--gold-dim); border:1px solid rgba(184,134,11,.18);
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px; flex-shrink:0;
+}
+.ctitle { font-family:var(--serif); font-size:14px; font-weight:600; color:var(--navy) }
+.csub   { font-size:10.5px; color:var(--text3); margin-top:1px }
+.cbody  { padding:15px; background:var(--card) }
+
+/* ══════ FORM ══════ */
+.fg { margin-bottom:13px }
+.fg:last-child { margin-bottom:0 }
+.flbl {
+  font-size:10.5px; font-weight:600; letter-spacing:.9px;
+  text-transform:uppercase; color:var(--text3);
+  display:block; margin-bottom:5px;
+}
+.req { color:var(--gold) }
+.fi {
+  width:100%; background:var(--card);
+  border:1.5px solid var(--border); border-radius:8px;
+  padding:10px 13px; font-family:var(--hindi); font-size:13.5px;
+  color:var(--text); outline:none;
+  transition:border-color var(--t), box-shadow var(--t);
+  -webkit-appearance:none;
+}
+.fi::placeholder { color:var(--text4) }
+.fi:focus {
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px var(--gold-dim);
+  background:var(--card);
+}
+textarea.fi { resize:none; min-height:82px; line-height:1.7 }
+select.fi {
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236B7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 11px center;
+  padding-right:32px; cursor:pointer;
+}
+.fg2 { display:grid; grid-template-columns:1fr 1fr; gap:10px }
+.fwrap { position:relative }
+.fwrap .fi { padding-right:42px }
+
+/* ══════ BUTTONS — gold-to-dark-gold gradient, 250ms hover ══════ */
+.btn {
+  width:100%; padding:13px 18px; border:none; border-radius:var(--r);
+  font-family:var(--sans); font-size:13.5px; font-weight:600;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  gap:7px; transition:all var(--t); letter-spacing:.1px;
+}
+.btn:active { transform:scale(.97) }
+.btn:disabled { opacity:.42; cursor:not-allowed }
+.btn:disabled:active { transform:none }
+.btn-gold {
+  background:var(--gold-grad); color:#fff;
+  box-shadow:0 2px 8px var(--gold-glow);
+}
+.btn-gold:hover:not(:disabled) {
+  background:var(--gold-grad-h);
+  box-shadow:0 4px 14px var(--gold-glow);
+  transform:translateY(-1px);
+}
+.btn-ghost {
+  background:transparent; color:var(--text3);
+  border:1.5px solid var(--border);
+}
+.btn-ghost:hover:not(:disabled) { border-color:var(--border2); color:var(--text) }
+.brow { display:flex; gap:9px; margin:0 16px }
+.brow .btn { margin:0 }
+
+/* ══════ ORDER TYPE TILES ══════ */
+.otgrid { display:grid; grid-template-columns:1fr 1fr; gap:9px }
+.ottile {
+  background:var(--card2); border:1.5px solid var(--border);
+  border-radius:var(--r); padding:14px 10px; text-align:center;
+  cursor:pointer; transition:all var(--t);
+  position:relative; overflow:hidden;
+}
+/* Gold left-border on important status cards — applied via top stripe */
+.ottile::before {
+  content:''; position:absolute; top:0; left:0; right:0;
+  height:2.5px;
+}
+.ottile.allowed::before  { background:var(--green) }
+.ottile.rejected::before { background:var(--red) }
+.ottile.remanded::before { background:var(--amber) }
+.ottile.closed::before   { background:var(--text3) }
+.ottile:active { transform:scale(.95) }
+.ottile.sel { transform:translateY(-2px); box-shadow:var(--sh-md) }
+.ottile.allowed.sel  { background:var(--green-bg); border-color:var(--green-br) }
+.ottile.rejected.sel { background:var(--red-bg);   border-color:var(--red-br) }
+.ottile.remanded.sel { background:var(--amber-bg); border-color:var(--amber-br) }
+.ottile.closed.sel   { background:var(--bg2);      border-color:var(--border2) }
+.ottile.sel::after { content:'✓'; position:absolute; top:6px; right:8px; font-size:10px; font-weight:900; opacity:.7 }
+.ottile.allowed.sel::after  { color:var(--green) }
+.ottile.rejected.sel::after { color:var(--red) }
+.ottile.remanded.sel::after { color:var(--amber) }
+.ottile.sel .ot-n { }
+.ottile.allowed.sel  .ot-n { color:var(--green) }
+.ottile.rejected.sel .ot-n { color:var(--red) }
+.ottile.remanded.sel .ot-n { color:var(--amber) }
+.ot-ico { font-size:23px; display:block; margin-bottom:7px }
+.ot-n   { font-size:12px; font-weight:600; color:var(--text); display:block; line-height:1.3; margin-bottom:2px }
+.ot-s   { font-size:9.5px; color:var(--text3); display:block }
+
+/* ══════ PARTY / PLOT BLOCKS ══════ */
+.pblock {
+  background:var(--card); border:1px solid var(--border);
+  border-left:3px solid transparent;
+  border-radius:var(--r); padding:13px; margin-bottom:9px;
+  position:relative;
+}
+.pblock.app-t  { border-left-color:var(--green) }
+.pblock.resp-t { border-left-color:var(--red) }
+.pblock.int-t  { border-left-color:var(--blue) }
+.plotblock {
+  background:var(--card); border:1px solid var(--border);
+  border-left:3px solid var(--gold);
+  border-radius:var(--r); padding:13px; margin-bottom:9px;
+  position:relative;
+}
+.bk-hdr { display:flex; align-items:center; gap:8px; margin-bottom:11px }
+.bk-badge {
+  width:20px; height:20px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; font-weight:700; flex-shrink:0;
+}
+.bb-g { background:var(--green); color:#fff }
+.bb-r { background:var(--red);   color:#fff }
+.bb-b { background:var(--blue);  color:#fff }
+.bb-o { background:var(--gold);  color:#fff }
+.bk-lbl { font-size:11.5px; font-weight:500; color:var(--text3) }
+.bk-rm {
+  position:absolute; top:9px; right:9px;
+  width:22px; height:22px; border-radius:50%;
+  background:var(--red-bg); border:1px solid var(--red-br);
+  color:var(--red); font-size:13px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; transition:all var(--t);
+}
+.bk-rm:active { background:var(--red); color:#fff }
+.add-btn {
+  width:100%; padding:11px;
+  border:1.5px dashed rgba(107,114,128,.28);
+  border-radius:var(--r); background:transparent;
+  font-family:var(--sans); font-size:12px;
+  color:var(--text3); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:5px;
+  transition:all var(--t);
+}
+.add-btn:active { border-color:var(--gold); color:var(--gold); background:var(--gold-dim) }
+
+/* ══════ PAKSH TOGGLE ══════ */
+.ptoggle {
+  display:flex; gap:3px;
+  background:var(--bg2); border-radius:9px; padding:3px;
+  margin-bottom:11px; border:1px solid var(--border);
+}
+.ptbtn {
+  flex:1; padding:7px 10px; border-radius:7px; border:none;
+  font-family:var(--sans); font-size:12px; font-weight:500;
+  cursor:pointer; background:transparent; color:var(--text3);
+  transition:all var(--t); display:flex; align-items:center; justify-content:center; gap:5px;
+}
+.ptbtn.on {
+  background:var(--card); color:var(--gold);
+  box-shadow:var(--sh-sm);
+  border:1px solid rgba(184,134,11,.2);
+}
+
+/* ══════ SCAN ZONE ══════ */
+.scan-zone {
+  border:1.5px dashed var(--border2); border-radius:var(--r);
+  padding:18px; text-align:center; background:var(--bg2);
+  cursor:pointer; transition:all var(--t); position:relative;
+}
+.scan-zone input[type=file] { position:absolute; inset:0; opacity:0; width:100%; cursor:pointer }
+.scan-zone:active { border-color:var(--gold); background:var(--gold-dim) }
+.sz-ico { font-size:26px; opacity:.45; display:block; margin-bottom:7px }
+.sz-t   { font-size:13px; font-weight:500; color:var(--text2) }
+.sz-s   { font-size:10.5px; color:var(--text3); margin-top:3px }
+.scan-list { margin-top:8px; display:flex; flex-direction:column; gap:5px }
+.si {
+  display:flex; align-items:center; gap:8px;
+  background:var(--card); border:1px solid var(--border);
+  border-radius:7px; padding:6px 10px;
+}
+.si img { width:26px; height:26px; object-fit:cover; border-radius:4px }
+.si-n { flex:1; font-size:11px; color:var(--text3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.si-x { background:none; border:none; color:var(--text4); cursor:pointer; font-size:13px }
+.ext-btn {
+  width:100%; padding:10px; margin-top:9px;
+  background:var(--gold-dim); border:1px solid rgba(184,134,11,.2);
+  border-radius:8px; font-family:var(--sans); font-size:12.5px;
+  font-weight:600; color:var(--gold); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  transition:all var(--t);
+}
+.ext-btn:disabled { opacity:.4; cursor:not-allowed }
+.ext-btn:active:not(:disabled) { background:rgba(184,134,11,.15) }
+
+/* ══════ DOC ZONE ══════ */
+.doc-zone {
+  background:var(--bg2); border:1px dashed var(--border2);
+  border-radius:var(--r); padding:11px; margin-top:10px;
+}
+.dz-lbl { font-size:9.5px; font-weight:600; text-transform:uppercase; letter-spacing:.8px; color:var(--text3); margin-bottom:8px }
+.dz-row { display:flex; gap:6px; flex-wrap:wrap }
+.dzbtn {
+  display:flex; align-items:center; gap:4px;
+  padding:6px 11px; border-radius:7px;
+  border:1px solid var(--border); background:var(--card);
+  cursor:pointer; font-family:var(--sans); font-size:11.5px; color:var(--text3);
+  transition:all var(--t);
+}
+.dzbtn input[type=file] { display:none }
+.dzbtn:active { border-color:var(--gold); color:var(--gold); background:var(--gold-dim) }
+.doc-list { margin-top:7px; display:flex; flex-direction:column; gap:4px }
+.di {
+  display:flex; align-items:center; gap:7px;
+  background:var(--card); border:1px solid var(--border);
+  border-radius:7px; padding:5px 9px;
+}
+.di img { width:24px; height:24px; object-fit:cover; border-radius:4px }
+.di-n { flex:1; font-size:11px; color:var(--text3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:140px }
+.di-x { background:none; border:none; color:var(--text4); cursor:pointer; font-size:13px }
+
+/* ══════ ANALYSIS SUB-SECTIONS — gold left-border ══════ */
+.asub {
+  border:1px solid var(--border); border-radius:var(--r);
+  padding:13px; margin-bottom:11px;
+  border-left:3px solid transparent;
+}
+.asub:last-child { margin-bottom:0 }
+.asub.dec  { background:var(--amber-bg); border-left-color:var(--amber) }
+.asub.dft  { background:var(--blue-bg);  border-left-color:var(--blue) }
+.asub.anl  { background:var(--green-bg); border-left-color:var(--green) }
+.as-lbl {
+  font-size:10px; font-weight:700; letter-spacing:1.2px;
+  text-transform:uppercase; margin-bottom:10px;
+  display:flex; align-items:center; gap:6px;
+}
+.asub.dec .as-lbl  { color:#92400E }
+.asub.dft .as-lbl  { color:#1E40AF }
+.asub.anl .as-lbl  { color:#14532D }
+
+/* ══════ AI BOX ══════ */
+.ai-box {
+  margin:0 16px 14px;
+  background:linear-gradient(135deg,rgba(184,134,11,.05),rgba(184,134,11,.02));
+  border:1px solid rgba(184,134,11,.18);
+  border-radius:var(--r2); padding:14px;
+}
+.ai-lbl {
+  font-size:10px; font-weight:700; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--gold);
+  display:flex; align-items:center; gap:6px; margin-bottom:9px;
+}
+.ai-lbl::before { content:'◆'; font-size:6px }
+
+/* ══════ PREVIEW ══════ */
+.prev-wrap { display:none; margin:0 16px 14px }
+.prev-wrap.show { display:block; animation:scIn .3s var(--t) }
+.prev-shell {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--r2); overflow:hidden; box-shadow:var(--sh-md);
+}
+.prev-hdr {
+  background:linear-gradient(150deg, var(--navy) 0%, var(--navy3) 100%);
+  padding:16px;
+}
+.prev-court { font-size:12.5px; font-weight:500; color:rgba(255,255,255,.82); line-height:1.4; margin-bottom:10px; font-family:var(--hindi) }
+.prev-tags  { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:11px }
+.prev-ct {
+  font-size:10px; font-weight:600; padding:3px 10px; border-radius:20px;
+  background:rgba(184,134,11,.2); color:var(--gold3); border:1px solid rgba(184,134,11,.3);
+}
+.prev-tt { font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px }
+.prev-tt.allowed  { background:rgba(22,163,74,.15);  color:#4ADE80; border:1px solid rgba(22,163,74,.3) }
+.prev-tt.rejected { background:rgba(220,38,38,.15);  color:#FCA5A5; border:1px solid rgba(220,38,38,.3) }
+.prev-tt.remanded { background:rgba(217,119,6,.15);  color:#FCD34D; border:1px solid rgba(217,119,6,.3) }
+.prev-tt.closed   { background:rgba(255,255,255,.1); color:rgba(255,255,255,.55); border:1px solid rgba(255,255,255,.15) }
+.prev-pts {
+  display:flex; align-items:center; gap:8px;
+  background:rgba(255,255,255,.07); border-radius:8px; padding:9px 12px;
+}
+.ppc { flex:1 }
+.ppl { font-size:8.5px; color:rgba(255,255,255,.38); letter-spacing:.7px; text-transform:uppercase }
+.ppn { font-size:12px; font-weight:600; color:#fff; margin-top:2px; font-family:var(--hindi); line-height:1.3 }
+.ppv { font-size:10px; font-weight:700; color:var(--gold3); padding:3px 7px; border-radius:6px; background:rgba(184,134,11,.15) }
+
+/* Alternate row shading — exact spec #F8F7F4 */
+.prev-meta { display:grid; grid-template-columns:1fr 1fr; border-bottom:1px solid var(--border) }
+.pmc { padding:9px 13px; border-right:1px solid var(--border) }
+.pmc:nth-child(even) { border-right:none; background:var(--bg) }   /* #F8F7F4 */
+.pmc:nth-child(odd)  { background:var(--card) }
+.pmcel:nth-child(even) { background:var(--bg) }
+.pml { font-size:8.5px; color:var(--text3); letter-spacing:.5px; text-transform:uppercase }
+.pmv { font-size:12px; font-weight:600; color:var(--text); margin-top:2px }
+
+.order-body { padding:13px }
+.ob-hdr { display:flex; align-items:center; gap:8px; margin-bottom:11px; padding-bottom:9px; border-bottom:1px solid var(--border) }
+.ob-t { font-size:11px; font-weight:600; color:var(--text3); letter-spacing:.4px }
+.mangal-chip {
+  font-size:9px; font-weight:700; padding:2px 8px; border-radius:10px;
+  background:var(--gold-dim); color:var(--gold); border:1px solid rgba(184,134,11,.2);
+  margin-left:auto;
+}
+.o-loading { display:none; flex-direction:column; align-items:center; padding:34px; gap:13px }
+.o-loading.show { display:flex }
+.spinner { width:36px; height:36px; border-radius:50%; border:2px solid var(--border); border-top-color:var(--gold); animation:spin .7s linear infinite }
+@keyframes spin { to{transform:rotate(360deg)} }
+.loading-t { font-size:13px; color:var(--text3) }
+.loading-s { font-size:11px; color:var(--text4) }
+
+/* Order sections — alternate shading */
+.osec { padding:11px 0; border-bottom:1px solid var(--border) }
+.osec:last-child { border-bottom:none; padding-bottom:0 }
+.osec:nth-child(even) { background:var(--bg); margin:0 -13px; padding:11px 13px }
+.osec.fin {
+  background:var(--green-bg); border:1px solid var(--green-br);
+  border-radius:var(--r); padding:11px; margin-top:8px;
+}
+.osh { display:flex; align-items:flex-start; gap:9px; margin-bottom:7px }
+.osn { width:21px; height:21px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:#fff; flex-shrink:0 }
+.oshi { font-size:12.5px; font-weight:600; color:var(--text) }
+.osen { font-size:9.5px; color:var(--text3); margin-top:1px }
+.osta {
+  width:100%; font-family:var(--mangal); font-size:13.5px;
+  line-height:1.85; color:var(--text);
+  background:var(--bg2); border:1.5px solid var(--border);
+  border-radius:8px; padding:9px 12px; outline:none;
+  resize:none; min-height:72px; transition:all var(--t);
+}
+.osta:focus { border-color:var(--gold); box-shadow:0 0 0 3px var(--gold-dim); background:var(--card) }
+.osta.filled { border-color:var(--green-br); background:var(--green-bg) }
+.fin .osta { background:rgba(22,163,74,.04); border-color:var(--green-br); min-height:92px }
+.rcms-bar {
+  background:var(--green-bg); border-top:1px solid var(--green-br);
+  padding:9px 14px; font-size:11.5px; font-weight:600;
+  color:var(--green); display:flex; align-items:center; gap:6px;
+  font-family:var(--hindi);
+}
+.pact { display:flex; gap:6px; padding:10px 13px; border-top:1px solid var(--border); background:var(--bg2) }
+.pabtn {
+  flex:1; padding:9px 5px; border-radius:8px; border:none;
+  font-family:var(--sans); font-size:11.5px; font-weight:600;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px;
+  transition:all var(--t);
+}
+.pabtn:active { transform:scale(.94) }
+.pa-w { background:var(--green-bg); color:var(--green); border:1px solid var(--green-br) }
+.pa-p { background:var(--red-bg);   color:var(--red);   border:1px solid var(--red-br) }
+.pa-c { background:var(--blue-bg);  color:var(--blue);  border:1px solid var(--blue-br) }
+.pa-r { background:var(--amber-bg); color:var(--amber); border:1px solid var(--amber-br) }
+
+/* Section number colors */
+.sc1{background:#16A34A} .sc2{background:#0EA5E9} .sc3{background:#DC2626}
+.sc4{background:#D97706} .sc5{background:#0891B2} .sc6{background:#15803D}
+.sc7{background:#B91C1C} .sc8{background:#6D28D9} .sc9{background:#92400E}
+.sc10{background:#1D4ED8} .sc11{background:#065F46}
+
+/* ══════ BIG ACTION BUTTONS ══════ */
+.bab {
+  display:none; width:calc(100% - 32px); margin:0 16px 10px;
+  padding:15px 18px; border:none; border-radius:var(--r2);
+  font-family:var(--sans); font-size:14px; font-weight:700;
+  cursor:pointer; align-items:center; gap:13px;
+  transition:all var(--t); position:relative; overflow:hidden;
+}
+.bab::after {
+  content:''; position:absolute; top:0; left:-100%;
+  width:55%; height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);
+  transition:left .55s var(--t);
+}
+.bab:hover::after { left:120% }
+.bab.show { display:flex; animation:babIn .4s var(--spring) }
+@keyframes babIn { from{opacity:0;transform:translateY(14px) scale(.95)} to{opacity:1;transform:none} }
+.bab:active { transform:scale(.98) }
+.bab-ico { width:41px; height:41px; border-radius:11px; background:rgba(255,255,255,.17); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0 }
+.bab-txt { text-align:left }
+.bab-t1 { font-size:14.5px; font-weight:800; color:inherit; display:block }
+.bab-t2 { font-size:11px; opacity:.78; display:block; margin-top:2px }
+.bab-rcms { background:linear-gradient(135deg,#15803D,#16A34A); color:#fff; box-shadow:0 4px 16px rgba(22,163,74,.35) }
+.bab-pdf  { background:linear-gradient(135deg,#B91C1C,#DC2626); color:#fff; box-shadow:0 4px 16px rgba(220,38,38,.3) }
+.bab-wa   { background:linear-gradient(135deg,#15803D,#22C55E); color:#fff; box-shadow:0 4px 16px rgba(34,197,94,.3) }
+
+/* ══════ FINAL DECISION ══════ */
+.dec-bar { display:none; margin:0 16px 14px; background:var(--card); border:1px solid var(--border); border-radius:var(--r2); overflow:hidden; box-shadow:var(--sh-md) }
+.dec-bar.show { display:block; animation:scIn .3s var(--t) }
+.db-hdr { background:linear-gradient(150deg,var(--navy),var(--navy3)); padding:14px 16px }
+.db-hdr h3 { font-family:var(--serif); font-size:15px; font-weight:600; color:#fff }
+.db-hdr p  { font-size:11px; color:rgba(255,255,255,.45); margin-top:3px }
+.db-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; padding:12px }
+.dbtn {
+  display:flex; flex-direction:column; align-items:center; gap:5px;
+  padding:12px 8px; border-radius:10px;
+  border:1.5px solid var(--border); background:var(--card2);
+  cursor:pointer; font-family:var(--sans); transition:all var(--t);
+}
+.dbtn:active { transform:scale(.94) }
+.db-ico { font-size:23px }
+.db-l { font-size:11.5px; font-weight:700; color:var(--text) }
+.db-s { font-size:9px; color:var(--text3); text-align:center; line-height:1.4 }
+.dbtn.acc.ch { background:var(--green-bg); border-color:var(--green-br) }
+.dbtn.rej.ch { background:var(--red-bg);   border-color:var(--red-br) }
+.dbtn.rem.ch { background:var(--amber-bg); border-color:var(--amber-br) }
+.dbtn.cls.ch { background:var(--bg2);      border-color:var(--border2) }
+.dbtn.acc.ch .db-l { color:var(--green) }
+.dbtn.rej.ch .db-l { color:var(--red) }
+.dbtn.rem.ch .db-l { color:var(--amber) }
+.db-legal { padding:0 12px 12px }
+.db-legbox { background:var(--bg); border:1px solid var(--border); border-radius:9px; padding:11px; display:none }
+.db-legbox.show { display:block; animation:scIn .2s var(--t) }
+.db-legtitle { font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--text3); margin-bottom:7px }
+.db-legpt { display:flex; gap:7px; margin-bottom:5px; font-size:11.5px; color:var(--text2); line-height:1.5 }
+.db-legpt:last-child { margin-bottom:0 }
+.db-stamp { display:none; margin:0 12px 12px; background:var(--green-bg); border:1px solid var(--green-br); border-radius:8px; padding:9px 12px; font-size:12.5px; font-weight:700; color:var(--green); align-items:center; gap:7px; font-family:var(--hindi) }
+.db-stamp.show { display:flex; animation:scIn .3s var(--t) }
+
+/* ══════ HISTORY ══════ */
+.sbox { margin:0 16px 11px; position:relative }
+.sbox input {
+  width:100%; padding:11px 14px 11px 39px;
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:var(--r); font-family:var(--sans); font-size:13px;
+  color:var(--text); outline:none; transition:all var(--t);
+  box-shadow:var(--sh-sm);
+}
+.sbox input::placeholder { color:var(--text4) }
+.sbox input:focus { border-color:var(--gold); box-shadow:0 0 0 3px var(--gold-dim) }
+.sbox::before { content:'🔍'; position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:13px; pointer-events:none }
+.frow { display:flex; gap:6px; margin:0 16px 11px; overflow-x:auto; padding-bottom:2px }
+.fchip {
+  flex-shrink:0; padding:6px 13px; border-radius:20px;
+  font-size:11px; font-weight:500; cursor:pointer;
+  background:var(--card); color:var(--text3);
+  border:1px solid var(--border); white-space:nowrap;
+  font-family:var(--sans); transition:all var(--t); box-shadow:var(--sh-sm);
+}
+.fchip.on { background:var(--gold-grad); color:#fff; border-color:var(--gold); box-shadow:0 2px 6px var(--gold-glow) }
+.stat-row { display:flex; gap:7px; margin:0 16px 11px; overflow-x:auto; padding-bottom:2px }
+.spill {
+  flex-shrink:0; background:var(--card); border:1px solid var(--border);
+  border-radius:10px; padding:9px 12px; text-align:center;
+  min-width:66px; box-shadow:var(--sh-sm);
+}
+.sp-n { font-family:var(--serif); font-size:18px; font-weight:700; color:var(--gold); display:block; line-height:1 }
+.sp-l { font-size:9px; color:var(--text3); display:block; margin-top:3px; letter-spacing:.4px; text-transform:uppercase }
+.hlist { margin:0 16px; display:flex; flex-direction:column; gap:8px }
+.hcard {
+  background:var(--card); border:1px solid var(--border);
+  border-left:3px solid transparent; border-radius:var(--r);
+  overflow:hidden; transition:all var(--t); box-shadow:var(--sh-card);
+}
+.hcard:hover { box-shadow:var(--sh-md); border-left-color:var(--gold); transform:translateX(1px) }
+.hc-top { display:flex; align-items:flex-start; gap:11px; padding:12px 13px 9px }
+.hc-orb { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0 }
+.hc-i { flex:1; min-width:0 }
+.hc-n { font-size:13px; font-weight:600; color:var(--text) }
+.hc-p { font-size:11px; color:var(--text3); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.hc-m { font-size:10.5px; color:var(--text4); margin-top:2px }
+/* Alternate row shading on history card bottom */
+.hc-bot { display:flex; align-items:center; gap:9px; padding:7px 12px; background:var(--bg); border-top:1px solid var(--border) }
+.hc-d { font-size:10px; color:var(--text3); flex:1 }
+.hca-row { display:flex; gap:5px }
+.hca {
+  padding:5px 10px; border-radius:7px; border:none;
+  font-size:11px; font-weight:600; cursor:pointer;
+  font-family:var(--sans); transition:all var(--t);
+}
+.hca:active { transform:scale(.93) }
+.hca-c { background:var(--blue-bg); color:var(--blue); border:1px solid var(--blue-br) }
+.hca-d { background:var(--red-bg);  color:var(--red);  border:1px solid var(--red-br) }
+
+/* ══════ PROFILE ══════ */
+.prof-hero {
+  margin:0 16px 18px;
+  background:linear-gradient(150deg,var(--navy),var(--navy3));
+  border-radius:var(--r3); padding:20px;
+  display:flex; align-items:center; gap:14px;
+}
+.prof-av {
+  width:54px; height:54px; border-radius:50%;
+  background:rgba(184,134,11,.2); border:2px solid rgba(184,134,11,.4);
+  display:flex; align-items:center; justify-content:center;
+  font-size:25px; flex-shrink:0;
+}
+.prof-n { font-family:var(--serif); font-size:17px; font-weight:600; color:#fff }
+.prof-r { font-size:11px; color:rgba(255,255,255,.5); margin-top:3px }
+.prof-d { font-size:11px; color:var(--gold3); margin-top:2px }
+.icard {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--r2); overflow:hidden; margin:0 16px 12px;
+  box-shadow:var(--sh-sm);
+}
+.irow {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 14px; border-bottom:1px solid var(--border);
+  transition:all var(--t);
+}
+/* Alternate row shading — exact spec #F8F7F4 */
+.irow:nth-child(even) { background:var(--bg) }
+.irow:nth-child(odd)  { background:var(--card) }
+.irow:last-child { border-bottom:none }
+.irow:active { background:var(--gold-dim) }
+.ir-ico {
+  width:33px; height:33px; border-radius:8px;
+  background:var(--gold-dim); border:1px solid rgba(184,134,11,.18);
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px; flex-shrink:0;
+}
+.ir-t { flex:1; min-width:0 }
+.ir-l { font-size:10px; color:var(--text3); letter-spacing:.3px }
+.ir-v { font-size:13px; font-weight:600; color:var(--text); margin-top:2px; line-height:1.3 }
+.ir-s { font-size:10px; color:var(--text4); margin-top:1px }
+.ir-a { color:var(--text4); font-size:16px; flex-shrink:0 }
+
+/* ══════ SETTINGS ══════ */
+.tsw { position:relative; width:42px; height:23px; flex-shrink:0 }
+.tsw input { opacity:0; width:0; height:0 }
+.tsl {
+  position:absolute; cursor:pointer; inset:0;
+  background:var(--border2); border-radius:23px; transition:var(--t);
+}
+.tsl::before {
+  content:''; position:absolute; height:17px; width:17px;
+  left:3px; bottom:3px; background:#fff; border-radius:50%;
+  transition:var(--t); box-shadow:0 1px 3px rgba(0,0,0,.2);
+}
+.tsw input:checked + .tsl { background:var(--gold) }
+.tsw input:checked + .tsl::before { transform:translateX(19px) }
+
+/* ══════ CAMERA — GLASSMORPHISM ══════ */
+.cam-modal {
+  display:none; position:fixed; inset:0; z-index:9998;
+  background:rgba(15,31,61,.5);
+  align-items:flex-end; justify-content:center;
+  /* Glassmorphism */
+  backdrop-filter:blur(20px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
+}
+.cam-modal.open { display:flex }
+.cam-sheet {
+  /* Glassmorphism card */
+  background:rgba(255,255,255,.88);
+  backdrop-filter:blur(28px) saturate(200%);
+  -webkit-backdrop-filter:blur(28px) saturate(200%);
+  border:1px solid rgba(255,255,255,.62);
+  border-radius:22px 22px 0 0; padding:18px;
+  width:100%; max-width:480px;
+  display:flex; flex-direction:column; gap:11px;
+  box-shadow:0 -8px 40px rgba(0,0,0,.14);
+}
+.cam-handle { width:34px; height:3.5px; border-radius:2px; background:var(--border2); margin:0 auto -4px }
+.cam-title { font-family:var(--serif); font-size:16px; font-weight:600; color:var(--navy); text-align:center }
+video { width:100%; border-radius:10px; background:#000; max-height:250px }
+
+/* ══════ TOAST ══════ */
+.toast {
+  position:fixed; bottom:calc(var(--nav) + 12px);
+  left:50%; transform:translateX(-50%) translateY(70px);
+  background:rgba(15,31,61,.95);
+  border:1px solid rgba(255,255,255,.08);
+  color:#fff; padding:10px 17px; border-radius:24px;
+  font-size:12.5px; font-weight:500;
+  box-shadow:0 8px 28px rgba(0,0,0,.22);
+  opacity:0; transition:all .26s var(--t);
+  z-index:9997; white-space:nowrap;
+  display:flex; align-items:center; gap:7px;
+  backdrop-filter:blur(10px);
+}
+.toast.show { transform:translateX(-50%) translateY(0); opacity:1 }
+
+/* ══════ VOICE MIC ══════ */
+.vmic {
+  position:absolute; right:9px; top:10px;
+  width:26px; height:26px; border-radius:50%;
+  background:var(--gold-dim); border:1px solid rgba(184,134,11,.2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; cursor:pointer; transition:all var(--t); z-index:2;
+}
+.vmic.rec { background:var(--red); border-color:var(--red); animation:vPulse 1s ease infinite }
+@keyframes vPulse { 0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.4)} 50%{box-shadow:0 0 0 7px rgba(220,38,38,0)} }
+
+/* ══════ PLOT BADGE ══════ */
+.plot-badge { font-size:9px; font-weight:700; background:var(--gold); color:#fff; padding:2px 8px; border-radius:10px; margin-left:8px; letter-spacing:.4px }
+
+/* ══════ EMPTY ══════ */
+.empty { text-align:center; padding:42px 20px; color:var(--text3); font-size:13px; line-height:1.7 }
+.empty-ico { font-size:32px; opacity:.28; display:block; margin-bottom:11px }
+
+/* ══════ UTILITY ══════ */
+.mt10{margin-top:10px} .mb12{margin-bottom:12px} .gap13{gap:13px}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+</style>
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjogIkRDTFIgXHUyMDE0IE11dGF0aW9uIEFwcGVhbCBTeXN0ZW0iLCAic2hvcnRfbmFtZSI6ICJEQ0xSIE9yZGVyIiwgInN0YXJ0X3VybCI6ICIuLyIsICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLCAiYmFja2dyb3VuZF9jb2xvciI6ICIjRjhGN0Y0IiwgInRoZW1lX2NvbG9yIjogIiNCODg2MEIiLCAiaWNvbnMiOiBbeyJzcmMiOiAiZGF0YTppbWFnZS9wbmc7YmFzZTY0LGlWQk9SdzBLR2dvQUFBQU5TVWhFVWdBQUFFZ0FBQUJJQ0FZQUFBQlY3Yk5IQUFBQ2ZrbEVRVlI0bk8yY3NVN0RNQkNHRGVJaFlPRUoySms2ZGtOSTNaRFkrMURka2RncUliYU9uZGg1QWhaNEMxZzRsTHF4L3p2SDU5YmwveWFFbk56bDY5bUpvcHhESUlRNGNqYmw0TGZudSs5YWlYaHkrL0JhZkozbUEzdVJrc0lxeXpRNGxqTmZiaTJIUXphcm1jdTVoK2NWdEtKVWd6ekZqQ1h2Rldzc0hoSUZCUTNsZUNlYm9uYmNPSFpPVWxhUVJjNW1OVnZvMHdzaGhMQTJqcmVlUDh5WDIyd01qYVNrSUkyY29SU1VUQzQ1RFNWVkpQbmxja09TTGtvVDI2eG1DNnVVMWtoK09WSHo1VGI3WTQxV2tGU1B0NXpXYTFBdWI4a2xycUx6ZUNCNnp1bWhjbExNbDlzMVdpdmo2OStyb0Z6MWFPVlkxNWVhYUtvdGRSMWpWYlJYUWRhVDlvaW1rb1FkUWFucU9TVTVPZVM2aDlOTVhVR25ocmFLL3EwZ0xWRFFLVTh2VFJYQkI4VVNyaTZ2Ly83Ky9QcndDTkVzbG91Z0laYUh2SkxYSGU4dmowV3h0SEFOQWxBUWdJSUFGQVNnSUFBRkFTZ0lRRUVBQ2dKUUVJQ0NBQlFFb0NBQUJRRW9DRUJCQUFvQ1ZIdWpPSHl6bC9yL3pmMVRkN0VtQzBvbG14dGJtbnpMV0VLeG9EaFpUU0p5akRYNWxyRmlKbGVRSmJDTXRWVENvV0lKMWFhWTVWZnRJWlpRTENqK2hTd0pXY3U5WmF5WWFsTk1rL1RVWkZ2R0VxcmQ1bXNsZEd5eCtLQUlvQ0FBQlFFb0NFQkJBUGZQWDRaWXZuN05qZlg0ekNVRkt3aEFRUUFLQWtCQmxvK3VlMFB6Z1NvckNMQWpTSG9VNGp2SUtWYlJXUFdNOVdvMHZjMjN2RDNYUWkxSXFzaTdzOUJLYVNlaTlqcjIxcURVTlB0TnB2dXBabW1GQ3FGZ2tlNVpVc2tNZ0UyOXFLRzNoejRPbEd1cWVrS1kyUFdzQ1g1SUxGM1A1cmJ3RU56NzV0MXg3WnNYUEhkZU9DUlZkbDRRdkRjMWFZbFdqSEJVdTc5NDRiNzd5eER1SDJTZ0YxbFRkcUFpWkJvL0ZrT0M3RWJBTnZ3QUFBQUFTVVZPUks1Q1lJST0iLCAic2l6ZXMiOiAiNzJ4NzIiLCAidHlwZSI6ICJpbWFnZS9wbmciLCAicHVycG9zZSI6ICJhbnkgbWFza2FibGUifSwgeyJzcmMiOiAiZGF0YTppbWFnZS9wbmc7YmFzZTY0LGlWQk9SdzBLR2dvQUFBQU5TVWhFVWdBQUFHQUFBQUJnQ0FZQUFBRGltSGM0QUFBRFcwbEVRVlI0bk8yZFBXNGJNUkNGbVNDSFNKcWN3SDBxbCtvQ0Era0NxTmVoM0J0SUowQkk1M0tyOURwQm11UVdjUk1hTkVVdXllR1FiMVo2WDJWdmRybkQ5M2I0RXhnYzV3Z2hoTndxNzBZMCt1dkgxMzhqMnJYQWwrOC9WVFZUYSt5YVJjK2hZVVozQXluaGQ0ZWx0MW16UEQvZVgxenJNVUw4WUN6OE5ZdWVJelpEWW9USWdGQjhwUENoQUZiaWFEV2g2V2EwOEtuMFQ0RXl3OGZYWWtMMWpWTHhueC92djFYZnZNNng4WDZ0OTdyZFlhbCtkMnMyVkJuUUtuNG9la3Z3aFRhYm45SEtoTmIrdEpqUVpFQ3BRejVRTGRHRGRzWFBhZzlIdFgyc0hZNktCclNJcnkxODBMYjQyVkh6UVUxL2EweFlOYUJHL0ZGZmZmUU84Yk1qSitTYXZwZE0rTkFid0VqaFBidkRBcDBEVnRvL090ZW5RellEU2wvL0xQR2pkMWJkQjFvaVovVll5NEt1REpoTkxLeVZqVmdQeVF5dytQVnZBVWtXTkdkQXIvZzlFK29zcE5tME95ekhWbjNlaTk1RTFMZ3dZRzM0NGRCVHhtZEI0cnB6N3ZKL2taa0JZR2dBbUdvRE9QelVreHVHVWtEMkFaOCtmbjc5K2MvZjM0Z1Ezb0NNWjdvQnU4UGl6cWY5bTkrbGFHM0V0T0tSd0RrQURBMEFRd1BBMEFBd05BQU1EUUJEQThEUUFEQTBBQXdOQUVNRHdOQUFNRFFBREEwQVF3UEEwQUF3TkFBTURRQkRBOERRQURBMEFBd05BRU1Ed0V6N3U2RHdiMjl5MSs4ZW5tYUZZeWFlWVFia090anlqS1lBMXVMeERERWcxZGt3K054WEZqOTNQdTFWT20wdG5oQjFBM3pRYTRIbS9pMitmajd0dXp0dExaNFkxVW00cHJNdCtIWWt3NGZGZUZKd0ZRUkcxUUR0TDZUM0M3WVdUd3IxT2VEdTRlbDFySXl2bHloTmx0Y1FUOHlRVlpEdmRJamtLOVFjdXkzRkV6SnNINUJhUWJRK280bTFlRHpUZHNJemQ3azFXSW1IcXlBd05BQU1EUUJEQThEUUFEQTBBQXdOQUVNRHdKZzhNMDV5cXBibEEvM1dZQWFBb1FGZ2FBQ1lhZ05hRGlHNmRWb090MklHZ0tFQms4aXQwcHBQenVYWmNldms5TW1kbk1zTUFOTzhFWk1jejFzQ2VaeXg1c1pNb2tzeUEzeWE1SVRoaXVnUzZmSDFISUlVR0ZMQXdUa2VZMTlEU1lOU0NaT3VEUEJEMGEwT1I3WGlyN0dKS2tvV21WSkZ5WU91STJhSjZYWEVQTFVtaEVIK3YzL3paa2dyNmFtVk1uVE9SQzFKR0pKYWtyVUZQVGRWVGRVeTBwSzJtNjRuYklWcDlZUkRXRkViV0ZFNzVKWnF5dWZXOVpDYThqRXBJNjZkSHVFOWFnYUVYTE1aR3FJVFFvZ1JYZ0IxZVJtdUJYb2N6Z0FBQUFCSlJVNUVya0pnZ2c9PSIsICJzaXplcyI6ICI5Nng5NiIsICJ0eXBlIjogImltYWdlL3BuZyIsICJwdXJwb3NlIjogImFueSBtYXNrYWJsZSJ9LCB7InNyYyI6ICJkYXRhOmltYWdlL3BuZztiYXNlNjQsaVZCT1J3MEtHZ29BQUFBTlNVaEVVZ0FBQUlBQUFBQ0FDQVlBQUFERFBtSExBQUFIeDBsRVFWUjRuTzJkWFd3VlJSVEgvKzNTRDBvQlM5TWlFSzFHaFFTSkpDQTAxTmJ3WUVQUVNsSjhFRk1URTB5cVNDSWYwUWdpR29QeVlTTHk0a3VEcUE4a3ZNaUhhY0pERFJhYTFoUW9FZ05WSXg5aUtJS2xVRW8vNzIxN2ZTamJiTGQ3ZDNkbWR1YnVkczR2SWJuYzNaazVlODUvenBtWmU5TUxFQVJCRUFSQkVOcVJwbnJBNWtNVkNkVmpSb25pTmJWS1l5SjlNQXE0R0xJRklhMXpDbnp3eUJCRDRCMTZCYjY4dWlIb0lTY1VkVFZsbnZjRUtZVEFPbklMUEFXZG4yU0NDRW9FZ1hUaUZId0tlckRJRW9Ld0FPekJwOERMeFVrSUlpTGdiaGkxV1c5MW5HbW4vVDJuZThLS1hRaThJdUJxRkdUdzYycktLcmthc25HRXM1MTAyOHFyRzNodEMwUUV6QTJDU1BuV29JczRnR0U4cm5ZcXNvQjlBdkQ0dy9wOHJDSVFFZ0NMZzFRSDNUS3VVSHZWcGNEMEU2dVBlRVhBSkFDUjRLc011bVZjeC9mOXJBR2M3bGNKanhCNFJEREpiK2M4SjN1OGFsWkZtQmQ2cHM5NGZkaDhxQ0xoUndTK1ZNSlQ5MU0xNjIwMkpMM21OdU9kN2swMWZ2M0p1akJNWnpVa0tzRUgzRzJOVXZDQmtRemdaOGZFYXErbkFGanJmbGlDYnlJU3dMQUUzOFN2Q0t4NGxXN21ET0JHMklKdllnK2tuOENHTGZnbWZrVEFZcnRyZldDWi9XRU52aHRST3ZtejQ4ZmZmbllGdm5jQm9zYUVrYWdGM1lxWkNVVDluclFFMEJjNjlNRFhHc0JqTlIzSjJUOFI4Rm9QV09PV2JFSUxsUUJad1JjOXZnMHJZU3c1Z2U0Q0NQWHdiQTJ0T0FxQTk4eWZDQjllWllBN0ExRHREdzhpV1lCS2dPYVFBRFNIU3dDcTB2K3NoeDhkL1JkRlZOclBXd1lDT1FrTUduUGhjdUhIcW5IdkJZWFRWalBvTVdUYUh4UlVBalNIQktBNUpBRE5JUUZvRGdsQWMwZ0Fta01DMEJ3U2dPYVFBRFNIQktBNUpBRE5JUUZvRGdsQWMwZ0Fta01DMEJ3U2dPYVFBRFNIQktBNUpBRE5JUUZvRGdsQWMwZ0Fta01DMEJ3U2dPYVFBRFNIQktBNUpBRE5JUUZvRGdsQWMwZ0Fta01DMEJ3U2dPYVFBRFFuTkg4aHhQclhOUHhjWDdEcW9FeHptSW1xL1NrVGdKZkRXTnVyZG1qVTdUZFJMb0Jram5OeWdQVmUrM1Y3UCtiL1pUc3k2dmJiVVNvQU40YzQ0WFpQTW9kZStMRkttaE9qYnI4VHloYUJWb1hMZUVCcnY2THAyWW1vMjU4TUpRSlFtZDVrT0RIcTlydEIyMEROSVFGb2poSUJxRXhyTXRKMTFPMTNRMWtHc0RwUjFpSk5wdk9pYm44eWxHNERGNnc2T0dhN1k3L0dBc3QrUENpaWJyOFR5ZytDa3FWVDBWbWx5bkZSdDk5T3lvNkN2VTdHV051ckp1cjJtNFRtdzZDd09JU1hxTnBQMjBETklRRm9EZ2xBYzBnQW1rTUMwQndTZ09hUUFEU0hCS0E1SkFETklRRm9EZ2xBYzBMeldZQUlUajhEcTZLZnNQNGNMQXVVQVRTSEJLQTVKQURONFJJQTcyL1ZFL0tvcXltckxLOXVPTUxhampLQTVwQUFOSWNFb0RtT0FpaGVVNXRtdms2Mk42WjFRSGh3cS8vVytGbmphakloRG9JbXdvRk1xaEFxQVpRRlVnL3Y2dCtFMWdDYU02NG1XR2srVkpFd1g3dWxXVkVWc2hEVXViOU1WSlVrTDc5NzFYK0FNa0JrQ1dyUytSYUEyOHlqdFVENDhKc3BYVXNBNEw4TVBCaFVXU25RR1Q5KzlwUCtBY1lTNEtVcXlnVHlZUTIrRjU0Q2NGT1BFeVFDZWZCa1dLLzQrUTR1U3lrQTFKU0RFOTlXb2pBL0J3QVFpdy9qenIxK25QKzlIUWVPdEtMMTBwMHg5eTUrdWhCdnZqSWZDK2NWWUVyT0pIUjJEZUN2YTUxWXY2TWVzZmp3YUY5YjlqYWh0djVxMG5HR0V3bDBkZzJnNWVKLzJMTy9CVGR2OThwOFJBQWp2Z1JHSnBlUGUwZGYrNW04WENlQmRUVmxuaUt3WmdMWlF0aXl0d2tuejdTaGRORXNmUHpPVXJ4UThnZzI3anFGK3ROdEFJQ0s1WTlqNTZabHVOY1Z3OWF2R3RGeXNSMUZzNmVpNnVWNU1JeDBJRDdzZTV5NnBuK3djK015ckNndFFtYUdnZlU3NnVVOUdOZ21FczhXMmJjQWl0ZlVwbG16Z0I5TXcxVUk0WDVQRE1jYnJtRmFiaWEycjF1S1Q5WVhvL0hjVVdSbEd2am83U1ZJVDB2RG5tOWFjT3JzRFFCQTYrVTcyTGJ2RitaeEJtSkRhUDd0RmxhVUZxRm85dFNnSDJNVVZwL1pnKyszZERObEFLc0kvR1FCRTVWQytQbDBHN2F2QXdyeUptUCtrek9RTnkwTHVUa1pBSUQ2MDllRis4L0tORkQ4ekV3QXdNa3piY0w5MmVIeEVXL3dBWTRTd0NzQ1lMd1FyTzhGUlVkbjMranJHZE95a1RjOUM4REl6TzN1alF2MXZYdHpDWFp2TGdFQU5KNzdGMTkrOTZ0UWY4QllYd0RzL2hBSlBzQ3dDTFJqTHdlOHg1OGlPNGJDZ2puN0RjUEk3N3pYc2ErdnIrY2tBQmlHa1Y5WU1HYy9BTnp1dVBXQmtaNCtQUyt2NEVNQXVIbnJlbFVpTWV5NGFuUHF5K2xhTERid1IvNk1tWjhiaHBIZmRiL3orNTZlcnFPODlnTmlFMEEwK0lDQUFJRGdSTUNMMDhyOXRaZm1ZdHRiUzlCK3R3L2xhNDhpTzh2QVR3Y3FrWnVUZ1MxN0cxRmIvN2Z2dnBKZHE2cVloNjNWejZLN040N2xieHhHLzhDZzdFY2RSeERCQndRL0M3QVBXbGRUbHJJUGEzSnpNckN5ckFqdnZyNFFnMFBEK1BUclpnd09EYU83TjQ1ZE5XZVJTQUR2cjEyTTBrV3prWk05Q1hNZmV3aWZiVmlHeWRuc0c2RmpKNjZncjM4UXVUa1plUEg1SWdsUGt4d25IL01HSHdqZ0N5Rk91d1BXdFlFb3V6YVZJQllmUWtkblA1ck8zOFNCSDFweDhWTEg2UFZqSjY3Z1Juc1AxcTZlankvZWV3NVRKbWVncXllR1A2L2V4ZERRMkMyZ3RjNER3SWFkcDhhTjE5MGJ4L0dHYTFoZC9nUmVYZmtVRHRkZGx2ZHdEMGcyc1VTQ0R3aVdBQ3R1VzBUNnhnNC9zZ0p2RXBnQVRMek9Da2dNN3ZncG9VRUZINUFnQUJQV1F5UENteUFEYnlKTkFGWklEUHpJQ0xvVkpRS3dRbUp3UjNiQUNZSWdDSUlnQU9CL0xvUHIxR1Myb2xrQUFBQUFTVVZPUks1Q1lJST0iLCAic2l6ZXMiOiAiMTI4eDEyOCIsICJ0eXBlIjogImltYWdlL3BuZyIsICJwdXJwb3NlIjogImFueSBtYXNrYWJsZSJ9LCB7InNyYyI6ICJkYXRhOmltYWdlL3BuZztiYXNlNjQsaVZCT1J3MEtHZ29BQUFBTlNVaEVVZ0FBQUpBQUFBQ1FDQVlBQUFEblJ1SzRBQUFJZTBsRVFWUjRuTzJjVzJ3VVZSakgvOXVXU2lNWExWSkxwTVJyTkdqcU5WVFJOU0hZRjhSTDFSZ01EM2h0alBFRmZSQ2pKaXJSU0NJaXhxaFpNWUtKQmczWXF0VklWcEZRR3dRVk5kNUlqQVFxQ25JckNtWHRkWDF4NmpDZG5aMHozemx6NC85TENPM3N6RG56bmZuTmQ3NDVzeWxBQ0NHRUVFSUlJU1E4TWxHZndPYlZjNHRSbjBPU2FaclhFZWsxREwxekNtT1dzSVVLclRPS0V6NWh5R1M4QXovaU5MZDJtajZOMUpMUFpjdnVZMUlrWXcxN2lVTmh6T0VsbEFtUnREZFlTaHhLRXo2bFpOSXBrbGFCM09TaE9OSGpKcEl1aWJRSjVKUW5EZUxZQno3cDhaaVNTTnhBR3JLT215aHVBOTdjMnBsNHFaeHhTU1VTSFd4S25ud3UyeUp1eEQ5dEx0dGFTbXgzSTh4elJYTnJwOS96S29sT2lRSWZxSFBLY2dxalk1QVUraDYxelpscHZBZzdDOW5IU2pKT3VpVFNJbERRUWJRR0kweGhIUDI3Ym5lYnhyeWtpbW9xMHlHVFBhWWdFZ1VTU0NwUDFPTDhkdzZ1Mjh2RkV6ZUpMQ1JqS3BHb1NyVXp5U3VKT0lqamhSOEpWS2EzTUxIR1ZEckdtMWZQTGFwSXBHU2JwTzdKNTdJdGNSSW5iUm5JaWVwNEI2MkpLaFRQYTRRa3l3T1VQbi83UU9aejJaRi96cy84dEJVbHphMmRiU3BQczBGajhDMVEwTG9uanZKWWVNWGhsQ1ZKOGxoSUpQSmJxZ1RPUUg2SXN6ekhDNm9TcWVKTG9DRFpKeW55T09QeGlrOWwzemloSXBGcUZ2SlZLS2tLbEJSNXlwSDAxeFpPL0Y0WGxjZjZzZ0lkci9La0ZkMFNhYTJCS0UvODBWMFRlUXJFN3pFVHdOc0QzeG5JeHdJYnMwOUM4Sk9GL05aOHlxOHlvaUtPcnc5TWs0VENYVXNOeE95VFBIVFZRaVVGWXYxRDdKVHl3VmNHS3JQa3oreVRVTXBsSVQ5VHFORlhHU1Q5VUNBaUlqRlBZUlpUNnFlTi9MeDdUM2VFWjZLWHBNWWxFaWpNK3NlYWozOTRmLzZvYlNZbzlXVjdVNFFWbHhPckRncDZIVG1GRVJFVWlJaWdRRVFFQlNJaUtCQVJRWUdJQ0FwRVJGQWdJb0lDRVJFVWlJaWdRRVFFQlNJaUtCQVJRWUdJQ0FwRVJGQWdJb0lDRVJFVWlJaWdRRVFFQlNJaUtCQVJRWUdJQ0FwRVJGQWdJb0lDRVJFVWlJaWdRRVFFQlNJaUtCQVJRWUdJQ0FwRVJGQWdJb0lDRVJFVWlJaWdRRVFFQlNJaUtCQVJRWUdJaUZqL25XajduNzcxOC9rRjE3OXA4blMwa2FhNFlpVlF1WUZWUFQ0dUE1L1d1SUFZQ09RMXVHNERaZC9mK2JtekxhOTlUWlBXdUp4RUpsRFF1OHByUDY4TFkvMXZlc0RUR2xjcElpbWluWGVReWVDZDdVdW5FeS9TR3BjWG9Rc1VWZm8xUGRocGphc2NrVDNHUjVGeXcrZ3pyWEdWZ3V0QVJFUmtBa1dSYnNQb002MXhsU0owZ2FLYXMwM1hLR21OcXh5UlpDRG5ZSnQrTWdwcmtOTWFseGVSclFOWkFUdlhNOXoyOFl2cTRwMEowaHBYS1NKZmlmWksvZEk3T01yQlRXdGNUaUlYeUU2NUpYelY0K05DV3VNQ1lpYVFremdQbklRMHhjVjFJQ0tDQWhFUkZJaUlvRUJFQkFVaUlpZ1FFVUdCaUFnS1JFUlFJQ0tDQWhFUkZJaUlvRUJFQkFVaUltTDlObDVLUHBlTlJYdk5yWjFhenlOT01BTVJFUlNJaUtCQVJJUklvT2JXenJaOEx0dWk2MlJJK09SejJaYm0xczYyb01jekF4RVJGSWlJRUF2RWFTeTVTS2N2d0VPZ3Bua2RHVnRIa2o1SVFyRmZkN3NQZGxLOWtKam1CYnk0b0tVRzRqU1dQSFJNWHdDTGFDTEVkVjZ6czNuMTNLTDFjN2twUVpmVnFpUzFSb3RxaXZWem5melVQd0F6MEhHSDdwdGNxMENzaGRLQlNrWXZPNFVCYXRQWWZ5Y1F5VlJHdlBGN1hmeE9YNENoS1l5WktINll1cWw5Q1JSa1VaRVN4UWNWZVZTeUR4QXdBMUdpNUJCVUhyLzRGc2lQalc1UW91aVFURnQrcjdlU0ZQWmlHbEJieHdpN3NGNjdmQTdPUGVOa0FNRFFVQkc5aFFIczJuTUVHNzdjaFRmZTI0WWpSd2RHOWozOXRBbTQ2K2JwYUdxc1I5MmtHdlQxRDJIdmdRTGVYNzhkcjY3NThaajJPamJzd0tMbnVqejdBNEREdmYzbzNuMFlxOXEzNGFPTk84d0c2OEM2WVZYR1czWHFzbENhd3B3TnE2UThLeE9GblkwNk51ekFwYmVzeG9LSDg5aHo0Q2p1dTYwUmE1NmZnN3JhR2dEQTVSZldZKzN5T2JoaDlwbDROLzhycnJtekhYUHYvUUF2dnZrZEpveXJEdFJmNHcxdjRmRVhOK1A4c3lkaHlZTlg0cUx6SnVzT3F5VFdqUnBVSGxXVWF5Q3BSRkdJTkRnMGpGOTJIc0xDWnpaaTV4K0hNYlYrSEI2NjV6S01xYXJBMHd0bjRvVHFTbnk0WVFkZWVmdDc3TzhwWUY5UEFldTZ1ckYwNVRlQitoc3VGckd1cXh0SC94bEVKZ1BNYUR4VmMwU2pzY1pVTmNzN3I1OXFxUkxvYlh6VHZJNk1jenBUd1FveVNLcVZNRFJVeFBvdmZzTWROMDNIckJsVGNjbjB1cEZNOVBIbk83WDNaMTJKZ2NGaDdXMEQvNDhmRUd3TXBmSUFncTl6MkNYSzU3S0IzdXM0UlhKdU44SGVnd1VBUVBXWUNqUk1HVGV5ZlgvUFA5cjZxTWhrMER5ekFUVmpxL0Qza1g1ODNLbFBUcWswdG5hTytUM29RMUtnZyt4SUN1dFM2SmplVGptbGZ0bVlxdXJUQzRYZWpZZitPckRNMmo1aC9Fa0xUanh4d28zRlluSGdZTSsreFpOcTY1NEVnSU05KzU3cTZ5dDhwZHFlODNQN3RtS3gyTjl6YVArU3ZyN0NWbWs4RmpwdUxsM3lBQm9FQXN4SUpNWHRxYW15TW9NUFhyb08wNmFNeDdxdWJpeGEyb1YxSzI1RVhXME4zbHUvSFk4OHYwbXB2VktmTDM1NUMrYk5PUWNMRjF5TS9vRmgzUDNZSjlqNjB6NWpzYXFnVXg1QTA2c01TV0VkQnBXVkdadzliU0tXTGJvYTA2YU14NjQ5UjdCa3hkY1lHQnpHbzhzM29hOS9DTmZOT2dPdHQxNkFTU2VOUmUzRXNaaDlSUU1ldVAzaVFQMzFGZ2J3MnRxZnNPbmIzYWdlVTRFbjdyOGNWWlhSZnZFaG44dHFsd2ZRbElFczNBcnJxTEtSZlYxbXVGaEU3OUVCL1A1bkx6N2JzZ3VyMm44K1poM296SWFKdVBPbTZXaHFQQldUYTJzd09EaU12UWNMYVA5ME8zTHYvRENxUFR1SER2ZmhxdmxyWERQVVdRMFQ4ZTRMMTZLeU1vTm5YOStLbFcwL2h4RDVhTnh1YUIzeUFKb0ZBdHdsQXVJeHJSMVBsSm9GZElsam9WMGdDNi9IZk1wa0RxL3lRYmM4Z0VHQkxQeXNGMUdvNFBpcE4wMklZMkZjSUF2SndpTUpoa2x4TEVJVHlJSWltU1VNYWV5RUxwQVRDaVVqYkdFSUlZUVFRZ2doUXY0RnFsdGM3ZnZIc3k0QUFBQUFTVVZPUks1Q1lJST0iLCAic2l6ZXMiOiAiMTQ0eDE0NCIsICJ0eXBlIjogImltYWdlL3BuZyIsICJwdXJwb3NlIjogImFueSBtYXNrYWJsZSJ9LCB7InNyYyI6ICJkYXRhOmltYWdlL3BuZztiYXNlNjQsaVZCT1J3MEtHZ29BQUFBTlNVaEVVZ0FBQUpnQUFBQ1lDQVlBQUFBWXdpQWhBQUFKQjBsRVFWUjRuTzJkYVd3VlZSaUczeW5hVzFSb2l3Z290S2dnaVFzUzE2cFlWNjVMUkdPTlM2VkdEWkVtYXRURWFJeEdEZjRobWhnMTdqWnhqV0pOVkZ5SUtBMytzRkdMUmtSUUVsRVRiVTFhS0tTdHBYU1RYbi9vMUdFNjk5NlpNK2ViOVgxK3dYVHVtYk04ODMzZm5MbkpCUWdoaEJCQ0NDR0VFTGNZWVhmQVpHUHowbHpZZlVnYU5mVnJRMS9mMERwQW9ZSW5ET0VDdlNDbGlnNUJ5UmJJUmR5SWxXMXNEYUlycWFLbHFiYm9PZEtpaVRaZVNDd0tGVHlGaEpNU1RhVFJmR0pScW1nUXBHamFCWE9TaTJKRkZ5ZlpkRXFtVlRDN1hCUXJIa2hLcHFXUnRFUXQ2MElrZlh5QUhzbDhONUJFdVp4RWNyckxzNDJ0aVpOT2R6VHpKWmgwU214cHFxM1QycUE3MWpnY3E4dHozSW5BKzV4dGJIWGJOOWZvaW1iS2drbklaUmRLWXVKYzlHSENNWHVrS2tRWVVVeHEzcXhqRGxVd3Y1TnFUbEFZUXRuNjRYamNLVTBXa2k3c1ZHa1Z6dStjK3BWTVNUQmRja1ZGclAvNjRuaTgyUGlpS3BtSmpqbjJJOWtCWGkrbTQzMWlsTVFxaEJ0SnZLVFBNRERudUtXcHRrN0hmRzlzWHByeklwa25HM1hVWGJvR3FwdWtSakFyZm01czFhSmZXYkFreVdXU2xCcXNHS3Jyb0pJcVhRdm1SNjY0cEVRZ25rK1JLcWhJcGhMRlNqejJ5elBtUU9JZ1Y1cklOcmF1OGJyUHFITHp1QkpNTlhwRlBTVTZZUjlmb2ZGNk9UZUsrSlhNelFPZjU2ZklOT0FrU3I3WFFuR1R5bzRwbVZRZ0tKcEQweFM5MG96WDlYSmI4SXZVWUpRcmZxaWtTemRvRjR4eXhSY0p5UW9LcHZOOUkwa1dib3Q5clVWK0VORXJ5cTlsZ2tENlJ0ZGQ5SXZ2ZzVGMG8wMHcxbDdKUVdjdGxsY3cxbCtrR0c3cU1DMFJqTkdMNUlNMUdIRkVWNXFNN2F1aXcyZFZqLys3czZzOXhKN0lrWVF4eGs0d00rLy8rRkhEaEdPUzVQc2FqeVJCajFFQzN5bVM5VmR5MFpFbVdZTVJVU2dZRVlXQ0VWRW9HQkdGZ2hGUktCZ1JoWUlSVVNnWUVZV0NFVkVvR0JHRmdoRlJLQmdSaFlJUlVTZ1lFWVdDRVZFb0dCR0ZnaEZSS0JnUmhZSVJVU2dZRVlXQ0VWRW9HQkdGZ2hGUktCZ1JoWUlSVVNnWUVZV0NFVkVvR0JHRmdoRlJLQmdSaFlJUlVTZ1lFWVdDRVZFb0dCR0ZnaEZSS0JnUmhZSVJVU2dZRVlXQ0VWRW9HQkVsRnIvMFlmM0ZDN2QvUCtHS3Q2UzZJMEpTeHhoSndZcE50a29iVVZ1TU5Jd1JpSmhnK1NiZGFlS3M1eGI3dS9YL1lTOUNHc1pvSlJLQ3FkeUp4YzZ4LzkyOFJsaUxrSVl4T2hGNmtXKy9TNlVteGQ2MmpoVGxsalNNTVIraENtYTkwNEs2MjZ6WENtSUIwakRHUW9RbVdOaGhQSWdGU01NWWl4RjZpaVRKaG9JUlVVSVRMT3p3SFVUNlNzTVlpeEZxQkxNdVFGQ0xZTDFXRUJPZmhqRVdJdlFVYVgrc2xsb0VlOXRCVG53YXhwaVBTR3kwMmxPSmpsY2dYbmJNZ3lBTlkzUWlFb0taNUt0WmROenhVWm4wTkl6UlNxUUVNOG4zQ3NSUEcxRWpEV01FSWlxWW5UaE1wRitTT3NiUWkzeVNiQ2dZRVlXQ0VWRW9HQkdGZ2hGUktCZ1JoWUlSVVNnWUVZV0NFVkVvR0JHRmdoRlJLQmdSaFlJUlVTZ1lFU1VXWDlmUlFVdFRiYVRhekRhMmF1eEpkR0VFSTZKUU1DS0tiOEd5amExcldwcHE2M1IwaGtTTGxxYmF1bXhqNnhvL2JUQ0NFVkVvR0JHRmdoRlJ0QWpHT2l4NTZLaS9BRVl3SWt6ZWpkYWErclhHeHVhbE9lRGZEY1c0Ynd6R3ZmOVJ4THJSWEZPLzFuQTZSMXNFWTVwTURyclNJOEFVU1lUUitpN1NqR0s2N0ZkQjRwMWprSVNkeW5Xdlg4RUlaczJyYmhlT3FUSytlSkhMVGYwRk1FVVNZZkthWjJJK1NacTREZUZocDByaURkWG9CZmlNWUlVK1hBaW15dmpnSnhnVTgwTTBSVkt5Nk9OVkxxOFBVYTRFVXluMlRTaFpkUEZieHJqSmJrb1JqSkxGSHhXNVZMYUFQTlZYMW9KZlpiOG1qTUwvcFpVWFlQSEpod01BeG5JNURBL3Z3NjdlSVd6ZHZndnZyUHNGMy8yMGM4Sm55aklIWU5sbEMzRFI0bW9jTldjcU1xV1Q4TmVlRWJSMzl1UEoxemZqdTU5MmpyZmIyeitNc3h2ZUxYcHRBQmdieTZHM2Z4aWJ0blhqaWRlK1IzdG52OHlnaTZDNkRtNjNKcXdvYjdTcXZKOE1jeVBXRktGOFNpa3VQS01LOTY4NEZaZldIb25uMzk2Q0Y1cTNqcDgzcmJ3TXI2NWFnbmxWNWZoMjZ3NDAzUHNaT3JyMllPNFJVNUE5cXhyVEs4cVVyMzFZNVdTOHVQSjhMRG16Q3ZPcnkzSDViUjhqbHl2K2VWMllXU1FvdVFDUEtkTGVzRXJJTkNVTEsyWDI5WS9nL1piZjhOUWJtMkVZd08zTFRzU1ppMmFOLy8yUk8yb3dyNm9jQTRPanVIUFZGL2kxdlEvREkvdXcvZmRlUExkNkN6NzdzbDM1MnQwOWcxai8xYitmUDNMMlZNeWVlWWp2OGJqRnZMSDl5dVVWenhITStpMExWY3hCK3Jtai9QTHUrbDl4MzRwVFVHSVl1UGJTWS9EMUQxMllYamtaNTUwMkJ3Q3cvc3QyOUErTWFMK3VZYWxLUmtiSHRMZHZ4KzhjZTluemNrSXBSZXI2S285ZE5Pc3hhWVpIOXFGNzl5Qm1UajhJeDh5dEFBQWNQV2NxalArbXI2TnJqL1pySGxZNUdkbXpxZ0FBNjFyL3dNN2RlN1ZmQTVDYlQ1VTlVZVVhVE9mM3hheVRFS1JzUnNuKzgyVVkvLzlmWjIxVU1TV3ozdzh0Yk5yV2pZZWVidFBXdnIzYzBEVnZxbldYRmFVUG1haStSbktMampwdFd1V01oek9ac3BQR3hzYjZkK3o4ODBienVHRVltVmt6cTk0R1lBd043VzNyNmQzMVdFbkpwSXFaTTJhL0FzRFlPeml3b2E5djk3TmUyeTF3emsybHBabmpwbFhPZU5Bd2pMS2g0Y0Z2ZW5xNkh3WGdXMlhkTjZMZnRHakZsMkRBUk1tQThMOXlZaVhmZHNMTlZ4NkxlNWFmREFCWThmRG4rSHB6SndEZ21RZlB4Zm1uejhIQTRDaVdMUDhnYngzbVpadkNlczZ0OVF0eCs3SVRBUUIzcmZvQ0c5bzZ0STFWQnpybEFqUzhLcXFwWDJ2b2VMb01pcW1IbE9LYWkrZmpqaHNXSVpjRG5sdTlaVnd1QUZqNTdFYjgxdEdIZ3ljZmlLY2ZPQWZ6cTh1UktaMkVlVlhsdU8zNmhiaG9jYld2NjcvNThjOFlHQndGQU54eTlmRysydEtOYnJrQWpWODR0RDlkbXAyTlNqU3JtSkxCMWc4Yk1EenlON3A3aHJDaHJRUE5uMnpIcG0zZCs1MjN1M2NJMTkzOUtScVdMc0RGaStkaTllT1hJSFBnSk96Wk80by9Pdi9DTjF0MlRHalgva05XTDcrM0RVKysvcjFqUC9vSFJ2RE91bCt3L0tyanNIREJvVGhqMFN5MC9kQ2xkN0FlY1FvSU91UUNOS1JJTzFGUG1lUi84bVVhWFhJQkFvSUJ6cElCRkMwcUJDR1dpWWhnSm9VMlpDbGI4QlNxalNYa0FvUUZNM0d6ODAvaDlPUG1ZVXRLTEpOQUJEUHgrNHFKNkVOYUxKTkFCYk5DMllJbktLbXNoQ2FZSFFxbm56Q0VJb1FRUWdnaGhDU2Nmd0FaakxBY0FlSXJPUUFBQUFCSlJVNUVya0pnZ2c9PSIsICJzaXplcyI6ICIxNTJ4MTUyIiwgInR5cGUiOiAiaW1hZ2UvcG5nIiwgInB1cnBvc2UiOiAiYW55IG1hc2thYmxlIn0sIHsic3JjIjogImRhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBTUFBQUFEQUNBWUFBQUJTM0d3SEFBQUwrMGxFUVZSNG5PM2RXMndVMXgwRzhHOXRiRnl3WThBcERsRHNCbWdLeFNSUlFiR2FlQlZDYTZFRWhIQkZVeXBMclZxbFZrTFVKOXBFelVNSlBGUkNiYXBLaWFqcXZyU3FhS3dvcWltbEYyUUlORTVJUUFtRnhLVVFpZ3VZY2pVWWN6SEV4cnQ5V0hhOUxMT3pjemxuNXN6K3Y5OUxmSm1kR2M3NWZ6UG56SXduQUJFUkVSRVJFUkVSRVJFUkZhdFkyRHZnMXQ2TzVjbXc5NEhzTmE3ZUZwbTZNbnBIV2V6RndlUkFHTGRqTFByaVpsb1lqTmtaRnI0OEpvUWg5QjF3Vy9qTmJkMjZkb1VVNkdxUHUvNU1tRUVJYmNOT0M1OEZIMzFPUXhGR0VBTGZvSlBDWjlFWEx5ZGhDRElJZ1FiQXJ2aFo5TElVQ2tKUUlRaGtJeXg4eWlmc0lHZ1BBSXVmbkxBTGdzNFFhQTFBdnVKbjRhZGtkenJiSkNWZkVIU0ZRRnNBV1B6MkJXN1YwZG5MU0E1SGtDSFFFZ0NyNHRmZGlWM3Q4UmF0RzNDdjArSm5MVGEveTE3RzdyTkdhRzdydHZzM0tHRVZCTlVoVUI2QW9Jby90K0NENkJDbjdNYXp6VzNkbm00V3BUOXJDcXNEam80KzBCMkNjYXBXQk9ndi91eEdONm5nSmJKcWZ4MzlZM1hBMk51eFBLa3FCTXFTcExQNDB3MGJsYUl2ZEFiSXQ0eVRzNE5KWndFN3F2dE0xNWxBU1FCMEZYL1VDaDl3VnZ4V3krYWJBRHRaajhsVTlxR09FUGdPZ0k3aWoyTGhBKzZLMzgrNnZLd3ZiS3I2VkhVSWxNNEJBRFhGSDdYQ3A4TFNmZXEzZi8xY1JMQlM0dWZES3AvaDcycVB0eFJ6OGJ2cE5KVWRiSnJtdHU3T2RGK3JXcWVmT3ZSODZsQTU5Q21td25jemRMR2FBemdwL3FnTmYvTHgwKytxaGtLK3pnRFpXUHdwVHRzaHR3T2RIdldMcGZpQnNiT0J4ODhxMlFkUEFWQTE5Q20yNG5jcVg3RVgyOFRYQ1Q4aHlPV2xMcFdjQWJ4MFRERVhmNzcyY05KT2ZqNGJWVjVEb0tKTlhBY2dOMlVzZm11NTdlS21uZng4TnFwVWhjRHRXY0QxcE1GdkFDUVV2eE9GbmdhVnlrdDk1TGFsbThtd3F6TUFpMThkaVVkNUo3eWNDZnljQlpUZkNDUG5XUFRoYzN3RzhIdmxoMGQvY2tyRmxTR245ZXI1S3BDYm94ZUxuOXh5R3dLdloxTmxOOEtJb3NqUmJOblBZdzloSC8yTCtibWFvSVE1VjNGVFAxNGVqL0IwQnVEa2pVemtwUzYxRG9IQ1B2cFQ5S2w4Vk1JSzV3QWttcllBOE9oUHF1ZzhDeFFNZ0lwbmY0aUM0dmF1TUlkQUpKcVdBSEQ0UTZycEdnYnhERUNpTVFBa21xaW5RYWZkVjVmNStzelpreUh1aVpra3RvL3lBSmcyL3MrK0t0Q3p0ZFh5NTBGVCtRSXRsVXhwbjN6Uzh3Q1Y5Y1VoRUluR0FKQm9EQUNKeGdDUWFBd0FpY1lBa0dnTUFJbkdBSkJvREFDSnhnQ1FhQXdBaWNZQWtHZ01BSW5HQUpCb0RBQ0p4Z0NRYUF3QWljWUFrR2dNQUluR0FKQm9EQUNKeGdDUWFBd0FpY1lBa0dnTUFJbkdBSkJvREFDSnhnQ1FhQXdBaWNZQWtHZ01BSW5HQUpCb0RBQ0p4Z0NRYUF3QWljWUFrR2dNQUluR0FKQm9EQUNKeGdDUWFBd0FpY1lBa0dnTUFJbkdBSkJvREFDSnhnQ1FhQXdBaWNZQWtHZ01BSW5HQUpCbzQ4TGVBUjE2dHJaNlhxWmh4V2JWdTJNY3RzK1l5QWZBU1dmNlhWK1VPNTN0WXkrU0FWRGRxVzYyRjRYT1p2czRGNmtBT08zWWZKM2dwS01LYlNQOWV4TTdtdTNqWGlRQ1lOZm9iaHJheWJKV3kxaHQzNlNPWnZ0NFozd0FUQmh6Wm04dmQzOTZ0cmFHMnNsc0gzK012Z3lhMjVnTkt6YUgzcGhXK3hEMG1EdmZkdGsrN2hrZGdHeGhkMnd1N284OTAvWW5IMk1ERUlVckMzYW5mdDNZUG1vWUd3Q2lJREFBSkpxeEFZakM2VFBNWVFqYlJ3MWpBNURMdEU3bS90Z3piWC95TVRvQVZwZlR3bTVZcTMwSTYrakc5dkhQK0J0aERTczJXOTVjeWY2OWJxcnV0T3JBOXZISCtBQUFZNDFvZDh2ZGFua3YvRDVQRXdhMmozZVJDRUNhWFVkbjB6a01NTGxqMlQ3dVJTb0FhVUZmQVlsYXA3SjluSXRrQUxJNWZUclJ6L3Fpak8xakwvSUJzRkpzbmFRYTIyZU0wWmRCaVhSakFFZzBCb0JFWXdCSU5BYUFSR01BU0RRR2dFUmpBRWcwQm9CRVl3QklOQWFBUkdNQVNEUUdnRVJqQUVnMEJvQkVZd0JJTkFhQVJDdkt2d2pUb2FzOUhybnROTGQxSzF0WHNlSVpnRVJqQUVnMEJvQkVVeDZBNXJidXpxNzJlSXZxOVJKMXRjZGJtdHU2TzFXdWsyY0FFbzBCSU5FWUFCS05BU0RSdEFTQUUyRlNUY2NFR1BBUWdLRHVpQko1a1Z1ZmphdTN4ZXlXTHhpQVFpc2dpakp0Y3dBT2cwZ1ZYY01mZ0EvRE9jWUh5NHFUMXF0QVBBdVFYenFQL29EREFPVE9BemdSSmhPNW5RQURBZHdINEZtQXZOSjk5QWQ0STR5RWMzV0pjMi9IOG1UMjkyNG1oa0drMlErSnd6cVRKL1p1NjhYTDhBY0k4QXpBb1JBNUZlVEIwbGNBSkI0MVNTOHZ4ZStuRGwwRndPOWRZWjRGS0FodTZ0UjFRZWZPQXdEM1kwblQ1d01VRGxWSGZ6Y0JjRDBFVXZGc0VNOEVsRXZWUWRGdGZTcVpCSHNaZ3pFRWxPYTErRlhNUVQwRlFOVVRvZ3dCcVJ3T2U2bExaWmRCdmFhUklaQ3BxejNlNHFmNFZWMkI5SFVrVnpFaFRrdUh3SlRKOFpQeGV2enNSMDJaNzVOSllPUldBdGVHaG5HMmZ3aUgvbk1KVzNiMjRzRGhDM25YVVJLTFlmRWpNN0JzOGYxWThJVWExRXlxd0dnaWlRdVhidUNUNHdQWXZlOS8rUFB1L3lLUlNONjF2WVdyT3ZEcDhLamovVXNiSGtuZ3dxVWhIRGpjajk5MkhzSy9ld2M4dG9BK2ZvLzZmaWUrMlh3OUR0MjRlbHZNS2dSZXBCdkUxQ3RFc1JoUVhsYUNLZFVWbUZKZGdTL05ub0pWUytmZ2I5MG5zTzdWOXpGMDg5WWR5OWRNcXNBckw4YXhhUDdVdTlaVlA3MEs5ZE9yMFB4b0hkN2Fld3BYcnc4cjI4L3lzaExNcUszRWpOcEtORDlhaCsrKzFJV0RSL3FWcmQ4dms0b2YwUEQzQUYzdGNWKzMyTE9IUkNZRlllR3FEb3lPSmpHamRpS1dQWDQvMnA2ZWozR2xKWGd5WG8rcWlXVjRidjB1Skc4ZkNzYVhsK0xYTHkvQjNGbVRBUURYaGtid2k5LzlFenYyOU9INmpSSE1xSzNFdkZtVHNmSnJzNUZNS2psK1lPR3FEdHdhVGFCaFRnMDIvZVFKVkZlVm83eXNCTjllT1E5ck40Yi95SU91UHZVN0gvVWRBS3V6Z0lvUTNGNlBVVUc0TlpyQWlkTlhzZW4xajNEczVHVzg4bUxxYU5UMDVlbFkybFNQdjNlZkFBQzBMdjlpcHZnVHlTVFdiTmlGL1lmR2hrcTlmWVBvN1J2RVgvNXhYT24ralk0bWNmQklQM2ErMzRldk44OEdBTXlzclZTNkRiZFU5cUdPSncrVW5BRjBoQUF3TndnQXNQM2RrM2ltZHdEemJoZjZ5cS9PeWdSZ3haSlptZVhlM1gvbWp1SVBRaXpybU5oLytXYWcyMDVUM1dlcWh6NXB5b1pBdWtJQTNCMkU3SitGYWYrL3ptY0NNSDkyRFlEVUdIeE9YZlVkeXdTbHREU0doamsxV05JNE0vT3p6aDNIQXR1K3J2N1JWZnlBNGptQXpoQUFkelpxN3FYVE1BSXhlRzFzOGxwVldaYjY3OFR5dk12bzlPR2JxKy80L3Z6RklieTYrU04wN1RtcFpYdFdsNjUxOUlITzRnZDhYZ2JOUitYbFVhZFUzMHY0VE1XRXBrbVQ3bDJiL3Y3c3ViNm5rOG5rU1BZeTk5d3orWm1KRTZxV0FVQWlrYmh5N3Z5cDc4UmlzYkw3YW1lK2tWN202dFhMdjc5Mi9jb2ZWV3pQYnZsY2ljVG80T0NWZ2ZhYk40ZjJGTnEyRjdvUE9QbkcrNnBmMDZQdG5ULzVMbythL0VjWTJaeGNsMy96bDA5bEpydmRINTdHYyt0M0FRQzJ2TFk4TXd4Nis0UFRXTE5obDVMdEZWcStZbndwZnRENkVGWS85UUNBMUtTNDlZWHQ2RGw2c2VEMlRSSlU4UU1hL3lBbTM4NFd5OThRTEgyc0xsUDhBUENudDNvelgyL04rcnBwNFRROFBQZXpnZXpUNE5WaC9MVDlBeHc5Y1JsQWFrN3c0Kzh2Q21UYnFnUlovSURtdndpekMwRVVnMUJhR2tQZHRDcXMrZGFEMlBqRHh6SS9mMmYvYVd4LzUwVG0rODNianVEdzdUdXdKYkVZZnJWdU1iNnhkQTRtVjQvSCtQSlMxRSt2d3RLbWV2eG13eEpVVGloVHVvK0pSQktiWHY4NDgvMURjKy9GVng2ZXBuUWJPdGpWaE02M0UycC9NWmJkM1dLVkUyVGRjaWVaYVg5OSt6aGVmbTB2c3U5bmZUbzhpbWZYNzhMUFgyakNvdmxUVVRXeEhPdWViOFM2NXh2ditud3NadDIzVnR0TEpKSjRjT1VmQ3U3cmp2ZE80bGpmSUdiUFRBM0RudjFtQTk0N2NLYmc1OEpnZHlBTTRyV2NnYndaTHYwUHNRcEN1Z0ZNRDBJeW1ib1JkdTM2Q001ZUhFTFAwWXZZc3ZNWURoNjJmc3lnZitBR3Z2ZlNEanpSK0Rrc2UvenpXUEJBRGFaVVZ5Q1JTT0xDd0ExOGN2d3lkdTg3aGVzMzhzNXpmZTFyK3hzOTJMZzJkWlphT0g4cUhsbFFpMzBmbjFPK0xhOEtqUUNDZWlkdDRDKytkZkxza09saElPK2NESDJEZkNGemFHOStkdm9RSGNNUWZVN25lMkc4aVR6MFY1KzdmWnFVZ1RDYmw0c2JZYjZDUC9RQXBLbDZySnFpdzRULzkwVG9PNUNMUVNodUpoUjlOcU4ySmhmRFVCeE1LL3BzeHU1WVBneUYyVXd1ZGlJaUlpSWlJaUlpSWlLQi9nOC9hTWdyTjdEcmNBQUFBQUJKUlU1RXJrSmdnZz09IiwgInNpemVzIjogIjE5MngxOTIiLCAidHlwZSI6ICJpbWFnZS9wbmciLCAicHVycG9zZSI6ICJhbnkgbWFza2FibGUifSwgeyJzcmMiOiAiZGF0YTppbWFnZS9wbmc7YmFzZTY0LGlWQk9SdzBLR2dvQUFBQU5TVWhFVWdBQUFZQUFBQUdBQ0FZQUFBQ2t4N1cvQUFBWlAwbEVRVlI0bk8zZGU1UmRaWDNHOGVkTUpoY2dJUWxKQ0NFUUxOY0FDU0MzQ0RnQ2xpZ0xxUzIxYUt4MnlXcTdJa3VzOWJKYWkvVmFLdGdMeTZvVmwwTzdTaTlwQWFWaEFRdXBvNGFTUWcwRWhScEI1Q0pDUXU0aGt3ekpaREl6cDMvRVE4NmNPZnVjdmZkNTk5N3Z1My9mejE5SnptM3ZuZmY5UGUvNzduMzJrUUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFKQ2hTdEViWU1XYTI2K3NGcjBOUUNpV0xMdVAycFFERHJKakZIb2dXNFNET3h6SURsRHNnZUlSQ09seDRCS2k2QU4rSXhEaTQwQzFRY0VId2tVWXRNYkJpVURoQjhxRk1CaVBBMUtIb2cvWVFCZ2N3RUVRaFIrd3lub1FtTjU1Q2o4QXlXNFFtTnpwb2dyLzB1V3JpL2hZSURoOXZUMkZmSzYxSURDMXMza1Vmb284a0oyOGdzRktFSmpZeVN3TFB3VWZLRTdXZ1ZEMklDajF6bVZWK0NuNmdKK3lDSVF5aDBCcGQ4eDE4YWZvQTJGeEhRWmxESUxTN1pETHdrL1JCOHJCVlJpVUxRUkt0VE91aWorRkh5Z25nbUNzVXV5RTVLYjRVL2dCRzF3RVFSbENJUGdkb1BBRFNNdDZFQVM3NFZMbnhaL0NEMERxUEFoQ0RZRWdOMXJxclBoVCtBRTAwMGtRaEJnQ3dXMndsTDc0VS9nQnRHTXBCSUxhV0ViOWNLVlpKNmVOb0Y3YUlBZ3BCSUxaVUViOWNLVlZ4NmE5b0ZHWmc4RDdEWlFvL21ndXpTZytUbWR1OVI3TUhHd3Fhd2g0dlhHUzdlTGYxOXR6VmRIYjRMR1ZMUjZMT202dFhoUG5QZEo4SmlRdFhiNDZ5YkgzVWhsRHdOc05rOUlWLzlBS1AwVStsVGpGcFBHNHBpbEE5ZStSNWpQUlJvakJrQ1lJZkEwQkx6ZEtLbS94cCtCM0xPMG92cE1BNkhUbWdKaENDWVN5aElCM0d5U1ZyL2luTGZxaGRJYThwT2wwdFhhUjlyV2RmQ1lPS21NZktFTUlkQmU5QVkzS1V2eVROSGlmR3puZ1FsUWJiOWRQNmgvM3JaK2tIU0Q0eExzQVNNcTM0aCtuOFB2V2tJR2lOUGFGVnYybjlwaFAvU2RwQ0t5NS9jcXFUN01BYnpaRVNqNzY5Nlg0dHl2NlBqWFlrSFc2SEpQazlaMHVIYUZ6SWZXcnBPM0VseER3WWlPa01JdC9xd2JxVStNc2c3UlQ3Y1oya3ZSN0FKMU04WDFvbzJVUlFoaUVHQUtGYjRBVVh2R244T2ZMVmZHUDgzN05Ya01JK01Ybi9oZGFDQlFlQUNFVmY1OGJYbG01THY2dDNqZnBONEJkYlF2U2llcVBSZmZGa0VJZ3FBRHdzZmdYM2RqS0xLdmlueFloNENjZisyYVN0bUkyQUVJby9qNDJMZ3Q4Sy80MWhJQy9mT3VySVlSQVlRRVFhdkduOE9mRDk2dHZmTjgreTN6cXQ3NkhRQ0VCNEh2eDk2a0JXZVY3Z2ZWOSs2enphVGJnY3doMDVmbGhJYUQ0aHl1UGIyWDI5ZllFLysxUEM1WXVYNzJ5V2IvbFhseGo1VDREOEhuMDM5ZzRLUHpGOFhHdHZkUEN6d3lnT0VYM2JWOW5BYmtHZ0svRm4xRy9uM3dLQVlwLytJcnU1M0hia1BrQW9QaWpKcXNRU1BJOUFJcC9lUlRkMzMwTGdkd0N3TWZSZjlIVFFzVGpPZ1NTZkJPWTRsOU9SZlY5MzVhQ3ZEc0pUUEZISTVkdG9sMEhkSG1DbCtMdnJ5UjNJWFg4dVhsOFRHeTVCSUJ2U3o4VS8vQzRhQnR4aTd1TFViOXZIUjNqK1I0Q2FYOFBQUW52WmdCWm8vamJsTFNvYzZtbkRVV0ZnQzh5RHdDZlJ2OFVmd0NOaWdnQlgyWUJabVlBRlAvd0pSMGt1QmhVRlBHWnlKL1ZtVUNtQWVETDZKL2lYeDV4MjRyTE5sWEVaeUovZVllQUQ3T0EwczhBS1A3bDA2N2paRkdJaS9oTTVNL2FUQ0N6QVBCaDlFL3hMNitvZHBQMDM1Tzh2NnYzaHQveURJR2lad0hkV2J5cGp5ais1Wk9tcUNmOVRlQk9QeE5oV3JwODljcXlqLzZsakdZQXZvMytLZjZvWVNrSGNkWFhqYkxPQWtwNURzQkNjaU05bG5LUVJobnJTaWIzbW9pVFZCbmVzcGQxZndETzVGVlQ0aXhQdXI0L2tQTVpRQjVmWDQ2TDRnK2dVejdWRWRmMXRaQWxvRHhHL3o3OXB3RUlXeDduQTRwWWduUWFBRVdPL3N1NFBnZkFUMFhXRzVkMXRwUW5nUm45QTNDdGpIVWw5d0RJWXByRDBnK0FQR1M5RkpUM01sRHdNd0NXZmdBZ0hXY0I0TVBWUDR6K0FXUXRyeStJdGVLcTN1WTZBM0E5dldIMEQ2Qm9ydXRRbnN0QXBia1hrTlhSUDc5Y2hhSlovQVoxV2U0VjVHUUdVTVR5VHhrT1BvQnlLS0lldWFpN3VTMEJaVGxLc0RyNkIxQ2NMT3RPWHJPcUlLOENZdlFQd0RjaDFxVWdBNkFlbzM4QVJRbTkvZ1FmQUFDQWREb09nTHh2L2N5M2ZnSDRwTWp2QlhSNklwZ1pBQUI0S0k4VHdVRUZBS04vQUQ3eTRkdkJhUVFWQUFBQWR3Z0FBREFxbUFCZytRZUF6MEpjQnVvb0FIeTRBeWdBV05aSkhjNThCbUR4UmxFQTRFTFc5VE9JSmFCUXBsTUFVQk5DM1FvaUFPcXgvZy9BVjZIVnArQUNBQURnQmdFQUFFWjVId0FocktNQlFETysxeS92QTZCZWFPdHJBT3dKcVU2VjVqZUJjZEM4b3haRVByWngwMHM1YmdsQ1JQdXhnd0FJWExQcmhOZmQ4NzVFejdlZ3I3Y244V3VzSGl2YWp4MUJMUUVCQU53aEFBREFLQUlBQUl6eU9nQzRBeWlBRUlWeVoxQ3ZBd0FBa0IwQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0NnQ0FBQ01JZ0FBd0tqdW9qY0E2YXk3NTMzT1g3Zm9uU3ZTYmc0Q1EvdUJSQUI0TFcwbnplTHo2Tnpob2YyZ0hRTEFFM2wzMXFTYWJSK2QyaCswSDZSQkFCVEU5dzRiUitNKzBLSHpRL3VCQ3dSQWpzclFhVnVwM3o4NnMzdTBIN2hHQUdTczdKMDJDcDNaRGRvUDdTZExCRUJHc3U2NFdYU0tyTGE1OXI1MDVQaG9QK1BmbC9iakhnSGdtS3RPVUVSamIvZVpuZTRiSGJrOTJrLzcxOU4rM0NFQUhFcmJ3RU5wME0yMk04MCtyN3ZuZmNIc2M1NW9QL0hRZnR3aEFCeEkyb2pMMUhnYjl5WHVzV0EwZHhEdDV5RGFUNzY0RlVTSGtuVGVSZTljVWZvR20zUWZyWjdrcktIOWpFWDd5UmN6Z0E3RWFYeGw3N0JSNnZlNzNYR3lPcVduL1VTai9lU0RHVUJLN1JxbGhkRmFYSEdPaGJXUkhPMG5QdHBQZGdpQUZPSjBYb3hISno2QTlwTU83Y2M5QXNBeE9tOXJISi9XT0Q2dGNYemNJZ0FTNG82SG5XdDFuTW8raXFQOWRNNXkrM0dOQUhDRXpwc014MnNzamtjeUhDODNDQUFBTUlvQUFBQ2pDQUFBTUlvQWNJU1RUOGx3dk1iaWVDVEQ4WEtEQUVpSUt4QTZaL2xLR05wUDV5eTNIOWNJQU1mb3hLMXhmRnJqK0xURzhYR0xBRWlCYnlTbXd6ZGdENkQ5cEVQN2NZOEFTQ2xPSjZZakh4RG5XRmpydkxTZitHZy8yZUZ1b0IxWTlNNFZzZTVVV1A5OEs1TGU1dGdpMms4MDJrOCttQUYwS09tOXk4cytxa3U2ajlZN0wrMW5MTnBQdnBnQk9GQnJoRWwvemFqeDlTRXErODhZNW9IMmsxekkrK3dUQXNDaE9GUDZacHE5eHNjR0h2SVBsb2VBOWhPUGovc1dLZ0xBc2FTanVTaEZuUFRLZW5tQmp0c2U3U2NhN2NjOUFpQWpyanB5bEpEV2d1bTR5ZEYrRHFMOVpJY0F5RmlTM3pZdEV6cXRHN1FmWklrQXlGSFpPek9kTmx1MEg3aEdBQlNrc2JHSDJLSHBzTVdoL2NBRkFzQVR6VHFEVDUyYXp1bzMyZy9TSUFBOGx2ZWRJK21rNVVMN1FUc0VRS0RvYk9nRTdRY1N0NElBQUxNSUFBQXdpZ0FBQUtNSUFBQXdpZ0FBQUtNSUFBQXdpZ0FBQUtNSUFBQXdpZ0FBQUtNSUFBQXdpZ0FBQUtNSUFBQXdpZ0FBQUtNSUFBQXdpZ0FBQUtNSUFBQXdpZ0FBQUtNSUFBQXdpZ0FBQUtNSUFBQXdpZ0FBQUtNSUFBQXdpZ0FBQUtNSUFBQXdpZ0FBQUtNSUFBQXdpZ0FBQUtNSUFBQXdpZ0FBQUtNSUFBQXdpZ0FBQUtNSUFBQXdpZ0FBQUtNSUFBQXdpZ0FBQUtNSUFBQXdxcnZvRFVDNTlQWDJGTDBKenZpNkwwdVhyeTU2RTFBU3pBQUF3Q2dDQUFDTUlnQUF3Q2dDQUFDTUlnQUF3Q2l2QTJEcDh0VXJhMy91NisyNXFzaHRBWUM0NnV0VmZSM3pqZGNCQUFESURnRUFBRVlSQUFCZ0ZBRUFBRVlSQUFCZ2xQY0J3SlZBQUVJU3loVkFVZ0FCQUFESUJnRUFBRVlSQUFCZ1ZCQUJ3SGtBQUNFSWFmMWZDaVFBQUFEdWRSUUFTNWJkVjJuM0hGOS9WUWtBZkJlbmZzYXB3MUdDbkFHd0RBVEFOeUhXcFdBQ0lJVDFOQUNRd3FsWHdRUUFBTUN0WUFNZ3hPa1dnSElLdFI0RkZRQ2hUS3NBMkJWU25jb2xBTGdTQ0FDU3lhTnVwcjU4cU42YTI2K3N0bnZPMHVXclhYeVVwUEMrYkFHZ3ZMS3FSMWxmQWlvRnRnUUVBSEFueUFEZzFoQUFmQkQ2YWtSdUFjQjVBQUNJSjY5NjZTUUFPbDJINmhTekFBQjVLM3IwNzZMdUJya0VKSVU1M1FJQW53UWJBSTJZQlFESVM5R2pmMWR5RFFEWDYxb2hIM2dBYUNiUDg2WE9BcUNvOHdCY0VRUWdUejZNL2wzVjI5SXNBZFVRQWdDeVVyYjZrbnNBWkRHOVlTa0lRTjZ5cUR0NVh5N2Y3ZkxObGl5N3J4TG50aEJaNit2dHVZcFFTSWZ2YTVTZnk5dXlXT0xMNk4vbGNudHBsb0FvK0FDeTBsajh5ekQ2bHdvS2dLeDJsQlBDQUxKV3BzR204d0FvK2x2QjlRZ0JBSjN5NGFxZkd0ZjF0YkFsb0R4bUFiLzZIRUlBUUNwNTFZK2l6cjJWNWh4QXZhSlRHa0Q0OGxqM1R5S0wxWlZNQWlEdWhtYVplcHdQQU9CS2xzVy95Q3Z2bkY0RzZqTXVEWTJIU3dRQnY5YjlzNVRaRXBCdnM0QmZmUll6QVFBdDVWa240dGEvckM2dUtlVTVnSHFFQUlDNGZGdjN6MXFtQWVERExFQWlCQUMwbDNmeEwzcjBMeG1ZQWRRUUFnQ2lXQnY1MTJRZUFMN01BaVJDQU1CNFJSUi9IMGIva21jekFFSUFRSjU4THY1NXlDVUFmTG85aEVRSUFQQi8yU2VQdXVuVkRFREtMeDBKQWNDbXZ0NmVxNG9xL2o2Ti9pVXAxNUY1M044S3lQUExTTTBLdjI4akFRQnVGTm5ma3hUL3ZGWk5jbCthSVFRQUZLSG9KUjlmVHZ6Vzh6WUFwUHh2UzFCMEF3bkpWLy84WXIxMXlUR1JqdytQakdwNGVGVDdoa2ExNjdVaDdScllwNDFiOTJqOXBnR3RlMjY3SGwrM1JWdGYzZXRrV3lvVjZiUVRadW1jMCtmb25OT08xSUtqcDJuNjFFbWFQbTJ5S3BXS0J2WU1hZXVPdlhybUY2L3F5V2UyYWRXakc3UmwrNTdVKzlmei9tL3IxVjM3VW05dnUyTlhiM0Rmc1BZT2ptamJ6cjE2Y2NNdS9lVG4yN1hxMGZYNnhmcGRxVC9mR2g4R2VENk8vcVVDQWtBS0t3Uit0UTBFUVlNa1JheVowV3BWYTlkdDBXMHJuOUpEYTE5SjlSNlRKbmJwSFJmL21qN3dXNmZxeEFYVFk3K3VXcFhXcnR1czIrNStXZyt0M2FCcWs5Ym9Td0JFZVdqdEJuM3Axc2YxMHNiZEhiMVAyZm5RbjMwdC9sSkJKNEY5dXlxb1hyUEd3UWxpOTdvcUZaMi9lSzV1K2V5bDZ2M0NXelYzOXFHSlhuL1NjVFAwcmIrN1FqZDg1RTJKaXI5MFlNWnczdUs1K3Zwbkx0SFJjdzVMOUZwZnZPWGMrVnJ4TjIvWHlXK1lVZlNtZUNucVJDL0ZmeXp2cmdKcVZNUlo4MllOcFZtRGdoc1h2bkdlN3JqNWNwMTJ3aEd4bm4vRlc5NmcyMisrWENjY202endsODNNd3lmcnhvOWVxSzR1YjhkVGhmQmgxQitLd2dJZ1Nkb1ZkZWxVMUd5QUlIQnY5c3hEOUkzUFhhcWpqMnc5SXIvZ3JIbTY4V01YYVBLa0NUbHRtZDhXSGo5VDU1eCtaTkdiNFlXb3ZsbFU4ZmQ5OUM4Vi9Ic0FTNWJkVjRsN1BxQ3Z0NmVRZTlYWEdrOWp3NnI5blpIRmVMVTE4cTVLUlZNUG02Z2pway9SNHBObjZlSno1MnZwaFFzMFlVTHp0ajVyeGhSOS9UT1g2RDBmLzQ2RzlvK09lM3ora1lmcHkzL1dvKzRKMGVPV1YvdjM2ZmJ2L0Z5UC9IaWpmdm5LYnZVUDdOTWhrN3MxNC9ESk92bTRHVnA4eW13dHZlQll2V0grNGM3MjE2WDY4d3NUdTd0MDFPeEQ5ZXR2T2xZZitiMnpOR2xpOC8xZWNzWmNQZmFUelhsdXBsZWlCbVJGOXMwUWlyOFUyQS9DRkJVQ0VrR1F4bWkxcWwwRFE5bzFNS1FYTit6U3ZhdCtvZmx6cCtxdlAzR1J6bHc0dStsclRqcHVocTYrL0NTdHVQZVpjWS85MGZ2UDB0UkRKMForM3QzZmYwRmYvT1pqMmpzNFBPYmZCL2JzMThDZS9WcS9hVUEvV0xOZVgvbVhKM1Rtd3RsYWZ2VWl4YjRhb1FEN2gwZjE4cVlCM1hiMzArcnFxdWpqMTd5eDZmT09QQ0xaK1pPeThMSHdTK0VVZjhtRGN3QkpEMERSMzZTTGFsd3NEY1d6WWZPQXJ2bFVuOWF1MnhMNW5PVlhMeHEzeEhQQ3NkTjF4Y1hIUmI3bXpnZWUxYWUvOHIvamluK1VKMysyVGRmZDhLQmUyZkphck9jWDdaRW5Oa1krVmpGMkNxRFZVazlJeGQ4SFhzd0FraXdGU2NYT0JLVG8yVUQ5dnhYZEVIMjJmM2hVSC8rcjFmcXZXMzlUaDB3WjN3Um56WmlpSldjY3BZZldibmo5Mzk1MjBRSjFSVlM2bHpidTFrMjlhelBiWGgrME90RzdhVnZyN3pTVVFhdkJsUzk5TFdueEwzcjBMM2tTQUZKNElTREZDNEw2NStHZ0hmMkR1cXZ2T2IzL054WTJmZnlpcytlTkNZQTNuM04wNUh2ZGR2ZlQyajg4L3B4Qm1WejB4dWo5WC9Qa3BoeTNKRC90WnRRKzlhc1FpNy9rVVFCSVlZYUFOTFlodGd1RHh1ZGI5dCtQdlJJWkFHZWVjdkFjUWFVaUxUcHhWb3YzMlJENVdNaHFKNEV2dTNDQlB2VGV4VTJmOCtRejI3VDJwOUhMYWFHSnM0enFXLzhKdGZoTG5nV0FGRzRJMUxTYUZkUVFDQWY4N0lVZGtZOGRNWDNLNjMrZU1XMXk1SlZETy9vSHRibEVTeUNyLysxM1lqOTM2NnQ3OWNtYkg4NXdhN0tYNUx5WmovMGs1T0l2ZVJnQWFmZ1dBbEw3V1VFOVg2OW15RnIvd0pDcTFlWW5NWStZUHZuMVA4K3NDNE5HbmR5U0lXUS9XTE5lTjl6eXFMUDdLV1V0N1FVU1B2ZUIwSXUvVk5DOWdPSklNZ3VvOFMwRW1pbkxsVUl6Wjg2NWZzcmtRODV2OXRqbUxlcy9NRG82R3VkdVpWM3pqbHJ3YlRWcGg5VnFkWERUNXBmZkswbmQzUk9QbVRONzN0ZWF2Y0h3OFA2WHRtN2IrTWRKdGowT1IvdVgrTDNicVZaSDkrenMzLzdWd2NHOWE5Sit2czk4THZqMXlsRDhKWTluQUVtWGdpUS9ad0tOK0NHYWc3cTZ1cVlxWWhBeU9qcXlxOW1mbTd5SG45L295a2lsMG5Yb3pCbHpQcmw3b1ArT2dZSCtPeVd2djhyUVZpZ0Z2eWJOWlo2K0ZuL0o0d0NRMG9lQUZNWnNRR3JkQWNvZURoTW5Uam9oNnJIUjBkSCt1ai92bGpTcUp0OWI2ZXFhTUdQQ2hBbXpSa1pHdG1lemxWNnFUSnM2ZlZsRmxlN2RBenRYRkwweGNZUlc2SnNwVy9HWFBGNENxcGRtT1VnS0p3UkM1T0oyeVovNjRMbjYzWGVjMHZTeEZmYytvNXR1UFhodC83Ly83ZHQxeHNuTnZ6MzhGN2M4cWpzZmVEYkdWc2RYMU8yZ2ErOTkrTlJKT25IQmRQM0J1MDdYeGVmTmIvcmNhbFg2d1BYZjFZK2UycHA2V3hCUEdZdS81TUUzZ2VOSWV5QkQrMWFlSmJObVRORnZYeFk1QWRERFB4Nzd6ZGYvZVR6Nk53T3V1ZXBVVGV3T29pbkh0bXRnU0Q5NmFxdXV1K0ZCcmZ6ZTgwMmZVNmxJMXk4L3o5dzNnZlBVMTl0VDJ1SXZCUklBMG9FRG11YWdwdjBQUkhhNkozVHA1ai90MFpUSnpWY2dkL1FQYXMzL2pmMXkwM2NmZnFucEQ3ZEkwb0o1MC9USlB6ekg5V1o2NDhiZXRkcTR0Zmt0SzA0OWZxWXV1MkJCemx0a1E5cTZFVXJ4bHdJS2dCcG1BMkdiUDNlcS92bW1wVHAzVWZRdGpMOTU1enJ0R3hvWjgyL1B2ZFN2K3g5Nk1mSTF5NjQ0V1YvNDhKTElVR2wwNXNMWit2dFBYOUwyOXRNKzJEczRyRnYrNHllUmozL3czWXR5M0pyeTYyVFFHRkx4bHp3L0NSd2x6Y2xoS2J3VHhLSHJxbFIwMktFVE5XdkdGQzA2YVpZdVBYKytMcnNnK25iUWt2VHNMM2ZxV3hIcitWLzkxeWQweWZuemRkZ2h6ZThJK3E2M25haEx6ajlHZDN6bjJRTzNnOTY0UzdzR2huVEk1RzVObjNiZ2R0Qm5uREpMU3k5YzhQcnRvRy9xZmF6ekhjM0JQYXRlMExYdldhVDVjNmVPZTJ6aDhUTjE2Zm5IYU5XajZ3dllzbkxwWktBWVd2R1hBZzBBS1gwSVNBUkIxcEo4bTdYZWp2NUJYWGZEZzAxL0MwQ1NObXg1VFIvNzBtcDk0N09YdHZ4TmdRKzlkM0hrclJOY1NMSi9ld2VIZGQ2NzcrajRNMGRHcXZxSGIvOVVuN3R1U2RQSHIxMjJpQURvUUtjckJDRVdmeW5BSmFCNm5SNTB6Zy80WTl1cmUzWHQ1MWUxdlQzekl6L2VxT3UvL01pNEpTSUw3djcrQzVHM3ZUajl4Rmw2ODluUk40eERjNTNXZ0xUbkpuMFJkQUJJYnY0RENJSmlQZnlqalhyUEp4N1FVODlIM3h1bzN2MFB2YWhsbjNoQXo3L2MzLzdKSmJKL2VGVC9lTmRUa1k5ZnU0eHpBWEc1NlBNaEYvNmE0QU9neHNWL0JrR1FuOUZxVlQ5OGNwT3UvZndxZmZEelAwaDhRN2RuZjdsVFYzLzBmbjMyYXo5TUhBVFZxclIyM1JaOStDOGYxQ3NSVjlmNDZxNis1N1F0NHY0L1p5MmNvemVkZVZUT1d4UVdWMzI4RE1WZkN2Z2NRRE9kbkJlb3h6bUN6bzJNVkRVOE1xckJmU1BhL2RxUWR1N2VwNDFiWDlQTG13YjAwK2QyYU8yNnpkcStjN0NqenhqYVA2ci83SHRlSzcvM3ZFNC9jWmJPT2YxSW5YM2FIQzJZTjAzVHAwM1c5S21UMU5WVjBjQnIrN1ZseHg3OS9NV2RldUpuVzdYcTBRM2FzajNNTzRqdUd4clJQNjE4V24veSsyYzNmZnphWll2MXc1TCtQa0JhTGdkMVpTbjhOYVhhbVhvdWdxQWVZUUNFeGZWc3ZtekZYeXB4QU5TNERnS0pNQUI4bGNVU2Joa0xmMDFwZDZ4ZUZpRlFReGdBeGNuNm5GMlppNzlrSkFCcXNneUNlb1FDa0kyOEx0SW9lK0d2TWJHVGpmSUtna1lFQXhCUFVWZmpXU244TmFaMnRsRlJRUURBTDlZS2Y0M0puVzVFRUFBMldTMzhOYVozdmhGQkFKU2Y5YUpmandNUmdUQUF5b1hDUHg0SHBBMkNBQWdYUmI4MURrNUNCQUxnTjRwK2ZCeW9EaEFHUVBFbytPbHg0QndqRklCc1VmRGQ0VURtaEdBQTRxUElBd0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUNpWC93ZURTdmowdDVRNDRBQUFBQUJKUlU1RXJrSmdnZz09IiwgInNpemVzIjogIjM4NHgzODQiLCAidHlwZSI6ICJpbWFnZS9wbmciLCAicHVycG9zZSI6ICJhbnkgbWFza2FibGUifSwgeyJzcmMiOiAiZGF0YTppbWFnZS9wbmc7YmFzZTY0LGlWQk9SdzBLR2dvQUFBQU5TVWhFVWdBQUFnQUFBQUlBQ0FZQUFBRDBlTlQ2QUFBalUwbEVRVlI0bk8zZGU3aG1WMTBmOE4rWmF6S1pTU2EzeVV3Q1NZREVjSmtrWEdJU3hPR21RNnltYU1SU0JZdWlOR0xpVTRzWFZOb2l0RnJRK2p6U1Ztc2RhMVVVSDd6eUZOQStPR0NnRVVPVTBBUUNKaElJSkJseW0yUW1NNU81ejV6K01UM2t6Smx6em52YmwzWDVmUDVMWnIvdldlL2FhNi9mZDYrOTMvMUdBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBUUptbSttNEEzYmoxL2RkTzk5MEdJQTlYZmUrSDFZWUsyTWtGVWVTQkxnZ0laYkFUTTZUUUE2a1JDdkpqaDJWQXdRZHlJeENrenc1S2xLSVBsRVFnU0k4ZGtnZ0ZINmlGTUpBR082RkhpajVRTzJHZ1B6cStCd28vd0ltRWdXN3A3STRvK2dEREV3YmFwNE5icHZBRGpFOFFhSStPYlluQ0Q5QWNRYUI1T3JSQmlqNUF1d1NCNXVqSUJ1UlMrRGRmZjNQZlRRQXlzSFhMcHI2Yk1KQWdNRGtkT0tIVWlyOGlEN1FwdFhBZ0NJeFB4NDBwaGNLdjJBTXBTQ0VVQ0FLajAyRWo2clB3Sy9oQUR2b01CSUxBOEhUVWtQb28vQW8rVUlLdUE0RVFNQnlkTklRdWk3K2lENVNzeXpBZ0NDeE81eXlpcThLdjZBTzFFUVQ2cDFNVzBFWHhWL2dCdWdrRFFzQ0pkTWdjYlJkK1JSOWdmb0pBdDNURUxHMFdmNFVmWUhodGhnRWg0QmlkOFArMVZmd1Zmb0R4dFJVRWhBQUJRT0VIeUlBZzBMeHFQM2hFTzhWZjRRZG9UeHRCb05ZUVVPV0hqbWkrK0N2OEFOMFFBcHBSM1FkMjFnOVFocWFEUUcwaG9Lb1A2Nndmb0R5Q3dIaXErSkFSaWovTU50K0VhVXlUTXlGZ2RNVi93SWhtaTc5Smtwd05NMGthNCtTc3lTQlFlZ2hZMG5jRDJxYjR3ekhEVG93cC9MWTdqS3ZKZWJyUG4zL3ZRdEhwcHFtZHAvQ1Rna21XN2NjcDZzTzh0MHNKcEt5cE1GdnFTa0NSSHlwQzhXL2ExaTJicnV1N0RSWDd3QkRiTExaL2hubjlxTzg3YVp0bzBlYnJiNTVrbnhkRkNGaFljUjhvUXZFZmx5S2ZwRkVtOGttSzlTanYyVVNiNkVtTjRVQUltRjlSSHlhaW1lSmZRK0ZYN0xNd3prUTlkNzgyTWRuUGZzOG0ya1JpYWdrRlRRU0Jra0pBTVI4a1F2RmZqSUtmbmFiTzJwc01BRzFjU2lCQkpRY0NJZUFwUlh5SUNNVi9Qb3ArMWdRQWtsRmFJQkFDanNuK0EwUW8vck8xVmZSTG13QlMxc1RrTkRPZW0zcXZKdHRFKzlvTS82WE1CVUpBeExLK0d6QXB4Yi9aZzcyVWd4dHF0dGh4UE9sOE1mUDYzT2VLSm9MdHJlKy9kanJuRUpCdHd5TVUvMGtQNU53UDRGSTFmYlk5eWZzMXZaSkFtbXFlUzJwZUNjaDJCV0RTNHAvelpEVHV3WnJ6UVFxMForN2NNT29jay9PcVFGT1h1SEtVWldxSm1Dd0E1Rmo4RmYzeU5Ua0p6UjNqa3o0SnNNMjJrYlp4NXA0YzU1MUp4M2lPcXdEWk5UaWlydUpmeThGWHM2YlBQaFlhNDZQOG5mbmVvNnQya3E1UjU2UGM1cUxhUWtCV2pZMm9hK2wvbElNdHR3T05ZOXBZZWx4c2pFL3lhNEJkdDVXMGxUby8xUlFDc21sb1JEM0Z2OVFEaStQMVdWREgvUkVmSVlDNVNweXZhZ2tCV1RSeVJ1bEwvOE1lU0xrY1JDd3M1MEthYzl0cFQybEJZSkp4TGdBMHJPVGlyL0RYSi9mcjZibTNuL2FVTkorVkhnS1NiMkNFNHAvRGdjTHdTcnFqdnFUUFFyTktDUUlsaDRDa0d4ZFJidkV2NWVCZ2RDVStWS2ZFejBRelNqakpLVFVFWlBzZ29FRlNua3hLT0NBQWhqRXpseTAyNzZYK0lLRlNIeGFVYkRLSktQUHNmMUR4VC9VQW9Ea2xMWnVYOUZub1JxNXpZSW1yQUVrMktxSzg0dStzbnhrbDNFVmZ3bWVnUDduT2g2V0ZnT1FhTkdQY0FKRGlKSkpyNHFVOU9SZlFuTnRPV25LY0c4Y2QveWtHZ0NWOU4yQStpaitNcm90cmxDVmVCNlUvZythL0puL3F2Q25qMXBrbWZyMjJhY2tsa2xLVy9oVitCbW1ybUk3N1JMOUJyK3V6dlpSdnNUa3p0Zm15bEVzQlNhNEFqQ09sU1VUeFp4aDlqTm10V3pZdE9Ia3Q5bTl0U2VtNHBWK0x6WXRidDJ5NkxxWFZnRkxHYlZJQm9JU2xmOFdmVWJReGRoY3I4T08rM25WL3VwRFRKWUVTTGdVa0ZRQnlOMmdKUy9GblBwdXZ2N24xWWpocUFXOXpKYUNMejB1K0JzMlZLWVdBM0NVVEFISS8rOC9wK2hWcGFxc3dqbHZNMjNqZWZ5ckhLK25MSVFUa3ZncVFUQUFZUnlxVGllSVAwTHlTUTBBS2tnZ0FxYVNoY1NqK3BHelNzM2hmKzZOdk9ZU0FjYVJROTNvUEFEa3YvU3YrdEdIU3NkM0dzWkZpbTZoSDZpRWcxL0hkZXdBWVJ3cWRyZmdEZENmMUVEQ092bGNCZWcwQWZYLzRjU24rdEczY2tOdG1PRTZ4VGRRbDVSQ1E0empQYmdXZzcwNVcvT25LcUdPOWkyTWp4VFpSbDlKQ1FKOG53dGtGZ0Q0cC9uUnQyQWxsb2UzYXVIWS9hWnRnVWltSGdKejA5a3ppY1ZKUG54T0s0ay9meG5sKy8wS3ZHOVk0dncrZzhOT1ZoZWJsdnVma2NZNjVQbjRqUUFBWVVxb0REWVl4em9Ta2tKT0RGT2ZtWEFKQUw1Y0FGSC9vbG12M2xHcWhlYmpQU3dHNTNBdmdIb0FCRkg5SzRkbzlwVW94Qk9TZzh5V0huTTcrRlg5SzVkbzlKVXB0ems3OVVzQ3lydjRRa0E3RkhraitFb0N6ZndDR2tkcWxnTlNEZHFjQklKY24veW4rQUhsS0xRU01xc3M2bWZ3S1FOY1VmNEM4NVI0Q3V0SlpBTWpwNWo4QWFFTEtYd20wQWpDTHMzK0FNbGdGR0N6WkFORDEyYi9pRDFDV1ZPYnZWRmV6T3drQXVkejhCMEQ1Y2xnRjZLSnVKcnNDMENWbi93QmxjaWxnWVVrR2dCU1dTeFIvZ0RLa01KK25VTmZtU2pJQWRFa0tCS2hUN2ZOLzZ3RWd4K3YvS2FSRkFKcVQ0N3plZHYxTWJnV2d5MldTMnRNZlFPMjZyQU9wWFFhbzlzZUEzUGpYbm5GK0FRdFlYR3JGSTBlYnI3LzVBMDc4bnRMcUNrQnV5LytLUDBCOVVnNEZiZGJSNUM0QmRDSGxuUTFBZTV6b1BTV3BBTkRuRXBkQkFWQ3ZyazRNVTdxVWsxUUFBSUMyT2VFN3ByVUFrT3IxLy9sU25zRUFRS3FYaDl1cXAxWUFBS2lPRTcrRUFrQVgxMFZTVFhjQXBLR0xPcEhLZlFESkJJQytTSUVBZGFwOS9xOG1BRGo3QjJBWXRkU0xhZ0xBZkdwUGZ3QzFxN2tPdEJJQVV2MEdBQURrcUkyNm1zUUtRTnMzUk5TeW5BTkFNOXF1R3luY0NKaEVBT2hEemNzK0FEeWwxbnBRYlFBQWdKb1ZId0FzL3dNd2p0THJSL0VCWUQ2MUx2Y0FNTDhhNjBLVkFRQUFhdGQ0QUVqcEs0Q2xMOThBMEs2VTZralQ5YlgzRllDdXZ3cFI0eklQQUlOMVhSLzYvaXBnN3dFQUFPaWVBQUFBRlNvMkFLUjAzUWFBZkpWYVQ0b05BUE54L1IrQXhkUlVKNm9LQUFEQU1RSUFBRlJvV2Q4Tm9DNGIxcDgvY0pzSEg3cXZnNVpBOTR4L1VsSmtBQ2oxaG8xY0xQYmQxanMvK1BxSlhzOW90bTdaTlBGNzJCL05NZjd6dFhYTHB1dEt1eitnbWtzQXBlMDRBTnBSUzcyb0pnQUFBRThSQUFDZ1FnSUFBRlJJQUFDQUNna0FBRkNoNGdMQWZGOEJyT1dPVGdDYU1WL2RLTzByNXNVRkFBQmdNQUVBQUNva0FBQkFoUVFBQUtpUUFBQUFGUklBQUtCQ0FnQUFWRWdBQUlBS0NRQUFVQ0VCQUFBcUpBQUFRSVVFQUFDb2tBQUFBQlVTQUFDZ1FnSUFBRlJJQUFDQUNna0FBRkFoQVFBQUtpUUFBRUNGQkFBQXFKQUFBQUFWRWdBQW9FSUNBQUJVU0FBQWdBb0pBQUJRSVFFQUFDb2tBQUJBaFFRQUFLaVFBQUFBRlJJQUFLQkNBZ0FBVkVnQUFJQUtDUUFBVUNFQkFBQXFKQUFBUUlVRUFBQ29rQUFBQUJVU0FBQ2dRZ0lBQUZSSUFBQ0FDZ2tBQUZBaEFRQUFLaVFBQUVDRkJBQUFxSkFBQUFBVkVnQUFvRUlDQUFCVVNBQUFnQW9KQUFCUUlRRUFBQ29rQUFCQWhRUUFBS2lRQUFBQUZSSUFBS0JDQWdBQVZFZ0FBSUFLQ1FBQVVDRUJBQUFxSkFBQVFJVUVBQUNva0FBQUFCVVNBQUNnUWdJQUFGUklBQUNBQ2drQUFGQWhBUUFBS2lRQUFFQ0ZCQUFBcUpBQUFBQVZFZ0FBb0VJQ0FBQlVTQUFBZ0FvSkFBQlFJUUVBQUNva0FBQkFoUVFBQUtpUUFBQUFGUklBQUtCQ0FnQUFWRWdBQUlBS0NRQUFVQ0VCQUFBcUpBQUFRSVVFQUFDb2tBQUFBQlVTQUFDZ1FnSUFBRlJJQUFDQUNna0FBRkFoQVFBQUtpUUFBRUNGQkFBQXFKQUFBQUFWRWdBQW9FSUNBQUJVU0FBQWdBb0pBQUJRSVFFQUFDb2tBQUJBaFFRQUFLaVFBQUFBRlJJQUFLQkNBZ0FBVkVnQUFJQUtDUUFBVUNFQkFBQXFKQUFBUUlVRUFBQ29rQUFBQUJVU0FBQ2dRZ0lBQUZSSUFBQ0FDZ2tBQUZBaEFRQUFLaVFBQUVDRkJBQUFxSkFBQUFBVkVnQUFvRUlDQUFCVVNBQUFnQW9KQUFCUUlRRUFBQ29rQUFCQWhRUUFBS2lRQUFBQUZSSUFBS0JDQWdBQVZFZ0FBSUFLQ1FBQVVDRUJBQUFxSkFBQVFJVUVBQUNvMExLK0cwQlo3dnpnNjF0OWo0MnZmdC9FN3c5dE1mN0ppUURBMEpxWTNMcG9nMG1TTmhqL2xFWUFZRjRwVEhiam1xL3RKa1ZHWWZ4VEF3R0FyQ2U3WVprVVdZanhUNjBFZ0VyVk1Pa05NcnNQVElaMU1mNk5md1NBYXBqd0ZqZTNmMHlJWlRIK0YyZjgxMGtBS0p5SmJ6d3ovV1lpekp2eFB4N2p2dzRDUUlGTWVzMnhUSm9mNDc4NXhuL1pCSUNDcEREeHRUMUo5UGtablJXbHpmaHZsL0ZmSGdHZ0FGMU5DaWtjK01PMG9lMytNQkdteGZnL252SFBzQVNBakxWMW9PZCtZQy9VL3FiN3kwVFlMK04vZnNZL3d4SUFNdFhVd1Z6VHdUdmZaMjNxMGEwMTlXTUtqUC9SR2YvTUpRQmtwb2tEMXNINmxObDlNVW5mT2h2cWh2SGZMT08vYmdKQVJpWTVRQjJZZ3pVeEdUb2Jhby94M3k3anZ6NENRQ2JHT1NBZGlPT2JaREkwQ1RiUCtPK1c4VitISlgwM2dNRkdQUUEzdnZwOURzQUdqZE9mS1h3bHJSVEdmNytNLzNJSkFJa2I1VUF5OGJWcjFQNDFDVTdPK0UrSDhWOGVBU0Jod3g1QUpyNXVqZExmSnNIeEdmOXBNdjdMSVFCa3pzVFhIMzNmUC91Z1Avbytmd0pBb29aSnpnN0EvcVh3WkxZU0dmOTVNUDd6SmdCa3l1U1hEdnVpZS9vOEhmWkZ2Z1NBQkVuTTViRlBoNmV2eW1PZnBra0F5SkRFblI3N3BEdjZPajMyU1o0RUFBQ29rQUFBQUJVU0FBQ2dRZ0pBaHR4UWt4NzdwRHY2T2ozMlNaNEVnQVM1b2FZODl1bnc5RlY1N05NMENRQ1prcmpUWVY5MFQ1K253NzdJbHdDUUtFL1l5b01uMXJYRCtNK0Q4WjgzQVNCekpzSCs2UHYrMlFmOTBmZjVFd0FTTnNvdmJqa1l1ek5LZnp2N0daL3hueWJqdnh3Q1FPSkcvZjF0RTJGN1J1MWZrOS9ralA5MEdQL2xFUUF5TU9xQlpDSnMxamo5YWZKcmp2SGZMK08vWE12NmJnREQyZmpxOTQxOEVNN2UzZ0U1bWtrS2lMNXVudkhmTGVPL0RnSkFSc2FaQkdlWURBZHI0cXhSMzdiSCtHK1g4VjhmQVNBek13ZllKQWVyeWZBcFRTMFYxOTZQWFRIK20yWDgxMDBBeU5Ra1owT3p6ZmNlcFI3TWJWMFhMclcvVW1iOGo4NzRaeTRCSUdOTm5BM05aNkgzeStWQTcrb0dzRno2bzFURy8veU1mNFlsQUJTZ3JZbHdyaFNlK3BYQzNkMG12clFZLzkweS9zc2hBQlNrcTRsd01TbE1VRzB4OGFYTitHK1g4VjhlQWFCQXN3L1VraWVrTHBqMDhtUDhOOGY0TDVzQVVMZ1V6b3B5Wk9JcmcvRS9IdU8vRGdKQUplWWUwQ2JFNDVud3ltYjhMODc0cjVNQVVDbkxwQ2E5bWhuL3hqOENBREgvUkZEYXBHaXlZeUhHUDdVU0FKaFh6cE9peVk1SkdmL1VRQUJnYU1OTUxHMVBraVkzK21MOFV4b0JnRWFab0tpWjhVOU9sdlRkQUFDZ2V3SUFBRlJJQUFDQUNna0FBRkFoQVFBQUtpUUFBRUNGQkFBQXFKQUFBQUFWRWdBQW9FSUNBQUJVU0FBQWdBb0pBQUJRSVFFQUFDb2tBQUJBaFFRQUFLaVFBQUFBRlJJQUFLQkNBZ0FBVkVnQUFJQUtDUUFBVUNFQkFBQXFKQUFBUUlVRUFBQ29rQUFBQUJVU0FBQ2dRZ0lBQUZSSUFBQ0FDZ2tBQUZBaEFRQUFLaVFBQUVDRkJBQUFxSkFBQUFBVkVnQUFvRUlDQUFCVVNBQUFnQW9KQUFCUUlRRUFBQ29rQUFCQWhRUUFBS2lRQUFBQUZSSUFBS0JDQWdBQVZFZ0FBSUFLQ1FBQVVDRUJBQUFxSkFBQVFJVUVBQUNva0FBQUFCVmExbmNESURWYnQyenF1d2xKS2FVL05sOS9jOTlOZ0tSWUFRQ0FDZ2tBQUZBaEFRQUFLaVFBQUVDRkJBQUFxRkJ4QVdEejlUZC9ZTzcvMjdwbDAzVjl0QVdBUE0xWE4rYXJMemtyTGdBQUFJTUpBQUJRSVFFQUFDb2tBQUJBaFFRQUFLaVFBQUFBRlNveUFQZ3FJQURqcXVFcmdCR0ZCZ0FBWUhFQ0FBQlVTQUFBZ0FvSkFBQlFvV0lEZ0JzQkFSaFZMVGNBUmhRY0FBQ0FoUWtBQUZBaEFRQUFLdFI0QUxqcWV6ODhOY3IyVzdkc2Fyb0pYK2MrQUFDRzFmWDEvMUhyMzZqMWRSQXJBQUJRSVFFQUFDcFVaUUJ3R1FDQTJXcXNDOFVIZ0ZLL3Z3bEF1MHF2SDhVSEFBRGdSTlVHZ0JxWGV3QTRVYTMxSUlrQTBPWlhBU1BLWDhZQm9GbHQxNDIyNjk0d1dna0FUWDlYRVFEYWtNdlpmeHQxTllrVmdDNTRLQkFBdzZobDFiaWFBQUFBUEdWWjN3M28yOVl0bTY2ckplMHhuTTNYMzl4M0U0QU8xTDRLbk13S1FCYzNSQ2owQUN5bWl6cVJ3ZzJBRVMwR2dKeHVCS3c5QlFMVUpxZDV2NjE2bXN3S1FGZXNBZ0F3bjlycVEzVUJZQ0U1cFVFQXhtZStQeWFwQU5EVmRaSGFVaDRBaSt1cUxxUnkvVCtpNVFDUTAzMEFFVkloUU9seW0rZmJyS05KclFCMHlTb0FBQkgxMW9OcUE4QkNja3VIQUF5bjcvazlwZVgvaUFRRFFKY2RWR3ZxQStDWW11dEE2d0VndC9zQUl2cFBpUUEwSzhkNXZlMzZtZHdLUU5kcVRuOEFOVmlvK05jKy95Y1pBRks0VHBKaldnUWdUU25VdGJrNkNRQ3BYd1pZS0FVS0FRQjV5L1hzdjR1Nm1lUUtRRVQzYVNuMXdRQkFNN3FlNzFNOCs0L3djOEFEK2JuZ3RLVjZZRkVQUHgrZExxdTRpK3RzQlNEMXl3QVJMZ1VBbENMWHBmK0k3dXBsc3BjQUl2bzV1OHRoY0FDd3NKU0tmOHFybEVrSGdKUllCUUNnSkowR2dIR1dOVkphQlJBQ0FOS1crOWwvbDVmTHJRQXNRQWdBeUV0S3hUOEhBZ0FBMlV1dCtLZCs5aC9SUXdESTVUSkFoRlVBQU1wbEJXQUFJUUFnYmFtZC9lZWl0Ky9tMy9yK2E2ZEhmVTJmRDl3d3dBRFNrK0xjbk1QeWY0UVZnS0ZaQ1FCSVM0ckZQeWU5QllDYzdnVVlSQWdBNkZhcXhUK1hzLzhJS3dBaldXeGdDUUVBM1VoMXZrMzFKSFVodlFhQUhGY0JoQUNBL2l3MnovWjk5aitPUG44bko4c1ZBQ0VBb0Q0cEYvKys2OUk0ZWc4QU9meEs0SHlFQUlEdXBGejh4OVYzL2VzOUFJd3JoYlFsQkFDMEwvWGluMEk5R2tjU0FhRHZGRFFKSVFDZ1Bha1gvM0dsVVBlU0NBRGpTaVYxQ1FFQXpjdWgrS2RTaDhiUmV3S1piWnluQTBiMCs0VEEyWElZckFDcEczVGlsTXA4T203eFQrSHNQeUx6RllEVURGb0pzQm9Bc0xoY2luOEpra2docytXK0NoQmhBQU9NSTZkVjFOelAvaU1TREFBUlpZU0FpTHdHTTNrNWRmV0t1UHJ5OVhIcHhXZkd4UmV1alhQUFBpWE9YSHR5bkxSeWFTeGZ0aVQyN2o4Y2UvWWVpc2QzN284djNmOUUzSFBmenJqOXJ1MXgrMTJQeHBFall4MWUwSnJjVHBwS0tQNFJBa0RyY2h2WU5YajdEVmZHYTcvdDRvSGJUVTlISEQwNkhZY09INGtEQjQvRzN2MkhZdmVUaDJMbjdnUHh5R1A3NG11UDdJbDd0KzJLdTc2OEkrNjViMmRNdDF4WGx5eVppbSs1K3VueDJuOXljVnk1OFp4WXVuVDB3M2ZQM2tQeHQvLzN3ZmpBUjc4VW4vek1nM0YwUUtPSDZhdGYraCszeGU5LzhLNlIyekxwMzUzUGtTUFRzZS9BNGRpNzcxQThzZWRnZkdYYnJ2ankvYnZpcy8rNFBXNjUvY0U0ZU9ob28rMWtjcm5Oa1pQYzlKZGFBRmpXZHdQbWM5WDNmbmhxbkJDd2RjdW01RUxBNXV0di9zQmlBM3pybGszWHBUYkFPV1pxS21McDBxbFl1blJabkxReTRyUTFLMkxEMmZOdnUzUDNnZmpZTGZmSGgyNjZOejc5K1VjYWI4c3JybnhhL09RYlh4QVhubmZxUk8remV0WHllTlZMem85WHZlVDgyUGJ3bnZqK3QvNVZQTHBqWDBPdDdOL1NwVk94ZXRYeVdMMXFlYXc3YzFWY2ZNSGFyLy9iay9zT3hVZHZ1VDkrL1E4L0cxOTc1TW4rR3NuWDVWYjhKNUZhOFk5SU5BQk1JdGNRTUxOZGQ2MmlTV3ZYckl6WHZPcWllTTJyTG9vNzd0NGUvK1gzNzRoYlAvdlF4Tys3ZXRYeWVQc05WOGEzdi9UQ3lSczV4M25uckk3VnB5d3ZLZ0FzNXBTVGw4ZDN2dktaOFczZmZFRzg1NzIzTjc1cXdmQnlMZnlsTFAzUFNQWmJBSk4wV0lyZnk5eDgvYzBmR0RTb2ZVdWdESmRmY2xiODlpOThTN3pqeHF2aTVKUEd6OWdiemo0bC91Q1hyMm1sK05kczVZcWw4VE52ZWxGYy85cU5mVGVsT3NOOEc2cTA0cCt5WkFOQVJMcXBhUkxEaEFCQm9BemZjODFGOFh2djJoeG5uMzd5eUs5ZGQ4Yko4YnZ2Mmh3WG5YOWFDeTBqSXVMSFhuOVpQUGVpTS9wdVJqV0dtZGRLTFA0cDE3SGlMZ0hNU1BGU3dJeEJsd1FpWEJZb3hYT2ZkVWI4M3JzM3h4dCtkbXRzSDNLcGZlV0twZkViUC8rS09HL2RLVU50LzhUdWcvR3hUOTBmTjkzNlFOeTdiVmRzMzdFdkRoNDZFbXZYckl6VDFxeU1TNTV4ZWx4K3lWbHg5ZVhyNHhsUG0rd2VncElzbVpxS24vaUJGOFNiL3QzSCttNUswWEl1L0pOS3VmaEhaQkFBeHIwaE1DTDlFQkF4K09BUUJQb3g5ODcyMWF1V3gybHJWc2FHczFiRkM1KzNMcTYrZkgxY2VlazVRNzNYK1J2V3hHLzgvQ3ZpKzkvNmtUaHc4TWpBN2QvNnd5K0tTNTV4K3NEdGprNVB4eC85NVJmanY3N3ZqdGkxNStBSi8vN0k0L3Zpa2NmM3hSZS91ak0rL1BGN0krTFk1WW52M3Z5c2VQVXJueG5MbHlXOUFEalEzSDIwZE9sVW5McDZSVHo3d3RQanU3NzFXZkVkTDd0dzRIdGNlZWs1Y2RxYUZmSEU3aFA3ajhrTXU1S1ordHhXNHRML2pPUURRRVM1SVNCQ0VNakZucjJIWXMvZVE3SHQ0VDN4NmM4L0VsdisrTTY0NUJtbng0MnZ1eXhlZWRYVEJyNytPYzg4UFg3cWpTK01YL3pOdjE5MHU0MFhuem5VMTkrT0hwMk90NzNubHE4WDltSGRjZmYydU9QdTdiSGxUejRmUC80dkxtLzlxNHRkT25Ka09uWThjU0J1dWVPaHVPV09oK0xPTHo0V1AvT21GeTM2bWlWTHB1SWJONTRUSDczbC9vNWFXYjVTQ245RXVVdi9NN0k1QlNqdHBzQzVoajBZM0NPUWpydnYzUkgvNmhjL0ViLzgyN2ZGMGFPREsray8vL2FMNDNrWG5ibm9Odi82RGMrUHFTRkcranQrL2RhUmkvOXMyeDdlRTIvOWxVL0dWN2J0R3ZzOVV2ZStEOTBkOXorMForQjI1NXkxcW9QV2xHK1V1VW54VDBNV0t3Qk5TSDBsSUdMNDFZRFoyK1J3SUpYdXZmL3JycGllanNGbm0xTlRjZVByTG9zYi92MU44Lzc3eFJlc2phc3ZYei93Ny8yZlQyK0xQOS82cGJIYVdwT2owOU54NngwUHhkUFhYN1RvZG1lY2VsSkhMU3JUS0Nja3VjeFhOUlQvaU13Q3dDU1hBaUx5Q0FFUmdrQ09mditEZDhVVkc5ZkZ0MXo5OUVXMzIvU2ljK09DYzlmRVY3KzIrNFIvKzg1WFBuUGczNW1lam5qM2I5MDJkanRyODhqamV3ZHVNK2hwaUp4bzFGWEluT2FuSEZhTW01SlZBSWlvSndSRWpCY0VacitPYnYzYSt6NDdNQUJNVFVWYzg4MFh4SlkvdnZPRWYzdkZFUGNTZk9xT0IrTytCMDhNRDh4dmFvanJLVHQzSGVpZ0pXVW91ZkJIVEY3OGN6cjdqOGd3QUVUVUZRSWlSZ3NDYzdmTDdRRE0yUmUvdWpNK2RjZERBNWZ4WC9LQ0RTY0VnRE5PT3lrdU9IZk53TC94NFk5L1paSW1WbWY5RU5mMzc3NTNSd2N0eWRjNDl4emxPTy9VVnZ3ak1nMEFFZldGZ0lqUmc4RGNiWE04S0hNelRBRFllUEdac1hUcDFIRy95dmU4SVI5SWM4ZmQyeWRxWDAyV1RFM0ZWWmN0dmk5MjdUa1luL3ZpWXgyMUtCL2ozbWljNnh4VFkvR1B5RGdBTkNISEVCQXhYaENZYi90Y0Q5YVVmZVlMZzM4SWFPV0twYkhoN0ZQaWdWbDNxRDl0L2VxQnI5dXo5MUI4OVd2bDNyWGZ0RGQ4MTdQajNBRVBVL3J6ajM1cHFHY3psRzdTYnhibFBKZlVXdndqTWc4QWs2NENST1FiQWlMR0R3SXo1bnRkemdkeUNyWU4rU3R6Njg5YWRWd0FXSGZtNEtYcVJ4L2ZWOVQzOXB1MlpNbFVuTFo2UlR6N0dhZkhkWnVmTmZBM0ZCNTViRy84OS9kL3JwdkdKYVNwcnhHWE1GZlVkTVBmZkxJT0FCRkNRTVR4QitLa0IvZENyeS9oWU8vQ3NFK1VXNzFxK1hIL2Zjckpndy9GM1hzOXJXNjJuM25UaXdaKzlYSWhPM2NmaURlLzg2YllzL2RRdzYxS1E1dlBDaWxsTG1paStPZDg5aDhSa1hYalo1czBCRVJFMWlGZ1BoNFlOTC9UVGozanphdFdyYjVtc1cxMjdkN3hQNTk4Y3ZlSHhubi9EZXZQLzdNWThKQ3RIVHUzLzZmOSsvZis3YXcyM2JCcTFlck5pNzNtd01IOWR6eisrQ1B2R0tkTjQycTdyeWI1dStNNmVPakFYVHQzUHZhclI0NGNIbnk5aG9nb3AralBVUHlQeVg0RllJYVZnQk0xdVRMQWNLYW1wazZLWVo2d09UMTkzS25uZEV3UFBCVmRNalUxK3M4S01tUDY0TUg5ZHo2NWQ4OWY3dCsvOTFOOU55WjFwUlg4MlJUL3B4UVRBQ0tFZ01YTVBhQUZnbllzV2JKa3FKL3dPenA5OUxnbjFFeFBUKzhmOUpxcHFlSGVtL2xOVFMwNWVTcW1WdlRkamhTVlhQQm5OSFc5djVUaUgxRllBSWhvTGdSRWxIZEpZTGI1RG5paFlISkxseTRiL0N6ZmlEaHk1TWlqcy8vNzZKRWpBNytMdG5UcDB0UGoyR1U3dHdLT2JtcjU4aFVYclYxNzVsdE8ybi95aTNjKzhkaXZUazlQVjNsVFJRM0ZmaTdGZjM3RkJZQ0laa0pBUkxtckFRdFpiR0lRRG9hellzWEs1d3phWm5wNitzQ1JJNGVQSy9pSGp4eCtlTkRycHFhV3JGcTJiTm1HdzRjUGYyMlNOdGJ1cEpOV1hiMTJhdXFuZHV4NDlGMVJhSmlxc2NndlJQRmZXSEVmYUxZbVFrQkUyU3NCTlhyN0RWY08vTW5kdWI4MVA2emZmZGZtdU9KNTZ4YmQ1dE9mZnlSKzhPZTJIdmYvemx4N1Vueml2YThaK1A1dmU4OHQ4Y0cvL3ZMSTdScFhtMzNWNU45ZGM4cUtPSGZkS2ZIeUs4K0w3Ny8yMlhINmFTc0gvbzMvL043YjQ3Zis5UE9OdEpmME5Qa1Z2eEtMZjBSR1B3YzhqcVoyMnRZdG02ci92aWlEUGZkWlp3d3MvaEVSbjd6dHhCUDR4M2J1SCtvWi85ZSs3TUp4bWxhODNVOGVqTHZ2M1JHLytVZDN4cXR2L0ZEYzllWEJqL2Y5MGUrN0xDNDg3OVFPV2tmWEZQL2hGQjBBSXByZGVVSUFpL214MTE4K2NKdnA2WWlQZlBLK2VmL3RyMjk5WU9EclgvejhEZkgwSVo0YVdMTWR1dzdFamIvdzhkajk1T0tYK0Zjc1h4SS8vVU12N0toVmRFWHhIMTd4QVNDaStSQWdDRERYRDcvbXVmSFNLODRkdU4zTnQyMWI4RXovUXpmZE8vRDFVMU1SUC9zdnJ4aTVmYlY1ZVB2ZStOWDMzajV3dTVkOTQzbnhndWVjM1g2RGFGM1RjM1BweFQraWtnQVEwZnpPRkFLWThVUGYvZHo0OFRjOGYrQjJSNmVuNDlmKzhMTUwvdnZkOSs2SXYvdmN3SHNCNDJYZmVGNTg5K1puamRMRUt2M1pYOTBUWDlrMitMY1RibnpkWlIyMGhqWTFYZmhyS1A0UkZRV0FpT1ozck5XQXVqM25tYWZIZjN2N3krTW5mdkFGc1dTSTM1My9vNy84WW56aG5zY1gzZVk5djNmN1VNLzdmOGVOVjhXMUw3OXd5SmFlNkx4elZzZTdmK0lsUlY4RFAzSmtPbjV6enM4dXorZnF5OWZIQzU5ckZTQkh6dm9uVTFVQW1OSEdhb0FnVUxiVnE1YkhlZXRPaVN1ZXR5NnVmKzNHK0oxZi9OYjRrL2Q4ZTd6MGl2T0dldjAvZkhsSC9NcnZmR2JnZHAvOXgrM3hwMzkxejhEdGxpeVppdi80bG0rS3QvM0lGWEhxNnVHZmJiUHg0alBqNTIrOEtqNzhHLzgwcm4zNWhURkVic25hWDN6aUsxWUJDdFRHbkZ0YjhZOG85RGtBdzJqcVdRR3oxZmJjZ0pKTjhrTXpjOTMzNE83NDBYZmVOUFRQenI3N3R6NGR6My8yV1hIeEJXc1gzVzdKMUZTODdqc3VpZTk0NlROaTY5L2VGeC8vK3dmaXkvZnZpc2QyN285RGg0L0VxYXRYeHRvMUsrTGlDOWJHWlplY0ZTOSsvb2E0NlB6VEd2aEV4NXUwcjk3OGpwdmliejdUenFNTmpoNDl0Z3J3cnJkODA2TGJYWFhaK25qUjg5YkZiWi8zOHdBcGErdEVxOGJpSDFGeEFJaG9Md1JFZUhZQXgzemhuc2ZqeHYvdzhkaStZOS9RcnpsdzhFaTgrWjAzeFIvODBxdGl3OW1Ebi81NzJwb1Y4VDNYWEJUZmM4MUZFN1MwWEgveGlhL0VqN3gyNDhETEhUZDgzNlh4dy8vMll4MjFpbEcxVWZ4ckxmd3pxcndFTUZ0Yk4zeTRMRkMzNmVtSVAvbklQZkdHbjlzYWo0NVEvR2M4dkgxdi9PRFBiWTE3SHhpOGZNM2labFlCQnJucXN2VkRQY2VCYnJVMWw5WmUvQ01FZ0s5cmF6QUlBdlg1ekJjZWpUZStiV3U4ODlkdmpmMEhEby85UHRzZWVUSmU5OU1mV2ZDNUFReHYySHNCYm5BdlFCSm01azFML3UycStoTEFYRzFjRXBqaDBrRFpIdHU1UHo3MnFmdmpnMzk5Yjl4KzE2T0RYekNrM1U4ZWpKLzhwWnZqZjcvNDZmR1dIM2hCWEhEdW1zYmVlOXZEZTJMUGt3Ti9oYmdJdzk0TGNPV2w1OFFWRzlmRnArOTBMMEFmMmo1WlV2aVBKd0RNTVROQTJnNENFY0pBNm81T1Q4Zmh3OU54K01qUk9IVG9hT3paZHloMjdUa1lUK3crRUE4L3RqZTJQYndudnZxMTNmRzVmM3hzcU1mNFR1S2p0OXdmTi8zZEEvR3RMejQvL3RrMUY4V1ZsNTRUUzVhTVBwYzl1ZTlRM0hMN1EvSG5XKytKdjdudHdUZzZ6SGNPQ3pIc3ZRQTNmdDlsOGNaLzg5R09Xa1ZFTjg5VlVmeFBwRU1XMFZZSW1Fc1FZRlNuclZrUlYxKytJUzc5aGpQakd5NVlHK2V1T3lYT1hIdFNyRnl4TEpZdG5ZcTkrdy9IM24ySFl2dk8vWEh2QTd2aVMvYy9FYmYvdzZQeG1TODhHb2VQSE8yNytkRFpwVkdGZjJFNlpnaGRCWUVJWVFBb1c1ZjNSQ24raTlNNVErb3lCTXdRQm9EYzlYRVR0TUkvSEowMG9qNkN3QXlCQU1oQm45OThVdnlIcDZQRzFHY1FtQ0VRQUNsSTRhdk9Ddi9vZE5pRVVnZ0Nzd2tGUUp0U0tQYXpLZnpqMDNFTlNTMEl6RWM0QUlhUldwR2ZqOEkvT1IzWXNCeUNBRUN1RlA3bTZNaVdDQUlBelZING02ZERXeVlJQUl4UDRXK1BqdTJJSUFBd0hFVy9HenE1QjhJQXdJa1UvbTdwN0I0SkFrRHRGUDMrNlBoRUNBTkFMUlQ5Tk5nSmlSSUlnSklvK3VteFF6SWdEQUM1VWZEVFp3ZGxTQ0FBVXFQZzU4Y09LNGhnQUhSQnNTK0RuVmdKNFFBWWxnSVBBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQlRrL3dFTVA2ZEE1dzhJY3dBQUFBQkpSVTVFcmtKZ2dnPT0iLCAic2l6ZXMiOiAiNTEyeDUxMiIsICJ0eXBlIjogImltYWdlL3BuZyIsICJwdXJwb3NlIjogImFueSBtYXNrYWJsZSJ9XX0=">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="DCLR Order">
+  <meta name="theme-color" content="#B8860B">
+  <link rel="icon" type="image/png" href="data:image/png;base64,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">
+  <link rel="apple-touch-icon" href="data:image/png;base64,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">
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="sp-ring">⚖️</div>
+  <h1>DCLR</h1>
+  <p>Mutation Appeal System</p>
+  <div class="sp-divider"></div>
+  <div class="sp-dots"><span></span><span></span><span></span></div>
+</div>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-seal">⚖️</div>
+  <div class="hdr-info">
+    <div class="hdr-title" id="hdrTitle">DCLR — Appeal System</div>
+    <div class="hdr-sub"   id="hdrSub">Bikramganj · Rohtas · Bihar</div>
+  </div>
+  <button class="hdr-btn" onclick="toast('Luxury light theme active','☀️')">☀️</button>
+  <span class="hdr-badge">v14</span>
+</header>
+
+<div class="scroll-area">
+
+<!-- ══ HOME ══ -->
+<div class="screen on" id="screen-home">
+  <div class="hero">
+    <div class="hero-eye">Bihar Land Mutation Act 2011</div>
+    <div class="hero-h">Mutation Appeal<br>Order System</div>
+    <div class="hero-grid">
+      <div class="hstat"><span class="hstat-n" id="stat-total">0</span><span class="hstat-l">Total</span></div>
+      <div class="hstat"><span class="hstat-n" id="stat-allowed">0</span><span class="hstat-l">Accepted</span></div>
+      <div class="hstat"><span class="hstat-n" id="stat-dismissed">0</span><span class="hstat-l">Rejected</span></div>
+      <div class="hstat"><span class="hstat-n" id="stat-remanded">0</span><span class="hstat-l">Remanded</span></div>
+      <div class="hstat"><span class="hstat-n" id="stat-sthagit">0</span><span class="hstat-l">Closed</span></div>
+      <div class="hstat link" onclick="goScreen('new-order')"><span class="hstat-n" style="font-size:20px">＋</span><span class="hstat-l">New</span></div>
+    </div>
+  </div>
+
+  <div class="sec-lbl">Quick Actions</div>
+  <div class="qgrid">
+    <button class="qbtn" onclick="goScreen('new-order')"><div class="qico">✍️</div><span class="qlbl">New Order</span></button>
+    <button class="qbtn" onclick="goScreen('history')">  <div class="qico">📁</div><span class="qlbl">History</span></button>
+    <button class="qbtn" onclick="goScreen('profile')">  <div class="qico">👤</div><span class="qlbl">Profile</span></button>
+    <button class="qbtn" onclick="goScreen('settings')"> <div class="qico">⚙️</div><span class="qlbl">Settings</span></button>
+  </div>
+
+  <div class="sec-lbl">Recent Cases</div>
+  <div class="case-list" id="recentList">
+    <div class="empty"><span class="empty-ico">📋</span>No cases yet. Create your first order.</div>
+  </div>
+</div>
+
+<!-- ══ NEW ORDER ══ -->
+<div class="screen" id="screen-new-order">
+  <div class="steps" id="stepStrip">
+    <div class="step-chip cur" id="chip-0" onclick="goStep(0)">1. Case</div>
+    <div class="step-chip"     id="chip-1" onclick="goStep(1)">2. Appellant</div>
+    <div class="step-chip"     id="chip-2" onclick="goStep(2)">3. Respondent</div>
+    <div class="step-chip"     id="chip-3" onclick="goStep(3)">4. Intervenor</div>
+    <div class="step-chip"     id="chip-4" onclick="goStep(4)">5. Grounds</div>
+    <div class="step-chip"     id="chip-5" onclick="goStep(5)">6. Generate</div>
+  </div>
+
+  <!-- Step 0 -->
+  <div id="step-0">
+    <div class="lcard">
+      <div class="chdr"><div class="cico">📁</div><div><div class="ctitle">Case Details</div><div class="csub">Section 7 — Bihar Land Mutation Act 2011</div></div></div>
+      <div class="cbody">
+        <div class="fg"><label class="flbl">Case Number <span class="req">✦</span></label><input class="fi" id="caseNo" placeholder="e.g. 45/2024-25"></div>
+      </div>
+    </div>
+    <div class="lcard">
+      <div class="chdr">
+        <div class="cico">🗺️</div>
+        <div><div class="ctitle">Land Details</div><div class="csub">Plot-wise — Multiple plots supported</div></div>
+        <span class="plot-badge" id="plotBadge">1 Plot</span>
+      </div>
+      <div class="cbody">
+        <div style="background:var(--gold-dim);border:1px solid rgba(184,134,11,.18);border-radius:9px;padding:13px;margin-bottom:13px;">
+          <div style="font-size:9.5px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1.1px;margin-bottom:11px;">Common Details</div>
+          <div class="fg2">
+            <div class="fg"><label class="flbl">Circle (Anchal)</label><input class="fi" id="anchal" value="Bikramganj"></div>
+            <div class="fg"><label class="flbl">Thana No.</label><input class="fi" id="thana" placeholder="e.g. 256"></div>
+          </div>
+          <div class="fg2">
+            <div class="fg"><label class="flbl">CO Order Date</label><input class="fi" type="date" id="coOrderDate"></div>
+            <div class="fg"><label class="flbl">Deed / Doc</label><input class="fi" lang="hi" id="deedNo" placeholder="Sale Deed No."></div>
+          </div>
+        </div>
+        <div style="font-size:9.5px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.9px;margin-bottom:9px;">🌾 Plot-wise Details</div>
+        <div id="plotList"></div>
+        <button class="add-btn" onclick="addPlot()">＋  Add Another Plot / Khesra</button>
+      </div>
+    </div>
+    <div style="margin:0 16px"><button class="btn btn-gold" onclick="goStep(1)">Next — Appellant Details →</button></div>
+  </div>
+
+  <!-- Step 1 -->
+  <div id="step-1" style="display:none">
+    <div class="lcard green-l">
+      <div class="chdr"><div class="cico" style="background:var(--green-bg);border-color:var(--green-br);">👤</div><div><div class="ctitle">Appellant / Vaadi</div><div class="csub">Petitioner filing the appeal</div></div></div>
+      <div class="cbody">
+        <div id="appellantList"></div>
+        <button class="add-btn" onclick="addParty('appellant')">＋  Add Another Appellant</button>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+          <div class="fg"><label class="flbl">Appellant's Advocate</label><input class="fi" id="appAdvName" placeholder="Advocate name"></div>
+        </div>
+      </div>
+    </div>
+    <div class="brow"><button class="btn btn-ghost" style="flex:1" onclick="goStep(0)">← Back</button><button class="btn btn-gold" style="flex:2" onclick="goStep(2)">Next →</button></div>
+  </div>
+
+  <!-- Step 2 -->
+  <div id="step-2" style="display:none">
+    <div class="lcard red-l">
+      <div class="chdr"><div class="cico" style="background:var(--red-bg);border-color:var(--red-br);">👥</div><div><div class="ctitle">Respondent</div><div class="csub">Opposite party / Circle Officer</div></div></div>
+      <div class="cbody">
+        <div id="respondentList"></div>
+        <button class="add-btn" onclick="addParty('respondent')">＋  Add Another Respondent</button>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+          <div class="fg"><label class="flbl">Respondent's Advocate</label><input class="fi" id="respAdvName" placeholder="Advocate name"></div>
+        </div>
+      </div>
+    </div>
+    <div class="brow"><button class="btn btn-ghost" style="flex:1" onclick="goStep(1)">← Back</button><button class="btn btn-gold" style="flex:2" onclick="goStep(3)">Next →</button></div>
+  </div>
+
+  <!-- Step 3 -->
+  <div id="step-3" style="display:none">
+    <div class="lcard" style="border-left:3px solid var(--blue)">
+      <div class="chdr"><div class="cico" style="background:var(--blue-bg);border-color:var(--blue-br);">🔀</div><div><div class="ctitle">Intervenor (Optional)</div><div class="csub">Skip if no intervention petition filed</div></div></div>
+      <div class="cbody">
+        <p style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.6">Fill only if an intervention petition has been filed in this case.</p>
+        <div id="intervenorList"></div>
+        <button class="add-btn" onclick="addParty('intervenor')">＋  Add Intervenor</button>
+      </div>
+    </div>
+    <div class="brow"><button class="btn btn-ghost" style="flex:1" onclick="goStep(2)">← Back</button><button class="btn btn-gold" style="flex:2" onclick="goStep(4)">Next →</button></div>
+  </div>
+
+  <!-- Step 4 - Grounds -->
+  <div id="step-4" style="display:none">
+
+    <div class="lcard">
+      <div class="chdr"><div class="cico">📬</div><div><div class="ctitle">Notice Details — Section 4</div></div></div>
+      <div class="cbody">
+        <div class="fg"><label class="flbl">Notice Service Details</label>
+        <div class="fwrap"><textarea class="fi" lang="hi" id="notice_detail" style="min-height:65px" placeholder="Notice issued on... served on... parties present / absent..."></textarea></div></div>
+      </div>
+    </div>
+
+    <div class="lcard gold-l">
+      <div class="chdr"><div class="cico" style="background:var(--blue-bg);border-color:var(--blue-br);">⚖️</div><div><div class="ctitle">Appellant's Argument — Section 5</div></div></div>
+      <div class="cbody">
+        <div class="ptoggle">
+          <button class="ptbtn on" onclick="tglPaksh('vaadi','type',this)">✏️ Type Input</button>
+          <button class="ptbtn"    onclick="tglPaksh('vaadi','scan',this)">📷 From Scan</button>
+        </div>
+        <div id="vaadi-text">
+          <div class="fg"><label class="flbl">Main Argument <span class="req">✦</span></label>
+          <div class="fwrap"><textarea class="fi" lang="hi" id="vaadi_paksh" placeholder="What argument did the appellant give?"></textarea></div></div>
+        </div>
+        <div id="vaadi-scan" style="display:none">
+          <div class="scan-zone"><input type="file" accept="image/*,.pdf" multiple onchange="hScan(event,'vaadi')"><span class="sz-ico">📄</span><div class="sz-t">Tap to upload petition</div><div class="sz-s">JPG · PNG · PDF</div></div>
+          <div class="scan-list" id="vaadi-scan-list"></div>
+          <button class="ext-btn" id="vaadi-ext-btn" onclick="extractPaksh('vaadi')" disabled>✨ Extract with AI</button>
+          <div class="fg mt10"><label class="flbl">Extracted Text</label><textarea class="fi" lang="hi" id="vaadi_paksh_scan" placeholder="Text appears here..."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcard green-l">
+      <div class="chdr"><div class="cico" style="background:var(--green-bg);border-color:var(--green-br);">📋</div><div><div class="ctitle">Appellant's Evidence — Section 6</div></div></div>
+      <div class="cbody">
+        <div class="fg"><label class="flbl">Documents Submitted by Appellant</label>
+        <div class="fwrap"><textarea class="fi" lang="hi" id="vaadi_sakshya" placeholder="Registered sale deed, genealogy, Khatiyan copy, Naksha..."></textarea></div></div>
+      </div>
+    </div>
+
+    <div class="lcard red-l">
+      <div class="chdr"><div class="cico" style="background:var(--red-bg);border-color:var(--red-br);">⚖️</div><div><div class="ctitle">Respondent's Argument — Section 7</div></div></div>
+      <div class="cbody">
+        <div class="ptoggle">
+          <button class="ptbtn on" onclick="tglPaksh('prativaadi','type',this)">✏️ Type Input</button>
+          <button class="ptbtn"    onclick="tglPaksh('prativaadi','scan',this)">📷 From Scan</button>
+        </div>
+        <div id="prativaadi-text">
+          <div class="fg"><label class="flbl">Respondent's Reply / CO's Ground</label>
+          <div class="fwrap"><textarea class="fi" lang="hi" id="prativaadi_paksh" placeholder="Respondent / CO's argument..."></textarea></div></div>
+        </div>
+        <div id="prativaadi-scan" style="display:none">
+          <div class="scan-zone"><input type="file" accept="image/*,.pdf" multiple onchange="hScan(event,'prativaadi')"><span class="sz-ico">📄</span><div class="sz-t">Tap to upload reply</div><div class="sz-s">JPG · PNG · PDF</div></div>
+          <div class="scan-list" id="prativaadi-scan-list"></div>
+          <button class="ext-btn" id="prativaadi-ext-btn" onclick="extractPaksh('prativaadi')" disabled>✨ Extract with AI</button>
+          <div class="fg mt10"><label class="flbl">Extracted Text</label><textarea class="fi" lang="hi" id="prativaadi_paksh_scan" placeholder="Text appears here..."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lcard">
+      <div class="chdr"><div class="cico" style="background:#F5F3FF;border-color:rgba(109,40,217,.2);">📋</div><div><div class="ctitle">Respondent's Evidence — Section 8</div></div></div>
+      <div class="cbody">
+        <div class="fg"><label class="flbl">Documents Submitted by Respondent</label>
+        <div class="fwrap"><textarea class="fi" lang="hi" id="prativaadi_sakshya" placeholder="Documents submitted by respondent..."></textarea></div></div>
+      </div>
+    </div>
+
+    <div class="lcard amber-l">
+      <div class="chdr"><div class="cico" style="background:var(--amber-bg);border-color:var(--amber-br);">🔀</div><div><div class="ctitle">Intervenor's Argument — Section 9</div></div></div>
+      <div class="cbody">
+        <div class="ptoggle">
+          <button class="ptbtn on" onclick="tglPaksh('hastkshepak','type',this)">✏️ Type Input</button>
+          <button class="ptbtn"    onclick="tglPaksh('hastkshepak','scan',this)">📷 From Scan</button>
+        </div>
+        <div id="hastkshepak-text">
+          <div class="fg"><label class="flbl">Intervenor's Argument (Optional)</label>
+          <div class="fwrap"><textarea class="fi" lang="hi" id="hastkshepak_paksh" placeholder="हस्तक्षेपकर्ता का तर्क..."></textarea></div></div>
+        </div>
+        <div id="hastkshepak-scan" style="display:none">
+          <div class="scan-zone"><input type="file" accept="image/*,.pdf" multiple onchange="hScan(event,'hastkshepak')"><span class="sz-ico">📄</span><div class="sz-t">Tap to upload petition</div><div class="sz-s">JPG · PNG · PDF</div></div>
+          <div class="scan-list" id="hastkshepak-scan-list"></div>
+          <button class="ext-btn" id="hastkshepak-ext-btn" onclick="extractPaksh('hastkshepak')" disabled>✨ Extract with AI</button>
+          <div class="fg mt10"><label class="flbl">Extracted Text</label><textarea class="fi" lang="hi" id="hastkshepak_paksh_scan" placeholder="Text appears here..."></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 10 Analysis — gold left-border -->
+    <div class="lcard gold-l">
+      <div class="chdr"><div class="cico" style="background:var(--blue-bg);border-color:var(--blue-br);">🧠</div><div><div class="ctitle">Analysis — Section 10</div><div class="csub">Deciders · Draft Order · DCLR's Analysis</div></div></div>
+      <div class="cbody">
+
+        <!-- A: Deciders -->
+        <div class="asub dec">
+          <div class="as-lbl">🔍 A. Deciders — Key Findings &amp; Decision</div>
+          <div class="fg mb12">
+            <label class="flbl">Key Facts / Decisive Points</label>
+            <div class="fwrap"><textarea class="fi" lang="hi" id="key_facts" style="background:rgba(217,119,6,.04);border-color:rgba(217,119,6,.18);" placeholder="Sale deed registered / Possession verified / Co-sharer objection / Limitation issue..."></textarea></div>
+          </div>
+          <div style="background:rgba(255,255,255,.8);border-radius:9px;padding:11px;border:1px solid rgba(217,119,6,.15);">
+            <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber);margin-bottom:9px;">⚖️ DCLR Decision — Select After Analysis</div>
+            <div class="otgrid">
+              <div class="ottile allowed sel" id="dt-allowed"  onclick="selDecider('allowed')"><span class="ot-ico">✅</span><span class="ot-n">Appeal Accepted</span><span class="ot-s">CO directed for Mutation</span></div>
+              <div class="ottile rejected"    id="dt-rejected" onclick="selDecider('rejected')"><span class="ot-ico">❌</span><span class="ot-n">Appeal Rejected</span><span class="ot-s">Revision before Addl. Collector</span></div>
+              <div class="ottile remanded"    id="dt-remanded" onclick="selDecider('remanded')"><span class="ot-ico">🔁</span><span class="ot-n">Remanded Back</span><span class="ot-s">Fresh reconsideration by CO</span></div>
+              <div class="ottile closed"      id="dt-closed"   onclick="selDecider('closed')"><span class="ot-ico">🔒</span><span class="ot-n">Temp. Closed</span><span class="ot-s">Non-prosecution</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- B: Draft Order -->
+        <div class="asub dft">
+          <div class="as-lbl">📋 B. Draft Order</div>
+          <div class="fg">
+            <label class="flbl">Direction to CO <span class="req">✦</span></label>
+            <div class="fwrap"><textarea class="fi" lang="hi" id="aadesh_saar" style="min-height:67px;background:rgba(29,78,216,.03);border-color:rgba(29,78,216,.18);" placeholder="After selecting Decision above, summarise direction here... AI will expand into full formal order..."></textarea></div>
+          </div>
+        </div>
+
+        <!-- C: DCLR Analysis -->
+        <div class="asub anl">
+          <div class="as-lbl">⚖️ C. DCLR's Analysis</div>
+          <div class="fg">
+            <label class="flbl">Legal Analysis &amp; Findings <span class="req">✦</span></label>
+            <div class="fwrap"><textarea class="fi" lang="hi" id="vishleshan" style="background:rgba(22,163,74,.03);border-color:rgba(22,163,74,.2);" placeholder="Your legal findings... AI will elaborate with Bihar Mutation Act 2011 &amp; Rules 2012..."></textarea></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="brow">
+      <button class="btn btn-ghost" style="flex:1" onclick="goStep(3)">← Back</button>
+      <button class="btn btn-gold"  style="flex:2" onclick="goStep(5)">Next — Generate →</button>
+    </div>
+  </div>
+
+  <!-- Step 5 - Generate -->
+  <div id="step-5" style="display:none">
+    <div class="ai-box">
+      <div class="ai-lbl">Additional Instructions to AI</div>
+      <textarea class="fi" lang="hi" id="additionalInst" style="background:rgba(184,134,11,.03)" placeholder="Any special point... Section 4(h) reference / specific timeline for CO..."></textarea>
+    </div>
+    <div style="margin:0 16px 14px">
+      <button class="btn btn-gold" id="genBtn" onclick="generateOrder()">✨  Generate Order with AI</button>
+      <button class="btn btn-ghost" id="regenBtn" onclick="generateOrder()" style="display:none;margin-top:9px">🔄  Regenerate</button>
+    </div>
+
+    <div class="prev-wrap" id="previewOuter">
+      <div class="prev-shell">
+        <div class="prev-hdr">
+          <div class="prev-court">उप समाहर्ता सह भूमि सुधार पदाधिकारी न्यायालय, बिक्रमगंज</div>
+          <div class="prev-tags">
+            <span class="prev-ct" id="prev-case">वाद सं. ___</span>
+            <span class="prev-tt allowed" id="prev-type">Appeal Accepted</span>
+          </div>
+          <div class="prev-pts">
+            <div class="ppc"><div class="ppl">Appellant</div><div class="ppn" id="prev-app">—</div></div>
+            <div class="ppv">बनाम</div>
+            <div class="ppc" style="text-align:right"><div class="ppl">Respondent</div><div class="ppn" id="prev-resp">—</div></div>
+          </div>
+        </div>
+        <div class="prev-meta">
+          <div class="pmc"><div class="pml">Case No.</div><div class="pmv" id="prev-caseno">—</div></div>
+          <div class="pmc"><div class="pml">Order Date</div><div class="pmv" id="prev-order">—</div></div>
+          <div class="pmc"><div class="pml">Appellant Adv.</div><div class="pmv" id="prev-appAdv">—</div></div>
+          <div class="pmc"><div class="pml">Respondent Adv.</div><div class="pmv" id="prev-respAdv">—</div></div>
+        </div>
+        <div class="order-body">
+          <div class="ob-hdr"><span class="ob-t">Order Draft</span><span class="mangal-chip">✦ Mangal Font — RCMS Ready</span></div>
+          <div class="o-loading" id="orderLoading">
+            <div class="spinner"></div>
+            <div class="loading-t">AI is generating the order...</div>
+            <div class="loading-s">Analysing case · Drafting 11 sections</div>
+          </div>
+          <div id="orderSections"></div>
+        </div>
+        <div class="rcms-bar">✅ इस आदेश की प्रति RCMS पोर्टल पर अपलोड की जाए।</div>
+        <div class="pact">
+          <button class="pabtn pa-w" id="wordBtn" onclick="dlWord()" disabled>⬇️ Word</button>
+          <button class="pabtn pa-p" id="pdfBtn"  onclick="dlPDF()"  disabled>🖨️ PDF</button>
+          <button class="pabtn pa-c" id="copyBtn" onclick="qCopy()"  disabled>📋 Copy</button>
+          <button class="pabtn pa-r" id="regenBtn2" onclick="generateOrder()" style="display:none">🔄 Redo</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="bab bab-rcms" id="bigCopyBtn" onclick="bigCopy()"><div class="bab-ico">📋</div><div class="bab-txt"><span class="bab-t1">Copy for RCMS Portal</span><span class="bab-t2">Mangal Font — Paste directly into RCMS</span></div></button>
+    <button class="bab bab-pdf"  id="bigPdfBtn"  onclick="dlPDF()"> <div class="bab-ico">🖨️</div><div class="bab-txt"><span class="bab-t1">Print / Save as PDF</span><span class="bab-t2">Court-formatted A4 — print-ready</span></div></button>
+    <button class="bab bab-wa"   id="waBtn"       onclick="shareWA()"><div class="bab-ico">📲</div><div class="bab-txt"><span class="bab-t1">Share on WhatsApp</span><span class="bab-t2">Send summary to parties / advocates</span></div></button>
+
+    <div class="dec-bar" id="decisionBar">
+      <div class="db-hdr"><h3>⚖️ Final Decision</h3><p>Review the draft above, then confirm your decision</p></div>
+      <div class="db-grid">
+        <button class="dbtn acc" id="db-allowed"  onclick="finalDec('allowed',this)"><span class="db-ico">✅</span><span class="db-l">Accepted</span><span class="db-s">CO directed for Mutation</span></button>
+        <button class="dbtn rej" id="db-rejected" onclick="finalDec('rejected',this)"><span class="db-ico">❌</span><span class="db-l">Rejected</span><span class="db-s">Revision before Addl. Collector</span></button>
+        <button class="dbtn rem" id="db-remanded" onclick="finalDec('remanded',this)"><span class="db-ico">🔁</span><span class="db-l">Remanded Back</span><span class="db-s">Fresh consideration by CO</span></button>
+        <button class="dbtn cls" id="db-closed"   onclick="finalDec('closed',this)"><span class="db-ico">🔒</span><span class="db-l">Temp. Closed</span><span class="db-s">Non-prosecution</span></button>
+      </div>
+      <div class="db-legal"><div class="db-legbox" id="dbLegBox"></div></div>
+      <div class="db-stamp" id="dbStamp"><span>🔏</span><span id="dbStampTxt">Decision recorded</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HISTORY ══ -->
+<div class="screen" id="screen-history">
+  <div class="sbox"><input id="histSearch" placeholder="Search by case no., party, mouza..." oninput="filterHist(this.value)"></div>
+  <div class="frow">
+    <button class="fchip on" onclick="filterType('all',this)">All</button>
+    <button class="fchip" onclick="filterType('allowed',this)">✅ Accepted</button>
+    <button class="fchip" onclick="filterType('rejected',this)">❌ Rejected</button>
+    <button class="fchip" onclick="filterType('remanded',this)">🔁 Remanded</button>
+    <button class="fchip" onclick="filterType('closed',this)">🔒 Closed</button>
+  </div>
+  <div class="stat-row" id="histStats"></div>
+  <div class="hlist" id="histList"><div class="empty"><span class="empty-ico">📁</span>No cases saved yet.<br>Generate your first order.</div></div>
+  <div style="height:16px"></div>
+</div>
+
+<!-- ══ PROFILE ══ -->
+<div class="screen" id="screen-profile">
+  <div class="prof-hero">
+    <div class="prof-av">👨‍⚖️</div>
+    <div><div class="prof-n">DCLR</div><div class="prof-r">Deputy Collector (Land Reforms)</div><div class="prof-d">Bikramganj · Rohtas · Bihar</div></div>
+  </div>
+  <div class="sec-lbl">Act Reference</div>
+  <div class="icard">
+    <div class="irow"><div class="ir-ico">📜</div><div class="ir-t"><div class="ir-l">Primary Act</div><div class="ir-v">Bihar Land Mutation Act 2011</div><div class="ir-s">Bihar Act No. 23 of 2011</div></div><span class="ir-a">›</span></div>
+    <div class="irow"><div class="ir-ico">⚖️</div><div class="ir-t"><div class="ir-l">Appeal Jurisdiction</div><div class="ir-v">Section 7 — Appeal before DCLR</div><div class="ir-s">Against CO order — within 30 days</div></div><span class="ir-a">›</span></div>
+    <div class="irow"><div class="ir-ico">🔁</div><div class="ir-t"><div class="ir-l">Revision Jurisdiction</div><div class="ir-v">Section 8 — Before Addl. Collector</div><div class="ir-s">Against DCLR order — within 30 days</div></div><span class="ir-a">›</span></div>
+    <div class="irow"><div class="ir-ico">📋</div><div class="ir-t"><div class="ir-l">Appeal Procedure</div><div class="ir-v">Rule 11 — Mutation Rules 2012</div><div class="ir-s">Hearing · Evidence · Reasoned Order</div></div><span class="ir-a">›</span></div>
+    <div class="irow"><div class="ir-ico">⏱️</div><div class="ir-t"><div class="ir-l">CO Mutation Timeline</div><div class="ir-v">35 days / 75 days</div><div class="ir-s">Without / With objection — Amendment Rules 2020</div></div><span class="ir-a">›</span></div>
+    <div class="irow"><div class="ir-ico">🏛️</div><div class="ir-t"><div class="ir-l">DCLR Powers</div><div class="ir-v">Section 16 — Powers of Civil Court</div><div class="ir-s">Evidence · Summons · Oath · Documents</div></div><span class="ir-a">›</span></div>
+  </div>
+  <div class="sec-lbl">About</div>
+  <div class="icard">
+    <div class="irow"><div class="ir-ico">🚀</div><div class="ir-t"><div class="ir-l">Version</div><div class="ir-v">v14.0 — Luxury Official Edition</div></div></div>
+    <div class="irow"><div class="ir-ico">🌐</div><div class="ir-t"><div class="ir-l">Live URL</div><div class="ir-v" style="font-size:12px">dclr-bikramgamj.github.io/dclr-order</div></div></div>
+    <div class="irow"><div class="ir-ico">❤️</div><div class="ir-t"><div class="ir-l">Developed by</div><div class="ir-v">DCLR Bikramganj × Claude AI</div></div></div>
+  </div>
+  <div style="height:16px"></div>
+</div>
+
+<!-- ══ SETTINGS ══ -->
+<div class="screen" id="screen-settings">
+  <div class="sec-lbl">🔑 API Key</div>
+  <div class="lcard">
+    <div class="cbody">
+      <p style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.7">Enter your Anthropic API key. Stored only on this device — never sent elsewhere.</p>
+      <div class="fg mb12">
+        <label class="flbl">Anthropic API Key</label>
+        <div class="fwrap"><input class="fi" id="apiKeyInput" type="password" placeholder="sk-ant-..." oninput="saveApiKey(this.value)"><button class="vmic" onclick="tglKey()" id="keyEye" style="top:8px;background:var(--bg2);border-color:var(--border);">👁️</button></div>
+      </div>
+      <div id="apiKeyStatus" style="font-size:11px;color:var(--text3);margin-bottom:10px"></div>
+      <button class="btn btn-gold" onclick="testApiKey()">🔌  Test Connection</button>
+    </div>
+  </div>
+  <div class="sec-lbl">🎙️ Voice Input</div>
+  <div class="icard">
+    <div class="irow"><div class="ir-ico">🎙️</div><div class="ir-t"><div class="ir-l">Voice Input (Hindi)</div><div class="ir-v">Speak to fill form fields</div><div class="ir-s">Tap mic icon in any text field</div></div><label class="tsw"><input type="checkbox" id="voiceEnabled" onchange="saveVoice(this.checked)" checked><span class="tsl"></span></label></div>
+    <div class="irow"><div class="ir-ico">🌐</div><div class="ir-t"><div class="ir-l">Voice Language</div><div class="ir-v">Hindi (हिंदी)</div></div><select onchange="saveLang(this.value)" id="voiceLang" class="fi" style="width:auto;padding:5px 27px 5px 8px;font-size:12px"><option value="hi-IN">Hindi</option><option value="en-IN">English (India)</option></select></div>
+  </div>
+  <div class="sec-lbl">🏛️ Court Details</div>
+  <div class="lcard">
+    <div class="cbody">
+      <div class="fg mb12"><label class="flbl">DCLR Name</label><input class="fi" id="dclrName" placeholder="Sri / Smt. ..." oninput="saveCS('dclrName',this.value)"></div>
+      <div class="fg mb12"><label class="flbl">Court Location</label><input class="fi" id="courtLocation" value="Bikramganj, Rohtas (Bihar)" oninput="saveCS('courtLocation',this.value)"></div>
+      <div class="fg"><label class="flbl">District</label><input class="fi" id="courtDistrict" value="Rohtas" oninput="saveCS('courtDistrict',this.value)"></div>
+    </div>
+  </div>
+  <div class="sec-lbl">📝 Display</div>
+  <div class="icard">
+    <div class="irow"><div class="ir-ico">📝</div><div class="ir-t"><div class="ir-l">Order Text Size</div><div class="ir-v">Font size for section textareas</div></div><select onchange="saveFZ(this.value)" id="fontSizeSelect" class="fi" style="width:auto;padding:5px 27px 5px 8px;font-size:12px"><option value="13">Small</option><option value="14" selected>Medium</option><option value="15">Large</option><option value="16">X-Large</option></select></div>
+  </div>
+  <div class="sec-lbl">💾 Data</div>
+  <div class="icard">
+    <div class="irow" onclick="exportCases()" style="cursor:pointer"><div class="ir-ico">📤</div><div class="ir-t"><div class="ir-l">Export History</div><div class="ir-v">Download as JSON</div></div><span class="ir-a">›</span></div>
+    <div class="irow" onclick="clearAll()" style="cursor:pointer"><div class="ir-ico">🗑️</div><div class="ir-t"><div class="ir-l">Clear All Data</div><div class="ir-v" style="color:var(--red)">Delete all saved cases</div></div><span class="ir-a" style="color:var(--red)">›</span></div>
+  </div>
+  <div style="height:20px"></div>
+</div>
+
+</div><!-- scroll-area -->
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <button class="ni on" id="nav-home"      onclick="goScreen('home')">      <div class="ni-ico">🏠</div><span>Home</span></button>
+  <button class="ni"    id="nav-new-order" onclick="goScreen('new-order')"> <div class="ni-ico">✍️</div><span>New Order</span></button>
+  <button class="ni"    id="nav-history"   onclick="goScreen('history')">   <div class="ni-ico">📁</div><span>History</span></button>
+  <button class="ni"    id="nav-profile"   onclick="goScreen('profile')">   <div class="ni-ico">👤</div><span>Profile</span></button>
+  <button class="ni"    id="nav-settings"  onclick="goScreen('settings')">  <div class="ni-ico">⚙️</div><span>Settings</span></button>
+</nav>
+
+<!-- Camera Modal — GLASSMORPHISM -->
+<div class="cam-modal" id="camModal">
+  <div class="cam-sheet">
+    <div class="cam-handle"></div>
+    <div class="cam-title">📷 Scan Document</div>
+    <video id="camVideo" autoplay playsinline></video>
+    <canvas id="camCanvas" style="display:none"></canvas>
+    <button class="btn btn-gold" onclick="capturePhoto()">📸 Capture Photo</button>
+    <button class="btn btn-ghost" onclick="closeCamera()">✕ Close</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><span id="tIco">✅</span><span id="tMsg"></span></div>
+
+<script>
+'use strict';
+// ══════════════════════════════════════════════════════════
+// DCLR PREMIUM v14 — LUXURY OFFICIAL EDITION
+// Bihar Land Mutation Act 2011 | Rules 2012
+// Design: #F8F7F4 · #FFFFFF cards · #0F1F3D navy · #B8860B gold
+// ══════════════════════════════════════════════════════════
+
+// ── STATE ──
+let OT = 'allowed';  // orderType
+let step = 0;
+let camStream = null, camTarget = null;
+const parties = { appellant:[], respondent:[], intervenor:[] };
+const pScans  = { vaadi:[], prativaadi:[], hastkshepak:[] };
+const cases = [];       // in-memory for updateCaseList compat
+const history = [];     // full persisted history
+const plots = [];
+
+// ── LABEL MAPS ──
+const TLBL = {
+  allowed:'अपील स्वीकृत', rejected:'अपील अस्वीकृत',
+  remanded:'Remanded Back', closed:'अपील अस्थायी बंद'
+};
+const TBADGE = {
+  allowed:'bg-green', rejected:'bg-red', remanded:'bg-amber', closed:'bg-amber'
+};
+const TORB = {
+  allowed:'var(--green-bg)', rejected:'var(--red-bg)',
+  remanded:'var(--amber-bg)', closed:'var(--bg2)'
+};
+
+// ── SECTIONS ──
+const SECS = [
+  {n:1, hi:'वादी का नाम एवं विवरण',    en:'Applicant Name & Details',         c:'sc1'},
+  {n:2, hi:'वाद का संक्षेप',            en:'Brief of Case',                    c:'sc2'},
+  {n:3, hi:'भूमि विवरण',               en:'Land Details',                     c:'sc3'},
+  {n:4, hi:'सूचना विवरण',              en:'Notice Detail',                    c:'sc4'},
+  {n:5, hi:'वादी का पक्ष',             en:'Vaadi ka Paksh',                   c:'sc5'},
+  {n:6, hi:'वादी के साक्ष्य',          en:'Vaadi ke Sakshya',                 c:'sc6'},
+  {n:7, hi:'प्रतिवादी का पक्ष',        en:'Prativaadi ka Paksh',              c:'sc7'},
+  {n:8, hi:'प्रतिवादी के साक्ष्य',     en:'Prativaadi ke Sakshya',            c:'sc8'},
+  {n:9, hi:'हस्तक्षेपकर्ता का पक्ष',   en:'Hastkshepak (if any)',             c:'sc9', opt:true},
+  {n:10,hi:'विश्लेषण',                  en:'Deciders · Order Summary · Analysis', c:'sc10'},
+  {n:11,hi:'आदेश',                      en:'Final Order',                      c:'sc11', fin:true}
+];
+
+const LAW = `BIHAR LAND MUTATION ACT 2011 & RULES 2012 — KEY POINTS:
+SEC 7: Appeal before DCLR within 30 days of CO order. DCLR hears parties, examines evidence, passes REASONED order.
+RULE 11: Memorandum of appeal + e-Receipt. DCLR calls case record, issues notice, passes reasoned order.
+SEC 8 / RULE 12: Revision before Additional Collector within 30 days of DCLR order.
+SEC 16: DCLR has powers of Civil Court — evidence, summons, oath, costs.
+RULE 5(2): Spot verification — physical possession is critical factor.
+RULE 9: CO issues Correction Slip after DCLR order. RULE 10: CO alters Khatian/Register.
+AMENDMENT RULES 2020: CO disposal — 35 days (no objection) / 75 days (with objection).`;
+
+const LDESC = {
+  allowed:  {c:'var(--green)', pts:['Previous CO mutation order is set aside','CO directed to mutate in favour of Appellant','Rule 9 (Correction Slip) & Rule 10 (Khatian/Register) to be done by CO']},
+  rejected: {c:'var(--red)',   pts:["Appellant's petition rejected — CO's order stands","Appellant advised: Revision before Additional Collector within 30 days (Section 8)"]},
+  remanded: {c:'var(--amber)', pts:['CO order set aside — case remanded for fresh consideration','CO to reconsider per Mutation Act 2011; Rule 5(2) spot verification + new evidence required']},
+  closed:   {c:'var(--text3)', pts:['Case closed due to non-prosecution / continued absence','Can be reopened via Prayer/Application in future','Reason to be recorded; Appellant to be notified']}
+};
+
+// ── INIT ──
+window.onload = () => {
+  loadApiKey(); loadCS(); loadHistory();
+  addParty('appellant'); addParty('respondent');
+  buildSecs(); addPlot(); selDecider('allowed'); initVoice();
+  setTimeout(() => {
+    const s = document.getElementById('splash');
+    s.style.animation = 'spIn .4s var(--t) reverse forwards';
+    setTimeout(() => s.style.display = 'none', 400);
+  }, 2300);
+};
+
+// ── HELPERS ──
+const g = id => (document.getElementById(id)?.value || '').trim();
+const td = () => { const d=new Date(); return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`; };
+const ti = () => new Date().toISOString().split('T')[0];
+const fd = d => { if(!d) return '—'; const dt=new Date(d); return `${String(dt.getDate()).padStart(2,'0')}.${String(dt.getMonth()+1).padStart(2,'0')}.${dt.getFullYear()}`; };
+
+function toast(msg, ico='✅') {
+  document.getElementById('tMsg').textContent = msg;
+  document.getElementById('tIco').textContent = ico;
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  clearTimeout(t._to);
+  t._to = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── NAVIGATION ──
+function goScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('on'));
+  document.getElementById('screen-'+name)?.classList.add('on');
+  document.getElementById('nav-'+name)?.classList.add('on');
+  const titles = {
+    'home':['DCLR — Appeal System','Bikramganj · Rohtas · Bihar'],
+    'new-order':['New Mutation Appeal','Bihar Land Mutation Act 2011'],
+    'history':['Case History','Search & manage past orders'],
+    'profile':['Profile & Act Reference','DCLR Court, Bikramganj'],
+    'settings':['Settings','API Key · Voice · Court Details']
+  };
+  if (titles[name]) {
+    document.getElementById('hdrTitle').textContent = titles[name][0];
+    document.getElementById('hdrSub').textContent   = titles[name][1];
+  }
+  if (name === 'history') renderHist(history);
+  window.scrollTo(0, 0);
+}
+
+function goStep(n) {
+  for (let i = 0; i < 6; i++) {
+    const e = document.getElementById('step-'+i);
+    if (e) e.style.display = i === n ? 'block' : 'none';
+    const c = document.getElementById('chip-'+i);
+    if (c) { c.classList.remove('cur','done'); if(i<n) c.classList.add('done'); else if(i===n) c.classList.add('cur'); }
+  }
+  step = n; window.scrollTo(0, 0);
+}
+
+// ── PLOTS ──
+function addPlot() {
+  const idx = plots.length; plots.push({});
+  const d = document.createElement('div');
+  d.className = 'plotblock'; d.id = 'plot-'+idx;
+  d.innerHTML = `<div class="bk-hdr"><span class="bk-badge bb-o">${idx+1}</span><span class="bk-lbl">Plot / Khesra ${idx+1}</span>${idx>0?`<button class="bk-rm" onclick="rmPlot(${idx})">×</button>`:''}</div>
+  <div class="fg2"><div class="fg"><label class="flbl">Mouza <span class="req">✦</span></label><input class="fi" lang="hi" id="pm-${idx}" placeholder="Mouza name"></div>
+  <div class="fg"><label class="flbl">Khata No. <span class="req">✦</span></label><input class="fi" id="pk-${idx}" placeholder="e.g. 125"></div></div>
+  <div class="fg2"><div class="fg"><label class="flbl">Khesra No. <span class="req">✦</span></label><input class="fi" id="pkh-${idx}" placeholder="e.g. 456"></div>
+  <div class="fg"><label class="flbl">Area (Rakba)</label><input class="fi" id="pa-${idx}" placeholder="e.g. 0.25 acre"></div></div>`;
+  document.getElementById('plotList').appendChild(d);
+  updPB();
+}
+function rmPlot(i) { document.getElementById('plot-'+i)?.remove(); plots[i]=null; updPB(); toast('Plot removed.','🗑️'); }
+function updPB() { const a=plots.filter((p,i)=>p!==null&&document.getElementById('plot-'+i)).length; const b=document.getElementById('plotBadge'); if(b) b.textContent=a+' Plot'+(a>1?'s':''); }
+function colPlots() {
+  const l=[];
+  plots.forEach((p,i)=>{ if(!p||!document.getElementById('plot-'+i)) return; const m=g('pm-'+i),k=g('pk-'+i),kh=g('pkh-'+i),a=g('pa-'+i); if(!m&&!k&&!kh) return; l.push(`  Plot ${i+1}: मौजा-${m||'—'}, खाता-${k||'—'}, खेसरा-${kh||'—'}, रकबा-${a||'अभिलेखानुसार'}`); });
+  return l.join('\n');
+}
+function fPlot(f) { for(let i=0;i<plots.length;i++){ if(plots[i]&&document.getElementById('plot-'+i)){const v=g('p'+f[0]+'-'+i);if(v)return v;} } return ''; }
+
+// ── PARTIES ──
+function addParty(type) {
+  const idx=parties[type].length; parties[type].push({});
+  const bc=type==='appellant'?'app-t':type==='respondent'?'resp-t':'int-t';
+  const bb=type==='appellant'?'bb-g':type==='respondent'?'bb-r':'bb-b';
+  const lb=type==='appellant'?'Appellant':type==='respondent'?'Respondent':'Intervenor';
+  const d=document.createElement('div'); d.className='pblock '+bc; d.id='pb-'+type+'-'+idx;
+  d.innerHTML=`<div class="bk-hdr"><span class="bk-badge ${bb}">${idx+1}</span><span class="bk-lbl">${lb} ${idx+1}</span>${idx>0?`<button class="bk-rm" onclick="rmParty('${type}',${idx})">×</button>`:''}</div>
+  <div class="fg2" style="margin-bottom:8px"><div class="fg"><label class="flbl">Full Name <span class="req">✦</span></label><input class="fi" lang="hi" id="${type}-n-${idx}" placeholder="Full name"></div>
+  <div class="fg"><label class="flbl">Father / Husband</label><input class="fi" lang="hi" id="${type}-f-${idx}" placeholder="Father's name"></div></div>
+  <div class="fg" style="margin-bottom:8px"><label class="flbl">Village / Address</label><input class="fi" lang="hi" id="${type}-v-${idx}" placeholder="Village, Police Station"></div>
+  <div class="fg" style="margin-bottom:8px"><label class="flbl">Presence</label><select class="fi" id="${type}-p-${idx}"><option value="present">Present</option><option value="exparte">Absent (Ex-parte)</option><option value="adv">Through Advocate</option></select></div>
+  <div class="doc-zone"><div class="dz-lbl">📎 Documents</div><div class="dz-row"><label class="dzbtn">📄 PDF<input type="file" accept=".pdf,.doc" multiple onchange="addDoc(event,'${type}',${idx})"></label><label class="dzbtn">🖼️ Image<input type="file" accept="image/*" multiple onchange="addDoc(event,'${type}',${idx})"></label><button class="dzbtn" type="button" onclick="openCam('${type}',${idx})">📷 Camera</button></div><div class="doc-list" id="dl-${type}-${idx}"></div></div>`;
+  document.getElementById(type+'List').appendChild(d);
+}
+function rmParty(t,i){ document.getElementById('pb-'+t+'-'+i)?.remove(); parties[t][i]=null; toast('Removed.','🗑️'); }
+function addDoc(e,t,i){ Array.from(e.target.files).forEach(f=>aDoc(t,i,f)); e.target.value=''; }
+function aDoc(t,i,file) {
+  const list=document.getElementById('dl-'+t+'-'+i); if(!list) return;
+  const k=`${t}-${i}-${Date.now()}`; const isI=file.type.startsWith('image/');
+  const d=document.createElement('div'); d.className='di'; d.id='di-'+k;
+  if(isI){const r=new FileReader();r.onload=ev=>{d.innerHTML=`<img src="${ev.target.result}"><span class="di-n">${file.name}</span><button class="di-x" onclick="document.getElementById('di-${k}').remove()">✕</button>`;};r.readAsDataURL(file);}
+  else{d.innerHTML=`<span style="font-size:15px">📄</span><span class="di-n">${file.name}</span><button class="di-x" onclick="document.getElementById('di-${k}').remove()">✕</button>`;}
+  list.appendChild(d); toast(`'${file.name}' added.`,'📎');
+}
+function colParties(type) {
+  return parties[type].map((p,i)=>{
+    if(!p) return null;
+    const nm=g(`${type}-n-${i}`); if(!nm) return null;
+    const f=g(`${type}-f-${i}`),v=g(`${type}-v-${i}`);
+    const ps=document.getElementById(`${type}-p-${i}`)?.value;
+    const pl=ps==='present'?'उपस्थित':ps==='exparte'?'अनुपस्थित':'अधिवक्ता द्वारा';
+    return `${i+1}. ${nm}${f?', पु./पत्नी '+f:''}${v?', ग्राम '+v:''} (${pl})`;
+  }).filter(Boolean).join('\n');
+}
+function pNames(type){ return parties[type].map((p,i)=>p?g(`${type}-n-${i}`):'').filter(Boolean); }
+
+// ── PAKSH TOGGLE ──
+function tglPaksh(who,mode,btn){
+  const body=btn.closest('.cbody')||btn.parentElement.parentElement;
+  body.querySelectorAll('.ptbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const t=document.getElementById(who+'-text'), s=document.getElementById(who+'-scan');
+  if(mode==='type'){if(t)t.style.display='block';if(s)s.style.display='none';}
+  else{if(t)t.style.display='none';if(s)s.style.display='block';}
+}
+
+// ── SCAN ──
+function hScan(e,who){ Array.from(e.target.files).forEach(f=>aScan(who,f)); e.target.value=''; }
+function aScan(who,file){
+  pScans[who].push(file);
+  const list=document.getElementById(who+'-scan-list'); if(!list) return;
+  const k=who+'-'+Date.now(); const isI=file.type.startsWith('image/');
+  const d=document.createElement('div'); d.className='si'; d.id='ss-'+k;
+  if(isI){const r=new FileReader();r.onload=ev=>{d.innerHTML=`<img src="${ev.target.result}"><span class="si-n">${file.name}</span><button class="si-x" onclick="document.getElementById('ss-${k}').remove()">✕</button>`;};r.readAsDataURL(file);}
+  else{d.innerHTML=`<span style="font-size:15px">📄</span><span class="si-n">${file.name}</span><button class="si-x" onclick="document.getElementById('ss-${k}').remove()">✕</button>`;}
+  list.appendChild(d);
+  document.getElementById(who+'-ext-btn').disabled=false;
+  toast('File added.','📎');
+}
+async function extractPaksh(who){
+  const files=pScans[who].filter(Boolean); if(!files.length){toast('Add a file first.','⚠️');return;}
+  const btn=document.getElementById(who+'-ext-btn'); btn.disabled=true; btn.textContent='⏳ Reading...';
+  const wl=who==='vaadi'?'Appellant':who==='prativaadi'?'Respondent':'Intervenor';
+  const imgs=[];
+  for(const f of files.slice(0,3)){if(!f.type.startsWith('image/'))continue;const b=await new Promise(res=>{const r=new FileReader();r.onload=ev=>res(ev.target.result.split(',')[1]);r.readAsDataURL(f);});imgs.push({type:'image',source:{type:'base64',media_type:f.type,data:b}});}
+  if(!imgs.length){toast('AI extracts from JPG/PNG only.','⚠️');btn.disabled=false;btn.textContent='✨ Extract with AI';return;}
+  try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:[...imgs,{type:'text',text:`यह ${wl} की याचिका की image है। मुख्य तर्क हिंदी में 150-200 शब्दों में लिखें।`}]}]})});const d=await res.json();const ta=document.getElementById(who+'_paksh_scan');if(ta){ta.value=d.content?.[0]?.text||'';ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';}toast(`${wl}'s argument extracted!`,'✨');}
+  catch(err){toast('Error: '+err.message,'❌');}
+  finally{btn.disabled=false;btn.textContent='✨ Extract with AI';}
+}
+function getPaksh(who){const s=document.getElementById(who+'-scan');if(s&&s.style.display!=='none')return document.getElementById(who+'_paksh_scan')?.value?.trim()||'';return g(who==='vaadi'?'vaadi_paksh':who==='prativaadi'?'prativaadi_paksh':'hastkshepak_paksh');}
+
+// ── CAMERA ──
+function openCam(t,i){camTarget={t,i};document.getElementById('camModal').classList.add('open');navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}).then(s=>{camStream=s;document.getElementById('camVideo').srcObject=s;}).catch(()=>{toast('Camera not available.','❌');closeCamera();});}
+function closeCamera(){if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}document.getElementById('camModal').classList.remove('open');}
+function capturePhoto(){const v=document.getElementById('camVideo'),c=document.getElementById('camCanvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);c.toBlob(blob=>{const f=new File([blob],`cam-${Date.now()}.jpg`,{type:'image/jpeg'});if(camTarget)aDoc(camTarget.t,camTarget.i,f);closeCamera();},'image/jpeg',.92);}
+
+// ── DECIDER ──
+function selDecider(t) {
+  OT = t;
+  ['allowed','rejected','remanded','closed'].forEach(k=>{document.getElementById('dt-'+k)?.classList.remove('sel');document.getElementById('db-'+k)?.classList.remove('ch');});
+  document.getElementById('dt-'+t)?.classList.add('sel');
+  const pt=document.getElementById('prev-type');
+  if(pt){pt.textContent=TLBL[t];pt.className='prev-tt '+t;}
+  toast('Decision: '+TLBL[t], t==='allowed'?'✅':t==='rejected'?'❌':t==='remanded'?'🔁':'🔒');
+}
+
+// ── BUILD SECTIONS ──
+function buildSecs(){
+  const c=document.getElementById('orderSections'); if(!c) return;
+  c.innerHTML=SECS.map(s=>`
+    <div class="osec${s.fin?' fin':''}" id="osec-${s.n}">
+      <div class="osh"><div class="osn ${s.c}">${s.n}</div><div><div class="oshi">${s.hi}</div><div class="osen">${s.en}${s.opt?' — Optional':''}</div></div></div>
+      <textarea id="sectext-${s.n}" class="osta" placeholder="${s.fin?'Final order will appear here...':'Section will appear here...'}"></textarea>
+    </div>`).join('');
+}
+
+// ── PREVIEW HEADER ──
+function updPrev(){
+  const cn=document.getElementById('prev-caseno');if(cn)cn.textContent=g('caseNo')||'—';
+  document.getElementById('prev-case').textContent='वाद सं. '+(g('caseNo')||'___');
+  const pt=document.getElementById('prev-type');if(pt){pt.textContent=TLBL[OT];pt.className='prev-tt '+OT;}
+  document.getElementById('prev-order').textContent=td();
+  document.getElementById('prev-appAdv').textContent=g('appAdvName')||'—';
+  document.getElementById('prev-respAdv').textContent=g('respAdvName')||'—';
+  document.getElementById('prev-app').textContent=pNames('appellant').join(', ')||'—';
+  document.getElementById('prev-resp').textContent=pNames('respondent').join(', ')||'—';
+}
+
+// ── GENERATE ──
+async function generateOrder(){
+  if(!g('caseNo')){toast('Case Number required.','⚠️');return;}
+  if(!g('vishleshan')){toast('DCLR Analysis required (Section C).','⚠️');return;}
+  const vp=plots.filter((p,i)=>p&&document.getElementById('plot-'+i)&&(g('pm-'+i)||g('pkh-'+i)));
+  if(!vp.length){toast('Fill at least one Plot (Mouza + Khesra).','⚠️');return;}
+  if(!parties.appellant.some((p,i)=>p&&g(`appellant-n-${i}`))){toast('Fill Appellant name.','⚠️');return;}
+  if(!parties.respondent.some((p,i)=>p&&g(`respondent-n-${i}`))){toast('Fill Respondent name.','⚠️');return;}
+  if(!getPaksh('vaadi')){toast("Fill Appellant's argument.",'⚠️');return;}
+  const hasI=parties.intervenor.some((p,i)=>p&&g(`intervenor-n-${i}`));
+  const instr={allowed:'अपील स्वीकृत — CO का पूर्व आदेश निरस्त; CO को Rule 9 (Correction Slip) और Rule 10 (Khatian/Register) के अनुसार नामांतरण का निर्देश।',rejected:'अपील अस्वीकृत — अपीलार्थी की अपील खारिज; CO का आदेश बरकरार; अपीलार्थी को Section 8/Rule 12 के अनुसार Additional Collector में 30 दिन में Revision दायर करने का सुझाव।',remanded:'Remanded Back — CO का आदेश निरस्त; Rule 5(2) के अनुसार spot verification और नये साक्ष्यों के साथ पुनर्विचार हेतु CO को वापस।',closed:'अपील अस्थायी बंद — अनुपस्थिति/non-prosecution; Rule 11(4); भविष्य में Prayer से पुनः खोली जा सकती है।'}[OT];
+  updPrev();
+  document.getElementById('previewOuter').classList.add('show');
+  document.getElementById('orderLoading').classList.add('show');
+  document.getElementById('genBtn').disabled=true;
+  ['wordBtn','pdfBtn','copyBtn'].forEach(id=>document.getElementById(id).disabled=true);
+  SECS.forEach(s=>{const e=document.getElementById('sectext-'+s.n);if(e){e.value='';e.className='osta';}});
+  document.getElementById('previewOuter').scrollIntoView({behavior:'smooth',block:'start'});
+
+  const prompt=`आप DCLR (Land Reforms Deputy Collector), बिक्रमगंज, रोहतास, बिहार के आदेश प्रारूपकार हैं।
+${LAW}
+आदेश प्रकार: ${instr}
+न्यायालय: उप समाहर्ता सह भूमि सुधार पदाधिकारी न्यायालय, बिक्रमगंज, जिला — रोहतास (बिहार)
+वाद सं.: नामांतरण अपील वाद सं. ${g('caseNo')}; आदेश तिथि: ${td()}
+वादी: ${colParties('appellant')}; अधिवक्ता: ${g('appAdvName')||'स्वयं'}
+प्रतिवादी: ${colParties('respondent')}; अधिवक्ता: ${g('respAdvName')||'—'}
+${hasI?'हस्तक्षेपकर्ता: '+colParties('intervenor'):'हस्तक्षेपकर्ता: कोई नहीं'}
+भूमि: अंचल-${g('anchal')||'बिक्रमगंज'}, थाना-${g('thana')||'—'}, जिला-रोहतास; CO आदेश-${fd(g('coOrderDate'))}; दस्तावेज-${g('deedNo')||'अभिलेखानुसार'}
+${colPlots()}
+वादी पक्ष: ${getPaksh('vaadi')}; वादी साक्ष्य: ${g('vaadi_sakshya')||'अभिलेखानुसार'}
+प्रतिवादी पक्ष: ${getPaksh('prativaadi')||'जवाब नहीं।'}; प्रतिवादी साक्ष्य: ${g('prativaadi_sakshya')||'कोई नहीं'}
+हस्तक्षेपकर्ता: ${getPaksh('hastkshepak')||'कोई नहीं।'}
+सूचना: ${g('notice_detail')||''}; तथ्य: ${g('key_facts')||'AI to identify'}
+Draft Order: ${g('aadesh_saar')||''}; DCLR विश्लेषण: ${g('vishleshan')}; अतिरिक्त: ${g('additionalInst')||''}
+RULES: 1) Section 7 Bihar Mutation Act 2011 का उल्लेख। 2) Rule 11 प्रक्रिया। 3) खंड 10 में तीन उप-शीर्षक: (A) निर्णायक तथ्य (Positive+Negative findings); (B) आदेश सारांश; (C) DCLR विश्लेषण। 4) खंड 11 अंत में: "इस आदेश की प्रति RCMS पोर्टल पर अपलोड की जाए।" 5) हस्ताक्षर ब्लॉक नहीं। 6) ONLY JSON: [{"num":1,"content":"..."},...,{"num":11,"content":"..."}]`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const txt=data.content?.[0]?.text||'';
+    const m=txt.match(/\[[\s\S]*\]/); if(!m) throw new Error('JSON not found');
+    JSON.parse(m[0]).forEach(sec=>{
+      const e=document.getElementById('sectext-'+sec.num);
+      if(e){e.value=sec.content;e.className='osta filled';e.style.height='auto';e.style.height=e.scrollHeight+'px';}
+    });
+    ['wordBtn','pdfBtn','copyBtn'].forEach(id=>document.getElementById(id).disabled=false);
+    document.getElementById('regenBtn').style.display='block';
+    document.getElementById('regenBtn2').style.display='flex';
+    ['bigCopyBtn','bigPdfBtn','waBtn'].forEach(id=>document.getElementById(id).classList.add('show'));
+    document.getElementById('decisionBar').classList.add('show');
+    document.getElementById('dbStamp').classList.remove('show');
+    document.getElementById('dbLegBox').classList.remove('show');
+    ['allowed','rejected','remanded','closed'].forEach(k=>document.getElementById('db-'+k)?.classList.remove('ch'));
+    // Save
+    const cd={id:Date.now(),caseNo:g('caseNo'),appellant:pNames('appellant').join(', '),respondent:pNames('respondent').join(', '),mouza:fPlot('m'),orderType:OT,orderDate:ti(),orderText:buildTxt()};
+    history.unshift(cd); cases.unshift(cd);
+    try{localStorage.setItem('dclr_cases',JSON.stringify(history.slice(0,200)));}catch(e){}
+    updStats(); updateCaseList();
+    toast('All 11 sections generated! ✨');
+  } catch(err){toast('Error: '+err.message,'❌');}
+  finally{document.getElementById('orderLoading').classList.remove('show');document.getElementById('genBtn').disabled=false;}
+}
+
+// ── ORDER TEXT ──
+function buildTxt(){
+  const l=[`उप समाहर्ता सह भूमि सुधार पदाधिकारी न्यायालय, बिक्रमगंज, जिला — रोहतास (बिहार)`,`नामांतरण अपील वाद सं. ${g('caseNo')} — ${TLBL[OT]}`,`आदेश तिथि: ${td()}`,`वादी अधिवक्ता: ${g('appAdvName')||'स्वयं'}  |  प्रतिवादी अधिवक्ता: ${g('respAdvName')||'—'}`,''];
+  SECS.forEach(s=>{const v=document.getElementById('sectext-'+s.n)?.value||'';if(v){l.push(`${s.n}. ${s.hi}`);l.push(v);l.push('');}});
+  l.push('इस आदेश की प्रति RCMS पोर्टल पर अपलोड की जाए।');
+  return l.join('\n');
+}
+
+// ── COPY ──
+async function qCopy(){
+  const btn=document.getElementById('copyBtn'); if(!btn||btn.disabled) return;
+  try{
+    await navigator.clipboard.writeText(buildTxt());
+    const o=btn.innerHTML;
+    btn.innerHTML='✅ Copied!';btn.style.background='var(--green-bg)';btn.style.color='var(--green)';
+    setTimeout(()=>{btn.innerHTML=o;btn.style.background='';btn.style.color='';},2500);
+    toast('Copied! Paste in RCMS portal.','📋');
+  } catch(e){toast('Copy failed: '+e.message,'❌');}
+}
+async function bigCopy(){
+  const btn=document.getElementById('bigCopyBtn');
+  try{
+    await navigator.clipboard.writeText(buildTxt());
+    const t1=btn?.querySelector('.bab-t1'); const o=t1?.textContent;
+    const t2=btn?.querySelector('.bab-t2');
+    if(t1)t1.textContent='✅ Copied!';
+    if(t2)t2.textContent='Now paste in RCMS portal (Ctrl+V / Long-press)';
+    toast('Order copied in Mangal font! Paste in RCMS.','📋');
+    setTimeout(()=>{if(t1)t1.textContent=o||'Copy for RCMS Portal';if(t2)t2.textContent='Mangal Font — Paste directly into RCMS';},4000);
+  }catch(e){toast('Copy failed: '+e.message,'❌');}
+}
+
+// ── WHATSAPP ──
+function shareWA(){
+  const msg=encodeURIComponent(`*DCLR Court, Bikramganj — Order Summary*\n\nCase No.: ${g('caseNo')||'—'}\nDecision: *${TLBL[OT]}*\nAppellant: ${pNames('appellant').join(', ')||'—'}\nRespondent: ${pNames('respondent').join(', ')||'—'}\nDate: ${td()}\n\n_Bihar Land Mutation Act 2011, Section 7_\n_DCLR Bikramganj, Rohtas (Bihar)_`);
+  window.open('https://wa.me/?text='+msg,'_blank');
+}
+
+// ── FINAL DECISION ──
+function finalDec(decision,btn){
+  ['allowed','rejected','remanded','closed'].forEach(k=>document.getElementById('db-'+k)?.classList.remove('ch'));
+  btn.classList.add('ch'); OT=decision; selDecider(decision);
+  const msgs={allowed:'✅ Appeal Accepted — CO directed for mutation',rejected:'❌ Appeal Rejected — Revision before Addl. Collector',remanded:'🔁 Remanded Back — CO to reconsider with fresh evidence',closed:'🔒 Appeal Temporarily Closed — Can be reopened'};
+  document.getElementById('dbStampTxt').textContent=msgs[decision];
+  document.getElementById('dbStamp').classList.add('show');
+  const desc=LDESC[decision]; const lb=document.getElementById('dbLegBox');
+  if(lb&&desc){lb.innerHTML=`<div class="db-legtitle">Legal Effect</div>${desc.pts.map(p=>`<div class="db-legpt"><span style="color:${desc.c};flex-shrink:0">▸</span>${p}</div>`).join('')}`;lb.classList.add('show');}
+  document.getElementById('dbStamp').scrollIntoView({behavior:'smooth',block:'nearest'});
+  toast(msgs[decision],decision==='allowed'?'✅':decision==='rejected'?'❌':decision==='remanded'?'🔁':'🔒');
+}
+
+// ── PDF ──
+async function dlPDF(){
+  if(document.getElementById('pdfBtn').disabled){toast('Generate order first.','⚠️');return;}
+  const btn=document.getElementById('bigPdfBtn');const t1=btn?.querySelector('.bab-t1');const o=t1?.textContent;
+  if(t1)t1.textContent='Generating PDF...';
+  try{
+    const{jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const mL=22,mR=20,mT=18,mB=20,pW=210,pH=297,cW=pW-mL-mR;let y=mT;
+    doc.setFont('helvetica');
+    const chk=h=>{if(y+h>pH-mB){doc.addPage();y=mT;}};
+    const ln=(x1,y1,x2,y2,c,w)=>{doc.setDrawColor(c||'#E5E7EB');doc.setLineWidth(w||.3);doc.line(x1,y1,x2,y2);};
+    // Navy header
+    doc.setFillColor('#0F1F3D');doc.rect(0,0,pW,mT+26,'F');
+    doc.setFontSize(12.5);doc.setFont('helvetica','bold');doc.setTextColor('#B8860B');
+    doc.text('COURT OF THE DEPUTY COLLECTOR (LAND REFORMS)',pW/2,mT+7,{align:'center'});
+    doc.setFontSize(8.5);doc.setFont('helvetica','normal');doc.setTextColor('#FFFFFF');
+    doc.text('Bikramganj, District — Rohtas (Bihar)  |  Bihar Land Mutation Act 2011',pW/2,mT+13,{align:'center'});
+    ln(mL,mT+17,pW-mR,mT+17,'#B8860B',.6);
+    y=mT+22;
+    doc.setTextColor('#1A1A2A');
+    doc.setFontSize(11);doc.setFont('helvetica','bold');
+    doc.text(`Mutation Appeal Case No. ${g('caseNo')||'—'}  —  ${TLBL[OT]}`,pW/2,y,{align:'center'});
+    y+=5;doc.setFontSize(8.5);doc.setFont('helvetica','normal');doc.setTextColor('#6B7280');
+    doc.text(`Date of Order: ${td()}`,pW/2,y,{align:'center'});
+    y+=7;ln(mL,y,pW-mR,y,'#E5E7EB',.3);y+=4;
+    doc.setFontSize(9);doc.setTextColor('#374151');
+    doc.text(`Appellant: ${pNames('appellant').join(', ')||'—'}`,mL,y);
+    doc.text(`Respondent: ${pNames('respondent').join(', ')||'—'}`,pW/2+2,y);
+    y+=5;ln(mL,y,pW-mR,y,'#E5E7EB',.3);y+=5;
+    SECS.forEach(sec=>{
+      const ct=document.getElementById('sectext-'+sec.n)?.value||'';if(!ct.trim())return;
+      chk(13);
+      doc.setFillColor('#1D4ED8');doc.circle(mL+3.5,y-1,3.5,'F');
+      doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor('#fff');
+      doc.text(String(sec.n),mL+3.5,y+.5,{align:'center'});
+      doc.setTextColor('#1A1A2A');doc.setFontSize(10);doc.setFont('helvetica','bold');
+      doc.text(sec.hi+' — '+sec.en,mL+10,y+.5);
+      y+=4.5;ln(mL+10,y,pW-mR,y,'#E5E7EB',.2);y+=3;
+      doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor('#374151');
+      doc.splitTextToSize(ct,cW-4).forEach(line=>{chk(5);
+        // Alternate row bg
+        doc.text(line,mL+4,y);y+=4.8;});
+      y+=2;
+    });
+    chk(18);y+=4;
+    ln(mL,y,pW-mR,y,'#B8860B',.5);y+=5;
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor('#16A34A');
+    doc.text('✓ इस आदेश की प्रति RCMS पोर्टल पर अपलोड की जाए।',mL,y);
+    y+=8;ln(pW-mR-48,y-1,pW-mR,y-1,'#E5E7EB',.3);
+    doc.setFontSize(8.5);doc.setFont('helvetica','normal');doc.setTextColor('#374151');
+    doc.text('Deputy Collector (Land Reforms)',pW-mR-48,y+4);
+    doc.text('Bikramganj, Rohtas (Bihar)',pW-mR-48,y+9);
+    const tot=doc.getNumberOfPages();
+    for(let i=1;i<=tot;i++){doc.setPage(i);doc.setFontSize(7.5);doc.setTextColor('#9CA3AF');doc.text(`Page ${i} of ${tot}  |  Case No. ${g('caseNo')||'—'}  |  DCLR Court, Bikramganj`,pW/2,pH-8,{align:'center'});doc.setDrawColor('#E5E7EB');doc.setLineWidth(.2);doc.line(mL,pH-11,pW-mR,pH-11);}
+    doc.save(`MA_Case_${(g('caseNo')||'order').replace(/\//g,'-')}_${td().replace(/\./g,'')}.pdf`);
+    toast('PDF downloaded!','🖨️');
+  }catch(err){printFallback();toast('Opening print dialog...','🖨️');}
+  finally{if(t1)t1.textContent=o||'Print / Save as PDF';}
+}
+
+function printFallback(){
+  const cn=g('caseNo')||'—';
+  const secs=SECS.map(s=>{const v=document.getElementById('sectext-'+s.n)?.value||'';if(!v)return'';return`<div class="sec${s.fin?' fn':''}"><div class="sh"><span class="sn">${s.n}</span><b>${s.hi}</b><em>${s.en}</em></div><div class="sc">${v.replace(/\n/g,'<br>')}</div></div>`;}).join('');
+  const css='body{font-family:Mangal,serif;font-size:12pt;color:#000}@page{size:A4;margin:20mm 22mm 20mm 25mm}.hd{text-align:center;border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:12px}.hd h1{font-size:14pt;font-weight:700}.cb{border:1.5px solid #000;padding:8px;text-align:center;margin:10px 0}.sec{margin:12px 0;page-break-inside:avoid}.sh{display:flex;align-items:baseline;gap:8px;border-bottom:1px solid #000;padding-bottom:3px;margin-bottom:6px}.sn{background:#000;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:9pt;font-weight:700;flex-shrink:0}.sc{font-size:11pt;line-height:1.9;padding:4px 6px;text-align:justify}.fn .sc{border:1.5px solid #000;padding:8px;background:#f9f9f9}.rcms{margin-top:14px;border:1px solid #000;padding:6px;text-align:center;font-weight:700;background:#f0f0f0}.sig{margin-top:20px;text-align:right;border-top:1px solid #000;padding-top:4px}';
+  const w=window.open('','_blank');if(!w){toast('Allow popups for print.','⚠️');return;}
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>MA Case ${cn}</title><style>${css}</style></head><body><div class="hd"><h1>उप समाहर्ता सह भूमि सुधार पदाधिकारी न्यायालय</h1><div>बिक्रमगंज, जिला — रोहतास (बिहार)</div><div style="font-size:9pt">Bihar Land Mutation Act 2011 | Bihar Land Mutation Rules 2012</div></div><div class="cb"><b>नामांतरण अपील वाद सं. ${cn} — ${TLBL[OT]}</b><br>आदेश तिथि: ${td()}</div>${secs}<div class="rcms">✅ इस आदेश की प्रति RCMS पोर्टल पर अपलोड की जाए।</div><div class="sig"><div>Deputy Collector (Land Reforms)</div><div style="font-size:9pt">Bikramganj, Rohtas (Bihar)</div></div></body></html>`);
+  w.document.close();w.onload=()=>{w.focus();w.print();};
+}
+
+// ── WORD ──
+async function dlWord(){
+  if(document.getElementById('wordBtn').disabled){toast('Generate order first.','⚠️');return;}
+  const{Document,Packer,Paragraph,TextRun,AlignmentType,BorderStyle,UnderlineType}=docx;
+  const M='Mangal';const c=[];
+  const ct=(text,opts={})=>new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:opts.before||0,after:opts.after||100},border:opts.bb?{bottom:{style:BorderStyle.SINGLE,size:6,color:'000000',space:4}}:undefined,children:[new TextRun({text,bold:!!opts.bold,size:opts.size||24,font:M})]});
+  const lf=(text,opts={})=>new Paragraph({alignment:AlignmentType.LEFT,spacing:{before:opts.before||0,after:opts.after||100},indent:opts.indent?{firstLine:360}:undefined,children:[new TextRun({text,bold:!!opts.bold,size:opts.size||24,font:M,underline:opts.ul?{type:UnderlineType.SINGLE}:undefined})]});
+  c.push(ct('उप समाहर्ता सह भूमि सुधार पदाधिकारी न्यायालय',{bold:true,size:28,after:40}));
+  c.push(ct('बिक्रमगंज, जिला — रोहतास (बिहार)',{size:24,after:40}));
+  c.push(ct(`नामांतरण अपील वाद सं. ${g('caseNo')} — ${TLBL[OT]}`,{bold:true,size:26,after:40,bb:true}));
+  c.push(ct(`आदेश तिथि: ${td()}`,{size:22,after:200}));
+  SECS.forEach(s=>{const v=document.getElementById('sectext-'+s.n)?.value||'';if(!v)return;c.push(lf(`${s.n}. ${s.hi}`,{bold:true,size:26,before:200,after:80,ul:true}));v.split('\n').forEach(line=>{if(line.trim())c.push(lf(line,{indent:true,after:100}));else c.push(lf('',{after:60}));});});
+  c.push(lf('',{after:200}));c.push(ct('इस आदेश की प्रति RCMS पोर्टल पर अपलोड की जाए।',{bold:true,size:24,before:100}));
+  const doc=new Document({styles:{default:{document:{run:{font:M,size:24}}}},sections:[{properties:{page:{size:{width:11906,height:16838},margin:{top:1080,right:1080,bottom:1080,left:1440}}},children:c}]});
+  const buf=await Packer.toBuffer(doc);
+  const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`M.A. Case ${g('caseNo').replace(/\//g,'-')}.docx`;a.click();URL.revokeObjectURL(url);
+  toast('Word (Mangal) downloading!','📥');
+}
+
+// ── HISTORY ──
+function loadHistory(){
+  try{const s=JSON.parse(localStorage.getItem('dclr_cases')||'[]');s.forEach(c=>{if(!history.find(x=>x.id===c.id))history.push(c);});}catch(e){}
+  updStats();updateCaseList();
+}
+function updStats(){
+  const cs=history;
+  [['stat-total',cs.length],['stat-allowed',cs.filter(c=>c.orderType==='allowed').length],['stat-dismissed',cs.filter(c=>c.orderType==='rejected').length],['stat-remanded',cs.filter(c=>c.orderType==='remanded').length],['stat-sthagit',cs.filter(c=>c.orderType==='closed').length]].forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=v;});
+}
+function updateCaseList(){
+  const c=document.getElementById('recentList');if(!c)return;
+  if(!history.length){c.innerHTML='<div class="empty"><span class="empty-ico">📋</span>No cases yet. Create your first order.</div>';return;}
+  c.innerHTML=history.slice(0,5).map(h=>`<div class="ccard"><div class="corb" style="background:${TORB[h.orderType]||'var(--bg2)'}">${h.orderType==='allowed'?'✅':h.orderType==='rejected'?'❌':h.orderType==='remanded'?'🔁':'🔒'}</div><div class="cinfo"><div class="cnum">Case No. ${h.caseNo}</div><div class="cpty">${h.appellant||'—'} vs ${h.respondent||'—'}</div></div><span class="badge ${TBADGE[h.orderType]||'bg-amber'}">${TLBL[h.orderType]||'—'}</span></div>`).join('');
+}
+function renderHist(cs){
+  const c=document.getElementById('histList');if(!c)return;
+  if(!cs.length){c.innerHTML='<div class="empty"><span class="empty-ico">📁</span>No cases found.</div>';updHistStats([]);return;}
+  c.innerHTML=cs.map(h=>`<div class="hcard"><div class="hc-top"><div class="hc-orb" style="background:${TORB[h.orderType]||'var(--bg2)'}">${h.orderType==='allowed'?'✅':h.orderType==='rejected'?'❌':h.orderType==='remanded'?'🔁':'🔒'}</div><div class="hc-i"><div class="hc-n">Case No. ${h.caseNo}</div><div class="hc-p">${h.appellant||'—'} <span style="color:var(--text4)">vs</span> ${h.respondent||'—'}</div>${h.mouza?`<div class="hc-m">📍 ${h.mouza}</div>`:''}</div><span class="badge ${TBADGE[h.orderType]||'bg-amber'}">${TLBL[h.orderType]||'—'}</span></div><div class="hc-bot"><span class="hc-d">🗓 ${h.orderDate||'—'}</span><div class="hca-row"><button class="hca hca-c" onclick="cpCase(${h.id})">📋 Copy</button><button class="hca hca-d" onclick="delCase(${h.id})">🗑️</button></div></div></div>`).join('');
+  updHistStats(cs);
+}
+function updHistStats(cs){
+  const e=document.getElementById('histStats');if(!e)return;
+  e.innerHTML=[['📊',cs.length,'Total'],['✅',cs.filter(c=>c.orderType==='allowed').length,'Accepted'],['❌',cs.filter(c=>c.orderType==='rejected').length,'Rejected'],['🔁',cs.filter(c=>c.orderType==='remanded').length,'Remanded'],['🔒',cs.filter(c=>c.orderType==='closed').length,'Closed']].map(([i,n,l])=>`<div class="spill"><span class="sp-n">${n}</span><span class="sp-l">${i} ${l}</span></div>`).join('');
+}
+function filterHist(q){if(!q.trim()){renderHist(history);return;}const d=q.toLowerCase();renderHist(history.filter(c=>(c.caseNo||'').toLowerCase().includes(d)||(c.appellant||'').toLowerCase().includes(d)||(c.respondent||'').toLowerCase().includes(d)||(c.mouza||'').toLowerCase().includes(d)));}
+function filterType(t,btn){document.querySelectorAll('.fchip').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderHist(t==='all'?history:history.filter(c=>c.orderType===t));}
+function delCase(id){const i=history.findIndex(c=>c.id===id);if(i>-1){history.splice(i,1);try{localStorage.setItem('dclr_cases',JSON.stringify(history));}catch(e){}renderHist(history);updStats();updateCaseList();toast('Case deleted.','🗑️');}}
+function cpCase(id){const c=history.find(x=>x.id===id);if(!c||!c.orderText){toast('Order text not saved.','⚠️');return;}navigator.clipboard.writeText(c.orderText).then(()=>toast('Order copied!','📋'));}
+function exportCases(){if(!history.length){toast('No cases.','⚠️');return;}const b=new Blob([JSON.stringify(history,null,2)],{type:'application/json'});const url=URL.createObjectURL(b);const a=document.createElement('a');a.href=url;a.download='DCLR_Cases_'+td().replace(/\./g,'')+'.json';a.click();URL.revokeObjectURL(url);toast('Exported!','📤');}
+function clearAll(){if(!confirm('Delete ALL saved cases? Cannot be undone.'))return;history.length=0;cases.length=0;localStorage.removeItem('dclr_cases');renderHist([]);updStats();updateCaseList();toast('All data cleared.','🗑️');}
+
+// ── API KEY ──
+function saveApiKey(v){if(v.startsWith('sk-ant-')||v===''){localStorage.setItem('dclr_ak',v);const s=document.getElementById('apiKeyStatus');if(s)s.textContent=v?'✅ Key saved to device':'';}};
+function loadApiKey(){const k=localStorage.getItem('dclr_ak')||'';const i=document.getElementById('apiKeyInput');if(i&&k)i.value=k;const s=document.getElementById('apiKeyStatus');if(s&&k)s.textContent='✅ API Key loaded from device';}
+function tglKey(){const i=document.getElementById('apiKeyInput');const e=document.getElementById('keyEye');if(!i)return;i.type=i.type==='password'?'text':'password';if(e)e.textContent=i.type==='password'?'👁️':'🙈';}
+async function testApiKey(){const k=localStorage.getItem('dclr_ak')||'';if(!k){toast('Enter API key first.','⚠️');return;}toast('Testing...','🔌');try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:10,messages:[{role:'user',content:'Hi'}]})});const d=await r.json();if(d.content)toast('✅ API Key is working!','🟢');else toast('❌ '+( d.error?.message||'Invalid key'),'🔴');}catch(e){toast('Error: '+e.message,'❌');}}
+
+// ── COURT SETTINGS ──
+function saveCS(k,v){localStorage.setItem('dclr_'+k,v);}
+function loadCS(){['dclrName','courtLocation','courtDistrict'].forEach(k=>{const v=localStorage.getItem('dclr_'+k);const e=document.getElementById(k);if(e&&v)e.value=v;});const vl=document.getElementById('voiceLang');const s=localStorage.getItem('dclr_vl');if(vl&&s)vl.value=s;const fs=document.getElementById('fontSizeSelect');const sf=localStorage.getItem('dclr_fs');if(fs&&sf){fs.value=sf;applyFS(sf);}}
+function saveFZ(v){localStorage.setItem('dclr_fs',v);applyFS(v);}
+function applyFS(v){document.querySelectorAll('.osta').forEach(e=>e.style.fontSize=v+'px');}
+function saveVoice(c){localStorage.setItem('dclr_vc',c?'1':'0');toast(c?'🎙️ Voice enabled':'Voice disabled',c?'🎙️':'🔇');}
+function saveLang(v){localStorage.setItem('dclr_vl',v);}
+
+// ── VOICE ──
+let vRec=null, avf=null;
+function initVoice(){
+  if(!('webkitSpeechRecognition'in window)&&!('SpeechRecognition'in window))return;
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  vRec=new SR();vRec.continuous=true;vRec.interimResults=true;
+  vRec.lang=localStorage.getItem('dclr_vl')||'hi-IN';
+  vRec.onresult=e=>{if(!avf)return;let f='';for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)f+=e.results[i][0].transcript;}const el=document.getElementById(avf);if(el&&f){el.value+=(el.value?' ':'')+f;el.style.height='auto';el.style.height=el.scrollHeight+'px';}};
+  vRec.onerror=()=>stopV();vRec.onend=()=>stopV();
+  ['vaadi_paksh','prativaadi_paksh','hastkshepak_paksh','vishleshan','aadesh_saar','key_facts','notice_detail'].forEach(id=>addMic(id));
+}
+function addMic(fid){
+  if(localStorage.getItem('dclr_vc')==='0')return;
+  const el=document.getElementById(fid);if(!el||el.dataset.mic)return;
+  el.dataset.mic='1';el.style.paddingRight='42px';
+  const w=el.parentElement;if(w){w.style.position='relative';}
+  const b=document.createElement('button');b.type='button';b.className='vmic';b.id='vm-'+fid;b.innerHTML='🎙️';b.title='Voice Input';b.style.top='10px';
+  b.onclick=()=>togV(fid);
+  if(w)w.appendChild(b);
+}
+function togV(fid){if(!vRec){toast('Voice not supported.','⚠️');return;}if(avf===fid){stopV();return;}if(avf)stopV();avf=fid;vRec.lang=localStorage.getItem('dclr_vl')||'hi-IN';vRec.start();const b=document.getElementById('vm-'+fid);if(b)b.classList.add('rec');toast('🎙️ Listening... speak now','🎙️');}
+function stopV(){if(vRec&&avf){try{vRec.stop();}catch(e){}const b=document.getElementById('vm-'+avf);if(b)b.classList.remove('rec');}avf=null;}
+
+</script>
+<div id="ib" style="display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:9999;background:rgba(15,31,61,.97);border-top:1px solid rgba(184,134,11,.35);padding:13px 16px;align-items:center;gap:11px;font-family:sans-serif;">
+  <span style="font-size:20px;flex-shrink:0">⚖️</span>
+  <div style="flex:1"><b style="font-size:13px;color:#D4A820">Install DCLR App</b><br><span style="font-size:11px;color:rgba(255,255,255,.4)">Works offline</span></div>
+  <button onclick="window._dp&&_dp.prompt()" style="background:linear-gradient(135deg,#B8860B,#8B6508);color:#fff;border:none;padding:8px 15px;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer">Install</button>
+  <button onclick="this.parentElement.style.display='none'" style="background:none;border:none;color:rgba(255,255,255,.3);font-size:20px;cursor:pointer">&#215;</button>
+</div>
+<script>
+(function(){var s=atob('Y29uc3QgQz0nZGNsci12MTQnO3NlbGYuYWRkRXZlbnRMaXN0ZW5lcignaW5zdGFsbCcsZT0+e2Uud2FpdFVudGlsKGNhY2hlcy5vcGVuKEMpLnRoZW4oYz0+Yy5hZGRBbGwoWycuLyddKSkudGhlbigoKT0+c2VsZi5za2lwV2FpdGluZygpKSk7fSk7c2VsZi5hZGRFdmVudExpc3RlbmVyKCdhY3RpdmF0ZScsZT0+e2Uud2FpdFVudGlsKHNlbGYuY2xpZW50cy5jbGFpbSgpKTt9KTtzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2ZldGNoJyxlPT57aWYoZS5yZXF1ZXN0LnVybC5pbmNsdWRlcygnYXBpLmFudGhyb3BpYycpKXJldHVybjtlLnJlc3BvbmRXaXRoKGNhY2hlcy5tYXRjaChlLnJlcXVlc3QpLnRoZW4ocj0+cnx8ZmV0Y2goZS5yZXF1ZXN0KSkpO30pOw==');var b=new Blob([s],{type:'application/javascript'});if('serviceWorker' in navigator)navigator.serviceWorker.register(URL.createObjectURL(b)).catch(function(){});window._dp=null;window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window._dp=e;setTimeout(function(){var el=document.getElementById('ib');if(el)el.style.display='flex';},3000);});window.addEventListener('appinstalled',function(){var el=document.getElementById('ib');if(el)el.style.display='none';});})();
+</body>
+</html>
